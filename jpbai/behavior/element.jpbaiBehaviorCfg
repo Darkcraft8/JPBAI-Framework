@@ -1,0 +1,50 @@
+{
+    "behaviors" : {
+        "init" : {
+            "eventOnInit" : [
+                "set<element>DamageElement"
+            ]
+        }
+    },
+    "behaviorEvents" : {
+        "setphysicalDamageElement" : [
+            {
+				"event" : "function",
+				"callback" : "behaviorEx.setDamageStatusEffects",
+				"args" : []
+			}
+        ],
+        "setfireDamageElement" : [
+            {
+				"event" : "function",
+				"callback" : "behaviorEx.setDamageStatusEffects",
+				"args" : []
+			}
+        ],
+        "seticeDamageElement" : [
+            {
+				"event" : "function",
+				"callback" : "behaviorEx.setDamageStatusEffects",
+				"args" : []
+			}
+        ],
+        "setpoisonDamageElement" : [
+            {
+				"event" : "function",
+				"callback" : "behaviorEx.setDamageStatusEffects",
+				"args" : []
+			}
+        ],
+        "setelectricDamageElement" : [
+            {
+				"event" : "function",
+				"callback" : "behaviorEx.setDamageStatusEffects",
+				"args" : []
+			}
+        ]
+    },
+    "behaviorName" : "broadswordCombo",
+    "defaultOverride" : {
+        "element" : "physical"
+    }
+}

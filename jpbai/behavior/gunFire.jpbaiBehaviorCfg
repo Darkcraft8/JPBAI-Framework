@@ -1,0 +1,71 @@
+{
+    "scripts" : ["/jpbai/module/specialised/weapon.lua"],
+    "stances" : {
+        "fire" : {
+            "duration" : 0.05,
+            "transition" : "cooldown"
+        },
+        "cooldown" : {
+            "duration" : 0.11,
+            "lerpTo" : true,
+            "transition" : "init"
+        }
+    },
+    "behaviors" : {
+        "init" : {
+            "stance" : "init",
+            "possibleOutcome" : [
+                {
+                    "require" : {},
+                    "behavior" : "idle"
+                }
+            ],
+            "eventOnInit" : [
+                {
+                    "event" : "setCursor",
+                    "cursor" : "/cursors/reticle0.cursor"
+                }
+            ]
+        },
+        "idle" : {
+            "stance" : "idle",
+            "possibleOutcome" : [
+                {
+                    "require" : {
+                        "fireMode" : "<abilitySlot>"
+                    },
+                    "behavior" : "fire"
+                }
+            ]
+        },
+        "fire" : {
+            "stance" : "fire",
+            "possibleOutcome" : [
+                {
+                    "require" : {
+                        "stance" : "idle"
+                    },
+                    "behavior" : "idle"
+                }
+            ],
+            "periodicEvent" : [],
+            "eventOnInit" : [
+                "shoot"
+            ]
+        }
+    },
+    "behaviorEvents" : {
+        "shoot" : {
+            "event" : "projectile",
+            "loop" : false,
+            "spawnPos" : "fireOffset",
+            "spawnOffset" : "<fireOffset>",
+
+            "type" : "<projectileType>",
+            "inaccuracy" : "<inaccuracy>",
+            "param" : {}
+        }
+    },
+
+    "behaviorName" : "gunFire"
+}

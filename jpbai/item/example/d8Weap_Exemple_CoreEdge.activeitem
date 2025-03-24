@@ -1,0 +1,566 @@
+{
+    "itemName" : "d8Weap_Exemple_CoreEdge",
+    "price" : 50,
+	"level" : 1,
+	"maxStack" : 1,
+	"rarity" : "Legendary",
+	"category" : "broadsword",
+	"shortdescription" : "Core's Edge",
+	"description" : "Multiple Technique with a blazing hot blade",
+	"twoHanded" : true,
+	"itemTags" : [],
+	"inventoryIcon" : [
+		{
+			"image" : "/items/active/weapons/melee/broadsword/blade/11.png?replace;1A3249=880000;676767=d92e00;B1B1B1=ffa200;E9E9E9=fffe9f?replace;890900=b97c01;b81a22=A46E06;e5323b=E2C344;ff7060=FFFFA7?flipx",
+			"position" : [-1, 2.4]
+		},
+		{"image" : "/items/active/weapons/melee/broadsword/handle/1.png?replace;1A3249=282828;676767=565656;B1B1B1=7a7a7a;E9E9E9=9f9f9f?replace;890900=282828;b81a22=565656;e5323b=7a7a7a;ff7060=9f9f9f?replace;053d6e=880000;0964a0=d92e00;2992bc=ffa200;60b9ff=fffe9f"}
+	],
+
+	"scripts" : ["/jpbai/JPBAI.lua", "/jpbai/module/specialised/weapon.lua"],
+	"elementalType" : "fire",
+	"animation" : "/items/active/weapons/melee/broadsword/combobroadsword.animation",
+	"animationParts" : {
+		"blade" : "/items/active/weapons/melee/broadsword/blade/11.png?replace;1A3249=880000;676767=d92e00;B1B1B1=ffa200;E9E9E9=fffe9f?replace;890900=b97c01;b81a22=A46E06;e5323b=E2C344;ff7060=FFFFA7?flipx",
+		"handle" : "/items/active/weapons/melee/broadsword/handle/1.png?replace;1A3249=282828;676767=565656;B1B1B1=7a7a7a;E9E9E9=9f9f9f?replace;890900=282828;b81a22=565656;e5323b=7a7a7a;ff7060=9f9f9f?replace;053d6e=880000;0964a0=d92e00;2992bc=ffa200;60b9ff=fffe9f"
+	},
+	"animationCustom" : {
+		"sounds" : {
+		  "fire" : [ "/sfx/melee/swing_broadsword.ogg" ],
+		  "fire2" : [ "/sfx/melee/swing_shortsword.ogg" ],
+		  "fire3" : [ "/sfx/melee/swing_spear.ogg" ]
+		},
+		
+		"globalTagDefaults" : {
+			"paletteSwaps" : "?hueshift=0",
+			"directives" : "?hueshift=0",
+			"bladeDirectives" : "?hueshift=0",
+			"elementalType" : "fire"
+		},
+		
+		"animatedParts" : {
+			"parts" : {
+				"blade" : {
+					"properties" : {
+						"offset" : [-0.1, 2.4],
+						"fullbright" : true
+					}
+				},
+				"swoosh" : {
+					"properties" : {
+						"offset" : [-0.1, 2.4],
+						"fullbright" : true
+					}
+				}
+			}
+		}
+	},
+	
+	"initBehavior" : "init",
+	"stances" : {
+		"init" : {
+			"duration" : 0.1,
+			"allowRotate" : false,
+			"allowFlip" : true,
+			"twoHanded" : false,
+           
+			"frontArmFrame" : "run.1",
+            "backArmFrame" : "run.5",
+			"armRotation" : 40,				
+			"transformations" : {
+				"weapon" : {
+					"translate" : [0.1, 1],
+					"rotate" : 60
+				}
+			},
+
+			"transition" : "sheathed"
+		},
+        "sheathed" : {
+            "allowRotate" : false,
+			"allowFlip" : true,
+			"twoHanded" : false,
+           
+            "frontArmFrame" : "run.1",
+            "backArmFrame" : "run.5",
+			"armRotation" : 40,				
+			"transformations" : {
+				"weapon" : {
+					"translate" : [0.1, 1],
+					"rotate" : 60
+				}
+			}
+        },
+
+		"nS_idle" : {
+			"allowRotate" : false,
+			"allowFlip" : true,
+			"twoHanded" : false,
+           
+            "frontArmFrame" : "rotation",
+            "backArmFrame" : "rotation",
+			"armRotation" : -30,
+			"transformations" : {
+				"weapon" : {
+					"translate" : [0, 0.4],
+					"rotate" : -40
+				}
+			}
+		},
+		"nS_windup1" : {
+			"duration" : 0.1,
+			"armRotation" : 90,
+			"transformations" : {
+				"weapon" : {
+					"rotate" : -10
+				}
+			},
+            "frontArmFrame" : "rotation",
+            "backArmFrame" : "rotation",
+
+			"twoHanded" : true,
+			"allowRotate" : false,
+			"allowFlip" : true,
+			
+			"transition" : "nS_preslash1"
+		},
+		"nS_preslash1" : {
+			"duration" : 0.025,
+			"armRotation" : 55,
+			"transformations" : {
+				"weapon" : {
+					"rotate" : -45
+				}
+			},
+			"twoHanded" : true,
+			"allowRotate" : false,
+			"allowFlip" : false,
+			
+			"transition" : "nS_fire1"
+		},
+		"nS_fire1" : {
+			"duration" : 0.15,
+			"armRotation" : -45,
+			"transformations" : {
+				"weapon" : {
+			        "rotate" : -55
+				},
+				"swoosh" : {
+					"translate" : [0.4, -0.4],
+					"rotate" : 55,
+					"rotationCenter" : [0, 0.4]
+				}
+			},
+			"animationStates" : {
+				"swoosh" : "fire"
+			},
+			"playSounds" : ["fire"],
+			"twoHanded" : true,
+				"allowRotate" : false,
+			"allowFlip" : false,
+			"transition" : "nS_wait1"
+		},
+		"nS_wait1" : {
+			"duration" : 0.2,
+			"armRotation" : -45,
+			"allowRotate" : false,
+			"allowFlip" : true,
+			"twoHanded" : true,
+			"transition" : "nS_idle"
+		},
+		"nS_windup2" : {
+			"duration" : 0.15,
+			"armRotation" : -15,
+			"transformations" : {
+				"weapon" : {
+					"rotate" : -60
+				}
+			},
+			"twoHanded" : true,
+			"allowFlip" : true,
+			"allowRotate" : false,
+			"transition" : "nS_fire2"
+        },
+		"nS_fire2" : {
+			"duration" : 0.2,
+			"armRotation" : -150,
+			"transformations" : {
+				"weapon" : {
+					"rotate" : 55
+				},
+				"swoosh" : {
+					"rotate" : 150
+				}
+			},
+			"animationStates" : {
+				"swoosh" : "fire2"
+			},
+			"playSounds" : ["fire2"],
+			"twoHanded" : true,
+			"allowFlip" : true,
+			"allowRotate" : false,
+			"transition" : "nS_wait2"
+		},
+		"nS_wait2" : {
+			"duration" : 0.2,
+			"armRotation" : -150,
+			"allowRotate" : false,
+			"allowFlip" : true,
+			"twoHanded" : true,
+			"transition" : "nS_idle"
+		},
+		"nS_windup3" : {
+			"duration" : 0.15,
+			"armRotation" : -150,
+			"twoHanded" : true,
+
+            "allowRotate" : false,
+			"allowFlip" : true,
+			"transition" : "nS_fire3"
+		},
+		"nS_fire3" : {
+			"duration" : 0.3,
+			"armRotation" : 0,
+			"transformations" : {
+				"weapon" : {
+					"rotate" : -90
+				},
+				"swoosh" : {
+					"translate" : [0.4, 0.0],
+					"rotate" : 0,
+					"rotationCenter" : [0, 0.0]
+				}
+			},
+			"animationStates" : {
+				"swoosh" : "fire3"
+			},
+			"playSounds" : ["fire3"],
+			"twoHanded" : true,
+
+			"allowRotate" : false,
+			"allowFlip" : true,
+			"transition" : "nS_idle"
+		},
+		"nS_toSheated" : {
+			"duration" : 0.25,
+			"inherit" : "nS_idle",
+            "lerpTo" : true,
+            "transition" : "sheathed"
+		},
+
+		"hS_idle" : {
+			"allowRotate" : false,
+			"allowFlip" : true,
+			"twoHanded" : true,
+            
+			"armRotation" : 75,				
+			"transformations" : {
+				"weapon" : {
+					"rotate" : -180
+				}
+			}
+		},
+		"hS_toSheated" : {
+			"duration" : 0.25,
+			"inherit" : "hS_idle",
+            "lerpTo" : true,
+            "transition" : "sheathed"
+		},
+			
+		"lS_idle" : {
+			"allowRotate" : false,
+			"allowFlip" : true,
+			"twoHanded" : true,
+            
+			"armRotation" : -30,				
+			"transformations" : {
+				"weapon" : {
+					"rotate" : -40
+				}
+			}
+		},
+		"lS_toSheated" : {
+			"duration" : 0.25,
+			"inherit" : "lS_idle",
+            "lerpTo" : true,
+            "transition" : "sheathed"
+		}
+	},
+
+	"behaviors" : {
+		"init" : {
+			"stance" : "init",
+			"possibleOutcome" : [ 
+				{ 
+					"require" : { 
+						"stance" : "sheathed"
+					}, 
+					"behavior" : "sheathed" 
+				}
+			],
+			"eventOnInit" : []
+		},
+		"nS_toSheated" : {
+			"stance" : "nS_toSheated",
+			"possibleOutcome" : [ 
+				{ 
+					"require" : { 
+						"stance" : "sheathed"
+					}, 
+					"behavior" : "sheathed" 
+				}
+			]
+		},
+		"hS_toSheated" : {
+			"stance" : "hS_toSheated",
+			"possibleOutcome" : [ 
+				{ 
+					"require" : { 
+						"stance" : "sheathed"
+					}, 
+					"behavior" : "sheathed" 
+				}
+			]
+		},
+		"lS_toSheated" : {
+			"stance" : "lS_toSheated",
+			"possibleOutcome" : [ 
+				{ 
+					"require" : { 
+						"stance" : "sheathed"
+					}, 
+					"behavior" : "sheathed" 
+				}
+			]
+		},
+		"sheathed" : {
+			"stance" : "sheathed",
+			"possibleOutcome" : [
+				{
+					"require" : {
+						"fireMode" : "primary"
+					},
+					"behavior" : "nS_comboStep1"
+				},
+				{
+					"require" : { 
+						"move" : {
+							"up" : true
+						},
+						"time" : 0.5
+					},
+					"behavior" : "hS_idle"
+				},
+				{
+					"require" : {
+						"move" : {
+							"up" : true
+						},
+						"shift" : true,
+						"time" : 0.5
+					},
+					"behavior" : "lS_idle"
+				}
+			]
+		},
+		"nS_idle" : {
+			"stance" : "nS_idle",
+			"possibleOutcome" : [
+				{
+					"require" : {
+						"fireMode" : "primary"
+					},
+					"behavior" : "nS_comboStep1"
+				},
+				{ 
+					"require" : { 
+						"move" : {
+							"up" : true
+						},
+						"shift" : false,
+						"time" : 0.5
+					},
+					"behavior" : "hS_idle"
+				},
+				{ 
+					"require" : { 
+						"move" : {
+							"up" : true
+						},
+						"shift" : true,
+						"time" : 0.5
+					},
+					"behavior" : "lS_idle"
+    			},
+				{
+					"require" : {
+						"fireMode" : "none",
+						"time" : 3.5
+					},
+					"behavior" : "nS_toSheated"
+				}
+			]
+		},
+		"nS_comboStep1" : {
+			"stance" : "nS_windup1",
+		    "possibleOutcome" : [
+				{ 
+					"require" : { 
+						"fireMode" : "primary",
+						"stance" : "nS_wait1"
+					}, 
+					"behavior" : "nS_comboStep2" 
+				},
+				{ 
+					"require" : { 
+						"stance" : "nS_idle"
+					}, 
+					"behavior" : "nS_idle" 
+				}
+			],
+			"eventOnStance" : {
+				"nS_fire1" : [
+					"swoosh1"
+				]
+			}
+		},
+		"nS_comboStep2" : {
+			"stance" : "nS_windup2",
+			"possibleOutcome" : [
+				{ 
+					"require" : { 
+						"fireMode" : "primary",
+						"stance" : "nS_wait2"
+					}, 
+					"behavior" : "nS_comboStep3" 
+				},
+				{ 
+					"require" : { 
+						"stance" : "nS_idle"
+					}, 
+					"behavior" : "nS_idle" 
+				}
+			],
+			"eventOnStance" : {
+				"nS_fire2" : [
+					"swoosh2"
+				]
+			}
+		},
+		"nS_comboStep3" : {
+			"stance" : "nS_windup3",
+			"possibleOutcome" : [
+				{ 
+					"require" : { 
+						"stance" : "nS_idle"
+					}, 
+					"behavior" : "nS_idle" 
+				}
+			],
+			"eventOnStance" : {
+				"nS_fire3" : [
+					"swoosh3"
+				]
+			}
+		},
+			
+		"hS_idle" : {
+			"stance" : "hS_idle",
+			"possibleOutcome" : [
+				{ 
+					"require" : { 
+						"move" : {
+							"up" : true
+						},
+						"shift" : true,
+						"time" : 0.25
+					},
+					"behavior" : "nS_idle"
+				},
+				{
+					"require" : {
+						"move" : {
+							"up" : false
+						},
+						"time" : 3.5
+					},
+					"behavior" : "hS_toSheated"
+				}
+			]
+		},
+			
+		"lS_idle" : {
+			"stance" : "lS_idle",
+			"possibleOutcome" : [
+				{ 
+					"require" : { 
+						"move" : {
+							"up" : true
+						},
+						"shift" : false,
+						"time" : 0.25
+					},
+					"behavior" : "nS_idle"
+				},
+				{
+					"require" : {
+						"shift" : false,
+						"time" : 3.5
+					},
+					"behavior" : "lS_toSheated"
+				}
+			]
+		}
+	}, 
+	"behaviorEvents" : {
+		"swoosh1" : [
+			{
+				"event" : "function",
+				"callback" : "animationEx.pitchShift",
+				"args" : {
+					"soundName" : "fire"
+				}
+			},
+			{
+				"event" : "damageArea",
+				"baseDamage" : 10,
+				"knockback" : 5,
+				"directionalKnockback" : true,
+				"hitbox" : { "partName" : "swoosh" }
+			}
+	    ],
+		"swoosh2" : [
+			{
+				"event" : "function",
+				"callback" : "animationEx.pitchShift",
+				"args" : {
+					"soundName" : "fire2"
+				}
+			},
+			{
+				"event" : "damageArea",
+				"baseDamage" : 5,
+				"knockback" : -10,
+				"directionalKnockback" : true,
+				"hitbox" : { "partName" : "swoosh" }
+			}
+		],
+		"swoosh3" : [
+			{
+				"event" : "function",
+				"callback" : "animationEx.pitchShift",
+				"args" : {
+					"soundName" : "fire3"
+				}
+			},
+			{
+				"event" : "damageArea",
+				"baseDamage" : 12.5,
+				"knockback" : 10,
+				"directionalKnockback" : true,
+				"hitbox" : { "partName" : "swoosh" }
+			}
+		]
+	},
+	"debug" : false
+}

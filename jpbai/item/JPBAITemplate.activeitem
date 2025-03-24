@@ -1,0 +1,40 @@
+{
+    "itemName" : "d8JPBAITemplate",
+    "price" : 50,
+    "level" : 1,
+    "maxStack" : 1,
+    "rarity" : "Common",
+    "category" : "Custom Item",
+    "shortdescription" : "JPBAI Template",
+    "description" : "Replace Parameters with your own",
+    "twoHanded" : true,
+    "itemTags" : [],
+    "inventoryIcon" : "/assetmissing.png",
+    "scripts" : ["/jpbai/JPBAI.lua"],
+
+    "initBehavior" : "init",
+    "stances" : {
+        "init" : {
+            "duration" : 0.1,
+            "allowRotate" : true,
+            "allowFlip" : true,
+            "transition" : "idle"
+        },
+        "idle" : {
+            "allowRotate" : true,
+            "allowFlip" : true
+        }
+    },
+
+    "behaviors" : {
+        "init" : {
+            "stance" : "init",
+            "possibleOutcome" : [ { "require" : { "stance" : "idle" }, "behavior" : "idle" } ],
+            "eventOnInit" : []
+        },
+        "idle" : {
+            "stance" : "idle",
+            "possibleOutcome" : []
+        }
+    }
+}

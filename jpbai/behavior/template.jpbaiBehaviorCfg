@@ -1,0 +1,86 @@
+{
+    "scripts" : [],
+
+    "animationCustom" : {
+        "sounds" : {
+            "emptyChamber" : [],
+            "fire" : [],
+            "open" : [],
+            "reload" : [],
+            "close" : [],
+            "slide" : []
+        },
+        "particleEmitters" : {
+            "bulletShell" : {
+                "active" : false,
+                "transformationGroups" : ["weapon"],
+                "emissionRate" : 1,
+                "burstCount" : 1,
+                "particles" : []
+            }
+        }
+    },
+
+    "stances" : {
+        "init" : {
+            "duration" : 0.25,
+            "armRotation" : 0,
+            "transformations" : {
+                "weapon" : {
+                    "translate" : [0.0, 0.0],
+                    "rotate" : 0
+                }
+            },
+            "animationStates" : {
+                "animation" : "idle"
+            },
+
+            "allowFlip" : true,
+            "lerpTo" : true,
+            "transition" : "idle"
+        },
+        
+        "idle" : {
+            "allowFlip" : true,
+            "armRotation" : 0,
+            "allowRotate" : false,
+            "resetAim" : true,
+            "twoHanded" : true,
+            "frontArmFrame" : "rotation",
+            "backArmFrame" : "rotation",
+            "transformations" : {
+                "weapon" : {
+                    "translate" : [0, 0],
+                    "rotate" : 0
+                }
+            }
+        }
+    },
+    
+	"initFunction" : [],
+    "uninitFunction" : [],
+
+    "initBehavior" : "init",
+    "behaviors" : {
+        "init" : {
+            "stance" : "init",
+            "possibleOutcome" : [ { "require" : { "stance" : "idle" }, "behavior" : "idle" } ],
+            "eventOnInit" : ["init"]
+        },
+        
+        "idle" : {
+            "stance" : "idle",
+            "possibleOutcome" : []
+        }
+    },
+
+    "behaviorEvents" : {
+		"init" : [
+        ]
+    },
+
+    "defaultOverride" : {
+    },
+    
+    "behaviorName" : "d8Weap_Ballistic_gunFire"
+}

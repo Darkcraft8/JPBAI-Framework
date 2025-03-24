@@ -1,0 +1,41 @@
+{
+
+    "behaviors" : {
+        "idle" : {
+            "stance" : "idle",
+            "possibleOutcome" : [
+                {
+                    "require" : {
+                        "fireMode" : "<abilitySlot>"
+                    },
+                    "cooldown" : 1,
+                    "behavior" : "spawnPunchy"
+                }
+            ]
+        },
+        "spawnPunchy" : {
+            "stance" : "idle",
+            "possibleOutcome" : [
+                {
+                    "require" : {
+                        "time" : 1
+                    },
+                    "behavior" : "idle"
+                }
+            ],
+            "periodicEvent" : [],
+            "eventOnInit" : [
+                {
+                    "event" : "monster",
+                    "loop" : false,
+                    "spawnPos" : "ownerHandPos",
+                    "spawnOffset" : [2, 0],
+
+                    "type" : "punchy",
+                    "level" : 1,
+                    "param" : {}
+                }
+            ]
+        }
+    }
+}

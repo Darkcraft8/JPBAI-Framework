@@ -1,0 +1,13 @@
+{
+  "author" : "Darkcraft8",
+  "description" : "Json Powered Behavioral Active Item Framework",
+  "friendlyName" : "D8 : JPBAI Framework",
+  "require" : ["d8_sharedFiles"],
+  "link" : "https://github.com/Darkcraft8/D8_Weaponry/tree/lastest_release",
+  "name" : "D8JPBAI",
+  "priority" : 0,
+  "tags" : "Miscellaneous|Weapons|Mechanics",
+  "version" : "V1.0.0",
+
+  "scripts": {"postLoad": ["/jpbai/item/buildscript/JPBAI/behaviorList_postload.lua"]}
+}
