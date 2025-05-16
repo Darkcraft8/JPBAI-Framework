@@ -10,6 +10,7 @@ function initBehavior()
     self.behaviorCurrentTime = {}
     self.behaviorPeriodicEventTimer = {}
     self.behaviorPeriodicEventLock = {}
+    self.behaviorBlocked = false
     self.initBehavior = config.getParameter("initBehavior", "idle")
     setBehavior(self.initBehavior)
     
@@ -29,18 +30,18 @@ local lastPlayerInput = {
     currentMove = nil
 }
 function behaviorPathBuild()
-    if config.getParameter("debug") then sb.logInfo("[JPBAI] Building Behaviors Path") end
+    if debugMode then sb.logInfo("[JPBAI] Building Behaviors Path") end
     for behavName, behavParam in pairs(self.behaviors) do
-        if config.getParameter("debug") then sb.logInfo("Building Behaviors Path for %s", behavName) end
+        if debugMode then sb.logInfo("Building Behaviors Path for %s", behavName) end
         for i, p in ipairs(behavParam["possibleOutcome"]) do
             if type(p) == "string" then 
-                if config.getParameter("debug") then sb.logInfo("Fetching Behaviors Path for %s, outcome n'%s named %s", behavName, i, p) end
+                if debugMode then sb.logInfo("Fetching Behaviors Path for %s, outcome n'%s named %s", behavName, i, p) end
                 self.behaviors[behavName]["possibleOutcome"][i] = self.behaviorPaths[p]
-                if config.getParameter("debug") then sb.logInfo("path now %s", self.behaviors[behavName]["possibleOutcome"][i]) end
+                if debugMode then sb.logInfo("path now %s", self.behaviors[behavName]["possibleOutcome"][i]) end
             end
         end
     end
-    if config.getParameter("debug") then sb.logInfo("[JPBAI] Behaviors Path Finished") end
+    if debugMode then sb.logInfo("[JPBAI] Behaviors Path Finished") end
 end
 
 function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to lower the amount of time we check for possible outcome
@@ -87,7 +88,7 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                     local behavior = p.behavior
                     local checkResult = {}
                     if self.behaviors[behavior] then
-                        if config.getParameter("debug") then sb.logInfo("--[ behavior %s", behavior) end
+                        if debugMode then sb.logInfo("--[ behavior %s", behavior) end
                         for k, v in pairs(p.require) do
                             if player then -- player specific check
                                 if k == "inSwapSlot" and not player.swapSlotItem() then
@@ -97,7 +98,7 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                                 end
                             end
                             if k == "fireMode" then
-                                if config.getParameter("debug") then sb.logInfo("fireMode %s", useBehav) end
+                                if debugMode then sb.logInfo("fireMode %s", useBehav) end
                                 if useBehav then
                                     useBehav = (v == fireMode)
                                 end 
@@ -111,25 +112,25 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
 
                                     useBehav = false
                                 end
-                                if config.getParameter("debug") then sb.logInfo("time %s, %s", useBehav, self.behaviorCurrentTime[behavior]) end
+                                if debugMode then sb.logInfo("time %s, %s", useBehav, self.behaviorCurrentTime[behavior]) end
                             end
                             if k == "move" then
                                 local individialCheckResult 
                                 if useBehav then useBehav, individialCheckResult = check_Move(currentMove, v, behavior) end 
-                                if config.getParameter("debug") then sb.logInfo("move %s", individialCheckResult or useBehav) end
+                                if debugMode then sb.logInfo("move %s", individialCheckResult or useBehav) end
                             end
                             if k == "shift" then 
                                 if useBehav then useBehav = (v == isShiftHeld) end 
-                                if config.getParameter("debug") then sb.logInfo("shift %s", useBehav) end 
+                                if debugMode then sb.logInfo("shift %s", useBehav) end 
                             end
                             if k == "stance" then
                                 if useBehav then useBehav = (v == self.stanceName) end 
-                                if config.getParameter("debug") then sb.logInfo("stance %s", useBehav) end 
+                                if debugMode then sb.logInfo("stance %s", useBehav) end 
                             end
                             -- For use with extra scripts ex: custom function that check if a specific parameters is at a specific value while some boolean are true
                             if k == "function" then 
                                 if useBehav then useBehav = check_Function(v) if useBehav then useBehav = true end end 
-                                if config.getParameter("debug") then sb.logInfo("function %s", useBehav) end 
+                                if debugMode then sb.logInfo("function %s", useBehav) end 
                             end
                             
                             if k == "facing" then
@@ -148,42 +149,42 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                                         end
                                     end
                                 end 
-                                if config.getParameter("debug") then sb.logInfo("facing %s", useBehav) end 
+                                if debugMode then sb.logInfo("facing %s", useBehav) end 
                             end
 
                             if k == "exactParam" then 
                                 if useBehav then
                                     useBehav = check_ExactParam(v) 
                                 end 
-                                if config.getParameter("debug") then sb.logInfo("exactParam %s", useBehav) end 
+                                if debugMode then sb.logInfo("exactParam %s", useBehav) end 
                             end
                             if k == "greaterParam" then
                                 if useBehav then 
                                     useBehav = check_GreaterParam(v)
                                 end 
-                                if config.getParameter("debug") then sb.logInfo("greaterParam %s", useBehav) end 
+                                if debugMode then sb.logInfo("greaterParam %s", useBehav) end 
                             end
                             if k == "lowerParam" then
                                 if useBehav then 
                                     useBehav = check_LowerParam(v)
                                 end 
-                                if config.getParameter("debug") then sb.logInfo("lowerParam %s", useBehav) end
+                                if debugMode then sb.logInfo("lowerParam %s", useBehav) end
                             end
             
                             if k == "hasLineOfSight" then
                                 if useBehav then
                                     useBehav = not check_raycastToSpawnPos(v)
                                 end 
-                                if config.getParameter("debug") then sb.logInfo("hasLineOfSight %s", useBehav) end
+                                if debugMode then sb.logInfo("hasLineOfSight %s", useBehav) end
                             end
                         end
                         if p.cooldown then
                             if useBehav then 
                                 useBehav = check_Cooldown(behavior) 
                             end 
-                            if config.getParameter("debug") then sb.logInfo("cooldown %s", useBehav) end
+                            if debugMode then sb.logInfo("cooldown %s", useBehav) end
                         end
-                        if config.getParameter("debug") then sb.logInfo("--] require %s", p.require) end
+                        if debugMode then sb.logInfo("--] require %s", p.require) end
                     else
                         useBehav = false
                         sb.logInfo("Behavior %s doesn't exist!!!")
@@ -201,7 +202,7 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                 local behavior = p.behavior
                 local checkResult = {}
                 if self.behaviors[behavior] then
-                    if config.getParameter("debug") then sb.logInfo("--[ behavior %s", behavior) end
+                    if debugMode then sb.logInfo("--[ behavior %s", behavior) end
                     for k, v in pairs(p.require) do
                         if player then -- player specific check
                             if k == "inSwapSlot" and not player.swapSlotItem() then
@@ -211,7 +212,7 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                             end
                         end
                         if k == "fireMode" then
-                            if config.getParameter("debug") then sb.logInfo("fireMode %s", useBehav) end
+                            if debugMode then sb.logInfo("fireMode %s", useBehav) end
                             if useBehav then
                                 useBehav = (v == fireMode)
                             end 
@@ -225,25 +226,25 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
 
                                 useBehav = false
                             end
-                            if config.getParameter("debug") then sb.logInfo("time %s", time) end
+                            if debugMode then sb.logInfo("time %s", time) end
                         end
                         if k == "move" then
                             local individialCheckResult 
                             if useBehav then useBehav, individialCheckResult = check_Move(currentMove, v, behavior) end 
-                            if config.getParameter("debug") then sb.logInfo("move %s", individialCheckResult) end
+                            if debugMode then sb.logInfo("move %s", individialCheckResult) end
                         end
                         if k == "shift" then 
                             if useBehav then useBehav = (v == isShiftHeld) end 
-                            if config.getParameter("debug") then sb.logInfo("shift %s", useBehav) end 
+                            if debugMode then sb.logInfo("shift %s", useBehav) end 
                         end
                         if k == "stance" then
                             if useBehav then useBehav = (v == self.stanceName) end 
-                            if config.getParameter("debug") then sb.logInfo("stance %s", useBehav) end 
+                            if debugMode then sb.logInfo("stance %s", useBehav) end 
                         end
                         -- For use with extra scripts ex: custom function that check if a specific parameters is at a specific value while some boolean are true
                         if k == "function" then 
                             if useBehav then useBehav = check_Function(v) if useBehav then useBehav = true end end 
-                            if config.getParameter("debug") then sb.logInfo("function %s", useBehav) end 
+                            if debugMode then sb.logInfo("function %s", useBehav) end 
                         end
                         
                         if k == "facing" then
@@ -262,42 +263,42 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                                     end
                                 end
                             end 
-                            if config.getParameter("debug") then sb.logInfo("facing %s", useBehav) end 
+                            if debugMode then sb.logInfo("facing %s", useBehav) end 
                         end
 
                         if k == "exactParam" then 
                             if useBehav then
                                 useBehav = check_ExactParam(v) 
                             end 
-                            if config.getParameter("debug") then sb.logInfo("exactParam %s", useBehav) end 
+                            if debugMode then sb.logInfo("exactParam %s", useBehav) end 
                         end
                         if k == "greaterParam" then
                             if useBehav then 
                                 useBehav = check_GreaterParam(v)
                             end 
-                            if config.getParameter("debug") then sb.logInfo("greaterParam %s", useBehav) end 
+                            if debugMode then sb.logInfo("greaterParam %s", useBehav) end 
                         end
                         if k == "lowerParam" then
                             if useBehav then 
                                 useBehav = check_LowerParam(v)
                             end 
-                            if config.getParameter("debug") then sb.logInfo("lowerParam %s", useBehav) end
+                            if debugMode then sb.logInfo("lowerParam %s", useBehav) end
                         end
         
                         if k == "hasLineOfSight" then
                             if useBehav then
                                 useBehav = not check_raycastToSpawnPos(v)
                             end 
-                            if config.getParameter("debug") then sb.logInfo("hasLineOfSight %s", useBehav) end
+                            if debugMode then sb.logInfo("hasLineOfSight %s", useBehav) end
                         end
                     end
                     if p.cooldown then
                         if useBehav then 
                             useBehav = check_Cooldown(behavior) 
                         end 
-                        if config.getParameter("debug") then sb.logInfo("cooldown %s", useBehav) end
+                        if debugMode then sb.logInfo("cooldown %s", useBehav) end
                     end
-                    if config.getParameter("debug") then sb.logInfo("--] require %s", p.require) end
+                    if debugMode then sb.logInfo("--] require %s", p.require) end
                 else
                     useBehav = false
                     sb.logInfo("Behavior %s doesn't exist!!!")
@@ -325,7 +326,7 @@ function uninitBehavior()
 end
 
 function setBehavior(newBehaviorName)
-    if config.getParameter("debug") then sb.logInfo("--[ newBehaviorName %s", newBehaviorName) end
+    if debugMode then sb.logInfo("--[ newBehaviorName %s", newBehaviorName) end
     if self.behavior["eventOnUninit"] then behaviorEvents(self.behavior["eventOnUninit"]) end
     resetBehavior()
     behaviorName = newBehaviorName
@@ -347,13 +348,13 @@ end
 
 function behaviorEvents(events)
     local events = events or {}
-    if config.getParameter("debug") then sb.logInfo("events %s", sb.printJson(events, 1)) end
+    if debugMode then sb.logInfo("events %s", sb.printJson(events, 1)) end
     
     if events then
         if #events > 0 then
             for i, e in ipairs(events) do
                 if type(e) == "string" then 
-                    if config.getParameter("debug") then sb.logInfo("behaviorEvents %s", sb.printJson(self.behaviorEvents[e], 1)) end
+                    if debugMode then sb.logInfo("behaviorEvents %s", sb.printJson(self.behaviorEvents[e], 1)) end
                     if self.behaviorEvents[e] then behaviorEvents(self.behaviorEvents[e]) end
                 else
                     behaviorEvent(e)
@@ -434,7 +435,7 @@ function check_Move(currentMove, value, behavior)
     local individialCheckResult = {}
     if type(value) == "table" then
         for m, b in pairs(value) do
-            if config.getParameter("debug") then sb.logInfo("move : %s", m) end
+            if debugMode then sb.logInfo("move : %s", m) end
             if m == "forward" or m == "backward" then
                 local movingBackward, movingForward
                 if mcontroller.facingDirection() < 0 then -- facing left
@@ -445,7 +446,7 @@ function check_Move(currentMove, value, behavior)
                     movingBackward = currentMove["left"] == true
                 end
 
-                if config.getParameter("debug") then 
+                if debugMode then 
                     sb.logInfo("direction : %s", mcontroller.facingDirection())
                     sb.logInfo("left %s", currentMove["left"])
                     sb.logInfo("right %s", currentMove["right"])
@@ -526,7 +527,7 @@ function check_Move(currentMove, value, behavior)
 end
 
 function check_Function(callbacks)
-    if config.getParameter("debug") then sb.logInfo("callbacks %s", callbacks) end
+    if debugMode then sb.logInfo("callbacks %s", callbacks) end
     local funcReturned = true
     for _, func in ipairs(callbacks or {}) do 
         local args = nil

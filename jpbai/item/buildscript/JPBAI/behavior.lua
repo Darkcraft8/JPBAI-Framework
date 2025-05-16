@@ -40,3 +40,36 @@ function setupBehavior(config, parameters, behaviorName, fireType)
     local newConfig = merge--util.mergeTable(cfg, config)
     return newConfig
 end
+
+-- (Darkcraft8) : taken from my shared files just to remove this very small dependency
+
+preciseType = function(...) -- has a few extra if statement to find what specificaly it is
+    local typeReturn = type(...)
+    if typeReturn == "table" then
+        local arg = ...
+        if arg["op"] and arg["path"] then return "jsonPatch" end
+        --if #arg == 2 and type(arg[1]) == "number" and type(arg[2]) == "number" then return "vec2" end
+        if #arg == 0 then return "array" end
+    end
+    return typeReturn
+end
+
+json = {}
+function json.merge(jA_A, jA_B) -- attempt to merge both json array in a similar way has starbound parameters overrides...
+    for var, val in pairs(jA_B or {}) do 
+        local typeA, typeB = preciseType(jA_A[var]), preciseType(val)
+        if typeB == "table" and typeA == "table" then
+            for i, v in ipairs(val) do
+                table.insert(jA_A[var], v)
+            end
+
+        elseif typeB == "array" and typeA == "array" then
+            jA_A[var] = json.merge(jA_A[var], val)
+    
+        else
+            jA_A[var] = val
+
+        end
+    end
+    return jA_A
+end

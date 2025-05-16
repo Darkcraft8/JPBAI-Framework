@@ -22,9 +22,10 @@ require "/jpbai/module/general/inventory.lua"
 require "/jpbai/module/general/status.lua"
 require "/jpbai/module/general/behavior.lua"
 require "/jpbai/module/general/behaviorEX.lua"
-
+debugMode = false
 local playerInteractTimer = 0
 function init()
+    debugMode = config.getParameter("debug", false)
     JPBAIConfig = root.assetJson("/jpbai/JPBAI.config")
     for _, func in ipairs(initFunc) do
         if type(func) == "function" then
@@ -129,20 +130,42 @@ function segmentPath(path)
 end
 
 function call(eventCfg) -- because whe can't directly do _ENV[funcGroup.Func]()
+    --sb.logInfo("eventCfg %s", eventCfg)
     if type(eventCfg) == "string" then
         callback = findCallback(tostring(eventCfg))
-    if callback then return callback() else sb.logError("[JPBAI Framework] Function %s Couldn't be found", eventCfg) end
+        if callback then
+            return callback()
+        else
+            sb.logError("[JPBAI Framework] Function %s Couldn't be found", eventCfg)
+        end
     else
         callback = findCallback(tostring(eventCfg.callback))
-        if callback then return callback(eventCfg.args) else sb.logError("[JPBAI Framework] Function %s Couldn't be found", eventCfg.callback) end
+        if callback then
+            if type(eventCfg.args) == "table" then
+                if eventCfg.args[1] then
+                    return callback(eventCfg.args[1], eventCfg.args[2], eventCfg.args[3], eventCfg.args[4], eventCfg.args[5], eventCfg.args[6], eventCfg.args[7], eventCfg.args[8], eventCfg.args[9], eventCfg.args[10])
+                else
+                    return callback(eventCfg.args)
+                end
+            else
+                return callback(eventCfg.args)
+            end
+        else
+            sb.logError("[JPBAI Framework] Function %s Couldn't be found", eventCfg.callback)
+        end
     end
 end
 
+-- callback functions
+
 function findCallback(functionPath, bypassBlacklist, bypassBridge)
-    if JPBAIConfig.bridgeFunc[functionPath] and not bypassBridge then
-        functionPath = JPBAIConfig.bridgeFunc[functionPath]
-    end -- swap function with their bridge variant 
-    
+    -- Stop the function returning nil and logging the attempt in the logs
+    if JPBAIConfig.funcAllowedlist[functionPath] == false and not bypassBlacklist then sb.logWarn('[JPBAI] Item %s:%s, behavior "%s", tried to call blacklisted function %s!', item.name(), item.friendlyName(), behaviorName, functionPath) return end
+
+    if JPBAIConfig.override[functionPath] and not bypassBridge then
+        functionPath = JPBAIConfig.override[functionPath]
+    end -- swap function with the given variant... primarily for safety consern or compatibility
+
     local findCallback = function(path)
         local pathSegment = {}
         if string.find(path, "[.:]") then
@@ -174,10 +197,9 @@ function findCallback(functionPath, bypassBlacklist, bypassBridge)
     return callback
 end
 
-function playerInteractBridge(args)
-    local _type, pane = args.type, args.pane
-    if not _type or not pane then return end
+function playerInteractBridge(interactionType, paneCfg, sourceEntityId)
+    if not interactionType or not paneCfg then return end
 
-    if type(pane) == "string" then pane = root.assetJson(pane) end
-    if pane.dismissable ~= false and playerInteractTimer <= 0 then player.interact(_type, pane) playerInteractTimer = 0.5 end -- to prevent bad actor from giving pane that can't be dismissed
+    if type(paneCfg) == "string" then paneCfg = root.assetJson(paneCfg) end
+    if paneCfg.dismissable ~= false and playerInteractTimer <= 0 then player.interact(interactionType, paneCfg) playerInteractTimer = 0.5 end -- to prevent bad actor from giving config that can't be dismissed
 end

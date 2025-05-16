@@ -1,13 +1,15 @@
 {
   "author" : "Darkcraft8",
-  "description" : "Json Powered Behavioral Active Item Framework",
+  "description" : "Json Powered Behavioral Active Item Framework\nI will describe this framework in due time, it is/will be used in D8 Weaponry Future Weapons and the items from a future mod that im preparing the needed scripts/contents",
   "friendlyName" : "D8 : JPBAI Framework",
-  "require" : ["d8_sharedFiles"],
-  "link" : "https://github.com/Darkcraft8/D8_Weaponry/tree/lastest_release",
+  "link" : "steam://url/CommunityFilePage/3451380749",
   "name" : "D8JPBAI",
   "priority" : 0,
+  "require" : [],
+  "scripts" : {
+    "postLoad" : ["/jpbai/item/buildscript/JPBAI/behaviorList_postload.lua"]
+  },
+  "steamContentId" : "3451380749",
   "tags" : "Miscellaneous|Weapons|Mechanics",
-  "version" : "V1.0.0",
-
-  "scripts": {"postLoad": ["/jpbai/item/buildscript/JPBAI/behaviorList_postload.lua"]}
+  "version" : "V1.0.0.5"
 }

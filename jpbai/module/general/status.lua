@@ -1,6 +1,6 @@
 -- Function's to interact with player resources|status
 statusEx = statusEx or {}
-function statusEx.hasResources(args) -- return if the resources in the table are available
+function statusEx.hasResources(resourceList) -- return if the resources in the table are available
     if not args then return end
     for i, cfg in ipairs(args) do
         if cfg.amount then
@@ -11,28 +11,13 @@ function statusEx.hasResources(args) -- return if the resources in the table are
     end
     return true
 end
- -- modifie the resource depending on the given operation and amount
-function statusEx.modResources(args) -- return nil, take table [ resource : 'string' resouceName, amount : 'interger or number' resouceAmount, op : 'string' operation]
-    if not args then return end
-    for i, cfg in ipairs(args) do 
-        if args.op == "give" then
-            status.giveResource(args.resource, args.amount)
-        elseif args.op == "consume" then
-            status.consumeResource(args.resource, args.amount)
-        elseif args.op == "overConsume" then
-            status.overConsumeResource(args.resource, args.amount)
-        elseif args.op == "set" then
-            status.setResource(args.resource, args.amount)
-        end
-    end
-end
 
-function statusEx.hasStatus(args) -- return bool
-    if not args then return end
+function statusEx.hasStatus(status, hasAll) -- return bool
+    if not status then return end
     local activeEffect = status.activeUniqueStatusEffectSummary()
     local hasAll = true
     local hasOne = false
-    for effectName, effectDuration in pairs(args.status) do 
+    for effectName, effectDuration in pairs(status) do 
         if activeEffect[effectName] then
             hasOne = true
         else
@@ -40,7 +25,7 @@ function statusEx.hasStatus(args) -- return bool
         end
     end
 
-    if args.hasAll then
+    if hasAll then
         return hasAll
     else
         return hasOne

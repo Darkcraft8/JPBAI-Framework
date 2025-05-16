@@ -3,7 +3,7 @@ require "/scripts/vec2.lua"
 require "/scripts/versioningutils.lua" -- it here for it replacePatternInData function
 
 require "/jpbai/item/buildscript/JPBAI/behavior.lua"
-require "/shared/darkcraft8/util/json.lua"
+--require "/shared/darkcraft8/util/json.lua"
 
 function build(directory, config, parameters, level, seed)
     local configParameter = function(keyName, defaultValue)

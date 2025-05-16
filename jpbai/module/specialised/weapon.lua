@@ -13,9 +13,8 @@ function Weapon_uninit() end
 -- Scaling
 function Weapon.damagePerShot(args)
     local mathResult = args.baseDamage or 1
-    mathResult = mathResult * (Weapon.damageLevelMultiplier or 1.0)
     mathResult = mathResult * ((Weapon.damageLevelMultiplier or 1.0) / (args.count or 1.0)) * activeItem.ownerPowerMultiplier()
-
+    
     return mathResult
 end
 function Weapon.basicDamage(args)

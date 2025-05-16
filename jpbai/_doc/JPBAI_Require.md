@@ -1,4 +1,4 @@
-# Require param for possibleOutcome
+# Require param for possibleOutcome | To Be Rewritten
 
 * fireMode | string, default to none if nil
 none, primary or alt

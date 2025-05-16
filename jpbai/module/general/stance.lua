@@ -66,6 +66,15 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
         self.lightFlashDuration[lightName] = 10
         if type(value) == "number" then self.lightFlashDuration[lightName] = value end
     end
+    for tagName, value in pairs(self.stance.globalTags or {}) do
+		animator.setGlobalTag(tagName, value)
+        --animator.setLightActive(lightName, true)
+
+        --self.lightFlash[lightName] = getLightColor(lightName)
+        --self.lightFlashprogress[lightName] = 0
+        --self.lightFlashDuration[lightName] = 10
+        --if type(value) == "number" then self.lightFlashDuration[lightName] = value end
+    end
     
     if self.player then
         if self.player.rotate then self.stancePlayerRotation = copy(self.player.rotate) mcontroller.setRotation(util.toRadians(self.stancePlayerRotation) * mcontroller.facingDirection()) end
@@ -74,54 +83,53 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
         if self.stancePlayerRotation then self.stancePlayerRotation = 0 mcontroller.setRotation(0) end -- reset player rotation because it can mess with collision
     end
     -- Convert Weapon.lua weapon rotation and offset to proper Transformation for weapon group, merge if a transformation for weapon group already exist
+		if self.stance.weaponRotation or self.stance.weaponOffset then
+			if debugMode then
+				sb.logInfo("[JPBAI Framework] Found Weapon.lua specific weapon transform in stance %s", self.stanceName)
+				if self.stance.weaponRotation and not self.stance.weaponOffset then
+					sb.logInfo("[JPBAI Framework] Found weaponRotation : %s", self.stance.weaponRotation)
+				elseif not self.stance.weaponRotation and self.stance.weaponOffset then
+					sb.logInfo("[JPBAI Framework] Found weaponOffset : %s", self.stance.weaponOffset)
+				else
+					sb.logInfo("[JPBAI Framework] Found weaponRotation : %s and weaponOffset : %s", self.stance.weaponRotation, self.stance.weaponOffset)
+				end
+			end
+			if not self.stance.transformations then self.stance.transformations = jarray() end
+			if not self.stance.transformations.weapon then self.stance.transformations.weapon = jarray() end
 
-    if self.stance.weaponRotation or self.stance.weaponOffset then
-        if config.getParameter("debug") then
-            sb.logInfo("[JPBAI Framework] Found Weapon.lua specific weapon transform in stance %s", self.stanceName)
-            if self.stance.weaponRotation and not self.stance.weaponOffset then
-                sb.logInfo("[JPBAI Framework] Found weaponRotation : %s", self.stance.weaponRotation)
-            elseif not self.stance.weaponRotation and self.stance.weaponOffset then
-                sb.logInfo("[JPBAI Framework] Found weaponOffset : %s", self.stance.weaponOffset)
-            else
-                sb.logInfo("[JPBAI Framework] Found weaponRotation : %s and weaponOffset : %s", self.stance.weaponRotation, self.stance.weaponOffset)
-            end
-        end
-        if not self.stance.transformations then self.stance.transformations = jarray() end
-        if not self.stance.transformations.weapon then self.stance.transformations.weapon = jarray() end
+			if self.stance.weaponRotation then
+				if self.stance.transformations.weapon.rotate ~= nil then
+					self.stance.transformations.weapon.rotate = self.stance.transformations.weapon.rotate + self.stance.weaponRotation
+				else
+					self.stance.transformations.weapon.rotate = self.stance.weaponRotation
+				end
+			end
+			if self.stance.weaponOffset then
+				if self.stance.transformations.weapon.translate ~= nil then 
+					self.stance.transformations.weapon.translate = vec2.add(self.stance.transformations.weapon.translate, self.stance.weaponOffset) 
+				else 
+					self.stance.transformations.weapon.translate = self.stance.weaponOffset
+				end 
+			end
+		end
+		if self.stance.weaponAngularVelocity then
+			if debugMode then
+				sb.logInfo("[JPBAI Framework] Found Weapon.lua specific velocity for weapon transform in stance %s", self.stanceName)
+				sb.logInfo("[JPBAI Framework] Found weaponAngularVelocity : %s", self.stance.weaponAngularVelocity)
+			end
+			if not self.stance.transformations then self.stance.transformations = jarray() end
+			if not self.stance.transformations.weapon then self.stance.transformations.weapon = jarray() end
+			if not self.stance.transformations.weapon.velocity then self.stance.transformations.weapon.velocity = jarray() end
 
-        if self.stance.weaponRotation then
-            if self.stance.transformations.weapon.rotate ~= nil then
-                self.stance.transformations.weapon.rotate = self.stance.transformations.weapon.rotate + self.stance.weaponRotation
-            else
-                self.stance.transformations.weapon.rotate = self.stance.weaponRotation
-            end
-        end
-        if self.stance.weaponOffset then
-            if self.stance.transformations.weapon.translate ~= nil then 
-                self.stance.transformations.weapon.translate = vec2.add(self.stance.transformations.weapon.translate, self.stance.weaponOffset) 
-            else 
-                self.stance.transformations.weapon.translate = self.stance.weaponOffset
-            end 
-        end
-    end
-
-    if self.stance.weaponAngularVelocity then
-        if config.getParameter("debug") then
-            sb.logInfo("[JPBAI Framework] Found Weapon.lua specific velocity for weapon transform in stance %s", self.stanceName)
-            sb.logInfo("[JPBAI Framework] Found weaponAngularVelocity : %s", self.stance.weaponAngularVelocity)
-        end
-        if not self.stance.transformations then self.stance.transformations = jarray() end
-        if not self.stance.transformations.weapon then self.stance.transformations.weapon = jarray() end
-        if not self.stance.transformations.weapon.velocity then self.stance.transformations.weapon.velocity = jarray() end
-
-        if self.stance.weaponAngularVelocity and self.stance.weaponAngularVelocity ~= 0 then 
-            if self.stance.transformations.weapon.velocity.rotate then 
-                self.stance.transformations.weapon.velocity.rotate = self.stance.transformations.weapon.velocity.rotate + self.stance.weaponAngularVelocity 
-            else 
-                self.stance.transformations.weapon.velocity.rotate = self.stance.weaponAngularVelocity 
-            end 
-        end
-    end
+			if self.stance.weaponAngularVelocity and self.stance.weaponAngularVelocity ~= 0 then 
+				if self.stance.transformations.weapon.velocity.rotate then 
+					self.stance.transformations.weapon.velocity.rotate = self.stance.transformations.weapon.velocity.rotate + self.stance.weaponAngularVelocity 
+				else 
+					self.stance.transformations.weapon.velocity.rotate = self.stance.weaponAngularVelocity 
+				end 
+			end
+		end
+		
     for group, transform in pairs(self.stance.transformations or {}) do
         animator.resetTransformationGroup(group)
         local rotationCenter = transform.rotationCenter or {0, 0}
@@ -176,6 +184,9 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
         if self.stance.user.angle then mcontroller.setRotation(self.stance.user.angle) end
         if self.stance.user.resetAngle then mcontroller.setRotation(0) end
         if self.stance.user.invertFacingDirection then mcontroller.controlFace(-1 * mcontroller.facingDirection()) end
+	elseif self.stance.resetUser then 
+		mcontroller.setRotation(0)
+		mcontroller.controlFace(mcontroller.facingDirection())
     end
 end
 

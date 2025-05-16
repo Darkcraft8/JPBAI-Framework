@@ -21,5 +21,5 @@ assets.add(path, registered)
 assets.patch(listPath, path)
 
 if count > 0 then
-  sb.logInfo("[JPBAI | BehaviorList Postload] Registered %s named behavior into %s", count, listPath)
+  sb.logInfo("[JPBAI | BehaviorList Postload]: Registered %s named behavior into %s", count, listPath)
 end

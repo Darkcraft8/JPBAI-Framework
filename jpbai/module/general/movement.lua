@@ -1,13 +1,8 @@
 movementControl = {}
-function movementControl.controlModifiers(args) -- mostlikely useless to make bridge func for some if not most of these... problably should add a blacklist
-    -- runningSuppressed
-    --mcontroller.rotate()
-    mcontroller.controlModifiers(args)
-end
-
-function movementControl.translateAboveGround(args)
+function movementControl.translateAboveGround(distance)
+    if not distance then return end
     local userPos = world.entityPosition(activeItem.ownerEntityId())
-    local groundPos = world.lineTileCollisionPoint(activeItem.ownerEntityId(), args.distance)
+    local groundPos = world.lineTileCollisionPoint(activeItem.ownerEntityId(), distance)
     if groundPos.position then
         local effectiveYPos = userPos[2] + (groundPos.position[2] - args.distance[2])
         mcontroller.setYPosition(effectiveYPos)

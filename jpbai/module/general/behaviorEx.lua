@@ -3,53 +3,44 @@ behaviorEx = {}
 
 -----------------------------------------------------------------------------------
 
-function behaviorEx.getParameter(args) -- bridge for getParameter/getInstanceValue
-    if not args then return end
-    if args.parameter ~= nil then return config.getParameter(args.parameter, args.defaultValue) end
-end
-
-function behaviorEx.setParameter(args) -- bridge for setParameter/setInstanceValue
-    if not args then return end
-    if args.parameter ~= nil and args.value ~= nil then activeItem.setInstanceValue(args.parameter, args.value) end
-end
-
------------------------------------------------------------------------------------
-
 -- Value
-function behaviorEx.modValue(args)
-    if not args then return end
-    if args.parameter and args.value then
-        if type(config.getParameter(args.parameter, 0)) == "number" and type(args.value) == "number" then
-            local newValue = config.getParameter(args.parameter, 0) + args.value
-            activeItem.setInstanceValue(args.parameter, newValue)
+function behaviorEx.modValue(parameter, value)
+    if not parameter or not value then return end
+    if parameter and value then
+        if type(config.getParameter(parameter, 0)) == "number" and type(value) == "number" then
+            local newValue = config.getParameter(parameter, 0) + value
+            activeItem.setInstanceValue(parameter, newValue)
         end
     end
 end
 
-function behaviorEx.valueDiff(args)
-    if not args then return false end
-    if args.parameter and args.value then
+function behaviorEx.valueDiff(parameter, value, diffType)
+    if not parameter or not value then return false end
+    if parameter and value then
         local diffType = args.diffType or "above" -- above, bellow or between
-        local currentValue = config.getParameter(args.parameter, 0)
-        if type(currentValue) ~= 'number' then sb.logError("[JPBAI Framework] %s ins't a number/value", args.parameter) return false end
+        local currentValue = config.getParameter(parameter, 0)
+        
+        if type(currentValue) ~= 'number' then sb.logError("[JPBAI Framework] %s ins't a number/value", parameter) return false end
+
         if diffType == "above" then
-            if type(args.value) == "table" then
-                return (currentValue > args.value[1])
+            if type(value) == "table" then
+                return (currentValue > value[1])
             else
-                return (currentValue > args.value)
+                return (currentValue > value)
             end
         elseif diffType == "bellow" then
-            if type(args.value) == "table" then
-                return (currentValue < args.value[1])
+            if type(value) == "table" then
+                return (currentValue < value[1])
             else
-                return (currentValue < args.value)
+                return (currentValue < value)
             end
         elseif diffType == "between" then
-            if type(args.value) ~= "table" then sb.logError("[JPBAI Framework] %s ins't a table of two value", args.value) return false end
-            if type(args.value[1]) ~= 'number' or type(args.value[2]) ~= 'number' then sb.logError("[JPBAI Framework] %s ins't a table of two value", args.value) return false end
+            if type(value) ~= "table" then sb.logError("[JPBAI Framework] %s ins't a table of two value", value) return false end
+            if type(value[1]) ~= 'number' or type(value[2]) ~= 'number' then sb.logError("[JPBAI Framework] %s ins't a table of two value", value) return false end
 
-            return ( (currentValue <= args.value[1]) == (currentValue >= args.value[2]) )
+            return ( (currentValue <= value[1]) == (currentValue >= value[2]) )
         end
+
     end
 end
 
@@ -124,11 +115,13 @@ end
 function behavior_projectile(event)
     local projectileCfg = event.parameter or {}
     local pos = spawnPosition(event)
+    sb.logInfo("power %s", projectileCfg.power)
     if event.scalingFunction or Weapon then -- Scale based on weapon stat or scaling function
         local callback = call({callback = event.scalingFunction or "Weapon.basicDamage", args = event})
         projectileCfg.power = callback
         projectileCfg.powerMultiplier = activeItem.ownerPowerMultiplier()
     end
+    sb.logInfo("power 2nd %s", projectileCfg.power)
     for i = 1, (event.count or 1) do
         local direction = aimVector((event.inaccuracy or 0))
         local projectileId = world.spawnProjectile(event.type, pos, activeItem.ownerEntityId(), direction, event.posRelativeToOwner, projectileCfg)
@@ -139,10 +132,9 @@ function behaviorEx.velocity(event)
 
 end
 
-function behaviorEx.callEntity(event)
-    if event.trackedEntity then
-        local functionName, variable = event.functionName, event.variable
-        local entityId = config.getParameter(event.trackedEntity)
+function behaviorEx.callEntity(trackedEntity, functionName, variable)
+    if trackedEntity then
+        local entityId = config.getParameter(trackedEntity)
         if functionName and variable and entityId then
             if world.entityExists(entityId) then
                 world.callScriptedEntity(entityId, functionName, variable)
@@ -151,13 +143,25 @@ function behaviorEx.callEntity(event)
     end
 end
 
-function behaviorEx.sendEntityMessage(event)
-    if event.trackedEntity then
-        local functionName, variable = event.messageType, event.variable
-        local entityId = config.getParameter(event.trackedEntity)
-        if functionName and variable and entityId then
+function behaviorEx.entityExists(trackedEntity)
+    if trackedEntity then
+        local entityId = config.getParameter(trackedEntity)
+        if entityId then
+            return world.entityExists(entityId)
+        end
+    end
+end
+
+function behaviorEx.sendEntityMessage(trackedEntity, messageType, variable)
+    if trackedEntity then
+        local entityId = config.getParameter(trackedEntity)
+        if messageType and variable and entityId then
             if world.entityExists(entityId) then
-                world.sendEntityMessage(entityId, messageType, variable)
+                if type(variable) == "table" then
+                    world.sendEntityMessage(entityId, messageType, variable[1], variable[2], variable[3], variable[4], variable[5], variable[6], variable[7], variable[8], variable[9], variable[10])
+                else
+                    world.sendEntityMessage(entityId, messageType, variable)
+                end
             end
         end
     end
