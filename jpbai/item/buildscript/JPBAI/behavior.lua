@@ -73,3 +73,29 @@ function json.merge(jA_A, jA_B) -- attempt to merge both json array in a similar
     end
     return jA_A
 end
+
+function json.sbMerge(jA_A, jA_B) -- Trie to imitate the way parameters override config
+    local isVec2 = function(val)
+        return (type(val[1]) == "number" and type(val[2]) == "number" and #val == 2)
+    end
+    for var, val in pairs(jA_B or {}) do 
+        local typeA, typeB = preciseType(jA_A[var]), preciseType(val)
+        if typeB == "table" and typeA == "table" then
+            if isVec2(val) and isVec2(jA_A[var]) then
+                jA_A[var] = val
+            else
+                for i, v in ipairs(val) do
+                    table.insert(jA_A[var], v)
+                end
+            end
+
+        elseif typeB == "array" and typeA == "array" then
+            jA_A[var] = json.sbMerge(jA_A[var], val)
+    
+        else
+            jA_A[var] = val
+
+        end
+    end
+    return jA_A
+end
