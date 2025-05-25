@@ -15,3 +15,4 @@
 - Use any content created directly or indirectly using the mod
 
 [def]: https://github.com/Darkcraft8
+[def2]: <https://community.playstarbound.com/help/mod-terms/> "Click to access Chucklefish Mod Terms"
