@@ -6,7 +6,7 @@
   - The projectile event no longer override the `power` and `powerMultiplier` parameter that are given inside of the event projectile `parameter`
   - Streamlined the `fireOffset` option for `spawnPos` in the `spawnPosition` function (used in the projectile event for exemple)
   
-#### Added
+#### Addition
   - `JPBAI.lua`
     - added uninitEvent parameter .
     <br>The item's uninitialization will cause any events in this `table` parameter to be executed.
@@ -25,7 +25,7 @@
 	If checkForObstacle isn't false or nil, Then the translation distance will be reduced to prevent the traversal of obstacle.<br>
 	The user position will be resolved before being applied as to **Hopefully** not cause them to be stuck
 	an offset(default [0, 2.5]) and the number of maximum Correction(3 by default) can be given.
-#### Fixed
+#### Fix
   - added `nil` check for callback in JPBAI.lua so that
   <br>they don't cause problem if the given function(s) doesn't exist
   - `Status Module`

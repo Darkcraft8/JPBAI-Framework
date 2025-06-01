@@ -42,15 +42,18 @@ function animationEx.pitchShift(soundName, range) -- pitch the shift a bit to ma
 end
 -- 
 
-function animationEx.setAnimationState(requiredState, newState, stateType, startNew)
-    if requiredState then
-        if hasAnimationState(stateType, requiredState) and hasAnimationState(stateType, newState) then
+function animationEx.setAnimationState(stateType, newState, startNew, requiredState)
+    --sb.logInfo("%s, %s, %s, %s", stateType, newState, startNew, requiredState)
+    if (requiredState ~= nil and requiredState ~= "null") then
+        local hasRequiredStateResult, hasAnimationStateResult = hasAnimationState(stateType, requiredState), hasAnimationState(stateType, newState)
+        if hasRequiredStateResult and hasAnimationStateResult then
             if animator.animationState(stateType) == requiredState then
                 animator.setAnimationState(stateType, newState, startNew)
             end
         end
     else
-        if hasAnimationState(stateType, newState) then
+        local hasAnimationStateResult = hasAnimationState(stateType, newState)
+        if hasAnimationStateResult then
             animator.setAnimationState(stateType, newState, startNew)
         end
     end

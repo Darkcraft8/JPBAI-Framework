@@ -51,18 +51,18 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
     if self.behavior["periodicEvent"] then
         for i, e in ipairs(self.behavior["periodicEvent"]) do 
             local triggerEvent = true
-            if self.behaviorPeriodicEventTimer[behavior] then
-                triggerEvent = (self.behaviorTime[behavior] > e.time)
+            if self.behaviorPeriodicEventTimer[behaviorName] then
+                triggerEvent = (self.behaviorPeriodicEventTimer[behaviorName] > e.time)
             else
-                self.behaviorPeriodicEventTimer[behavior] = dt
+                self.behaviorPeriodicEventTimer[behaviorName] = dt
                 triggerEvent = false
             end
-            if triggerEvent and not self.behaviorPeriodicEventLock[behavior] then
+            if triggerEvent and not self.behaviorPeriodicEventLock[behaviorName] then
                 behaviorEvent(e)
                 if e['repeat'] then
-                    self.behaviorPeriodicEventTimer[behavior] = dt
+                    self.behaviorPeriodicEventTimer[behaviorName] = dt
                 else
-                    self.behaviorPeriodicEventLock[behavior] = true
+                    self.behaviorPeriodicEventLock[behaviorName] = true
                 end
             end
         end
@@ -89,7 +89,7 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                     local checkResult = {}
                     if self.behaviors[behavior] then
                         if debugMode then sb.logInfo("--[ behavior %s", behavior) end
-                        for k, v in pairs(p.require) do
+                        for k, v in pairs(p.require or {}) do
                             if player then -- player specific check
                                 if k == "inSwapSlot" and not player.swapSlotItem() then
                                     if useBehav then
@@ -191,7 +191,11 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                     end
                     
                     if useBehav == true then
-                        if p.cooldown then self.behaviorCooldown[behavior] = p.cooldown end
+                        if type(p.cooldown) == "number" then
+                            self.behaviorCooldown[behavior] = p.cooldown
+                        elseif type(p.cooldown) == "table" then
+                            self.behaviorCooldown[p.cooldown.cooldownName] = p.cooldown.time
+                        end
                         setBehavior(behavior)
                     return "Switching to Behavior | " .. behavior end
                 end
@@ -203,7 +207,7 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                 local checkResult = {}
                 if self.behaviors[behavior] then
                     if debugMode then sb.logInfo("--[ behavior %s", behavior) end
-                    for k, v in pairs(p.require) do
+                    for k, v in pairs(p.require or {}) do
                         if player then -- player specific check
                             if k == "inSwapSlot" and not player.swapSlotItem() then
                                 if useBehav then
@@ -305,7 +309,13 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                 end
                     
                 if useBehav == true then
-                    if p.cooldown then self.behaviorCooldown[behavior] = p.cooldown end
+                    if p.cooldown then
+                        if type(p.cooldown) == "number" then
+                            self.behaviorCooldown[behavior] = p.cooldown
+                        elseif type(p.cooldown) == "table" then
+                            self.behaviorCooldown[p.cooldown.cooldownName] = p.cooldown.time
+                        end
+                    end
                     setBehavior(behavior)
                 return "Switching to Behavior | " .. behavior end
             end
@@ -546,8 +556,13 @@ function check_Function(callbacks)
 end
 
 function check_Cooldown(behaviorName)
-    if not self.behaviorCooldown[behaviorName] then return true end
-    if self.behaviorCooldown[behaviorName] <= 0 then return true end
+    if type(behaviorName) == "number" then
+        if not self.behaviorCooldown[behaviorName] then return true end
+        if self.behaviorCooldown[behaviorName] <= 0 then return true end
+    elseif type(behaviorName) == "table" then
+        if not self.behaviorCooldown[behaviorName.cooldownName] then return true end
+        if self.behaviorCooldown[behaviorName.cooldownName] <= 0 then return true end
+    end
     return false
 end
 

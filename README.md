@@ -12,7 +12,7 @@ A bundle of script that implement a behavior/state machine for activeItem
 
 ---
 
-#### [Documentation][DocumentationInfo] <a name="Documentation"></a>
+#### [Documentation][TBA] <a name="Documentation"></a>
   - [Missing Capability][missing]
   - [Stance][TBA]
   - [Behavior][TBA]
@@ -20,16 +20,16 @@ A bundle of script that implement a behavior/state machine for activeItem
 
 ---
 
-#### [Mod Compatibility Issues][ModCompatibilityInfo] <a name="ModCompatibility"></a>
-- There is currently no repertoried issue
+#### [Mod Compatibility Issues][TBA] <a name="ModCompatibility"></a>
+  - There is currently no known mod incompatibility
 
 ---
 
-[DocumentationInfo]: /_information/system.md 'Click to access documentation'
-[ModCompatibilityInfo]: /_information/mod%20compatibility.md 'Click to access documentation'
+[DocumentationInfo]: </_doc> 'Click to access documentation'
+[ModCompatibilityInfo]: </_information/mod%20compatibility.md> 'Click to access documentation'
 
 [D8SharedFiles]: <https://github.com/Darkcraft8/Darkcraft8_Shared> 'Go to Mod Page'
 
 [TBA]: </README.md> 'TBA'
 
-[missing]: </_information/missingCapabality.md> 'Click to access list of missing capability'
+[missing]: </_doc/jpbai/missingCapabality.md> 'Click to access list of missing capability'

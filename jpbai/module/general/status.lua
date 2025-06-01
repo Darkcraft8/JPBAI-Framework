@@ -5,6 +5,7 @@ function statusEx.hasResources(resourceList) -- return if the resources in the t
     for i, cfg in ipairs(resourceList) do
         if type(cfg) == "table" then
             if cfg.amount then
+                --sb.logInfo("%s : %s", cfg.resource, status.resource(cfg.resource))
                 if not (status.resource(cfg.resource) >= cfg.amount) then return false end
             else
                 if not status.resourcePositive(cfg.resource) then return false end
