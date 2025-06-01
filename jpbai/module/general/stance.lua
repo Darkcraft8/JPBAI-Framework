@@ -22,15 +22,25 @@ local function inherit(stanceName, json)
         end
     end
 end
+
+local function inheritResult(stance)
+    if stance["inherit"] then
+        return inherit(stance["inherit"], stance)
+    else
+        return copy(stance)
+    end
+end
+
 function setStance(stanceName) -- replace and expend on the old version in stances.lua
     self.stanceName = stanceName
     status.setPrimaryDirectives("")
     if self.stances[stanceName] then
-        if self.stances[stanceName]["inherit"] then
-            self.stance = inherit(self.stances[stanceName]["inherit"], self.stances[stanceName]) -- sb.jsonMerge(copy(self.stances[self.stances[stanceName]["inherit"]]), self.stances[stanceName])  
+        self.stance = inheritResult(self.stances[stanceName])
+        --[[if self.stances[stanceName]["inherit"] then
+            self.stance = inherit(self.stances[stanceName]["inherit"], self.stances[stanceName])
         else
             self.stance = copy(self.stances[stanceName])
-        end
+        end]]
     else
         sb.logError("[JPBAI Framework] [setStance] stance %s couldn't be found", stanceName)
     end
@@ -144,7 +154,7 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
                 if inheritedValue.rotationCenter then rotationCenter = vec2.add(inheritedValue.rotationCenter or {0, 0}, rotationCenter or {0, 0}) end
             end
         end
-        
+
         if translate then animator.translateTransformationGroup(group, translate) end
         if rotate then animator.rotateTransformationGroup(group, util.toRadians(rotate), rotationCenter) end
         if scale then animator.scaleTransformationGroup(group, scale) end
@@ -291,11 +301,19 @@ function lerpStance(dt)
                     scale = (inheritedValue.scale or 0) + (scale or 1)
                     rotationCenter = vec2.add(inheritedValue.rotationCenter or {0, 0}, rotationCenter or {0, 0})
                 end
+                local toTranslate, toRotate, toScale, toRotationCenter = copy(toTranform.translate), copy(toTranform.rotate), copy(toTranform.scale), copy(toTranform.rotationCenter)
+                if toTranform.inherit then
+                    local inheritedValue = to.transformations[transform.inherit]
+                    toTranslate = vec2.add(inheritedValue.translate or {0, 0}, toTranslate or {0, 0})
+                    toRotate = (inheritedValue.rotate or 0) + (toRotate or 0)
+                    toScale = (inheritedValue.scale or 0) + (toScale or 1)
+                    toRotationCenter = vec2.add(inheritedValue.rotationCenter or {0, 0}, toRotationCenter or {0, 0})
+                end
 
-                local translate = vec2.lerp(progress, translate or {0, 0}, toTranform.translate or {0, 0})
-                local rotate = interp.linear(progress, rotate or 0, toTranform.rotate or 0)
-                local rotationCenter = vec2.lerp(progress, rotationCenter or {0, 0}, toTranform.rotationCenter or {0, 0})
-                local scale = interp.linear(progress, scale or 1 , toTranform.scale or 1)
+                local translate = vec2.lerp(progress, translate or {0, 0}, toTranslate or {0, 0})
+                local rotate = interp.linear(progress, rotate or 0, toRotate or 0)
+                local rotationCenter = vec2.lerp(progress, rotationCenter or {0, 0}, toRotationCenter or {0, 0})
+                local scale = interp.linear(progress, scale or 1 , toScale or 1)
 
                 if translate then animator.translateTransformationGroup(group, translate) end
                 if rotate then animator.rotateTransformationGroup(group, util.toRadians(rotate), rotationCenter) end

@@ -22,6 +22,8 @@ require "/jpbai/module/general/inventory.lua"
 require "/jpbai/module/general/status.lua"
 require "/jpbai/module/general/behavior.lua"
 require "/jpbai/module/general/behaviorEX.lua"
+require "/jpbai/module/general/movement.lua"
+
 debugMode = false
 local playerInteractTimer = 0
 function init()
@@ -40,7 +42,9 @@ function init()
             func()
         else
             local callback = findCallback(func, true)
-            callback()
+            if callback then
+                callback()
+            end
         end
     end
 end
@@ -51,7 +55,9 @@ function update(dt, fireMode, isShiftHeld, currentMove)
             func(dt, fireMode, isShiftHeld, currentMove)
         else
             local callback = findCallback(func)
-            callback(dt, fireMode, isShiftHeld, currentMove)
+            if callback then
+                callback(dt, fireMode, isShiftHeld, currentMove)
+            end
         end
     end
     if playerInteractTimer > 0 then playerInteractTimer = playerInteractTimer - dt end
@@ -71,9 +77,12 @@ function uninit()
             func()
         else
             local callback = findCallback(func, true)
-            callback()
+            if callback then
+                callback()
+            end
         end
     end
+    behaviorEvents(config.getParameter("uninitEvent", {}))
 end
 
 function activeItemCfg()

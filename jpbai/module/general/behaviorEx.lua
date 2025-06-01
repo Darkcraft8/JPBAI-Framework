@@ -64,7 +64,10 @@ function behavior_hitbox(event) -- todo
     local damageLine, damagePoly
     local knockback = event.knockback or 0
     local damage = event.baseDamage or 0
-    if not poly then sb.logError("[JPBAI Framework] behavior_hitbox | poly not found for %s : %s", hitboxInfo.partName, hitboxInfo.polyName) return end
+    if not poly then
+        sb.logError("[JPBAI Framework] behavior_hitbox | poly not found for %s | %s : %s", hitboxInfo, hitboxInfo.partName, hitboxInfo.polyName)
+        --if player then if player.say then player.say(string.format("^cyan;[JPBAI Framework] behavior_hitbox | poly not found for %s : %s", hitboxInfo.partName, hitboxInfo.polyName)) end end
+    return end
     if #poly == 2 then damageLine = poly else damagePoly = poly end
     if (event.damageScalingFunction or Weapon) and damage then damage = call({callback = (event.damageScalingFunction or "Weapon.basicDamage"), args = event}) end    
     if knockback and event.directionalKnockback then knockback = knockbackMomentum(knockback, event.knockbackMode, self.aimAngle or 0, self.aimDirection or 0) end
@@ -118,8 +121,8 @@ function behavior_projectile(event)
     --sb.logInfo("power %s", projectileCfg.power)
     if event.scalingFunction or Weapon then -- Scale based on weapon stat or scaling function
         local callback = call({callback = event.scalingFunction or "Weapon.basicDamage", args = event})
-        projectileCfg.power = callback
-        projectileCfg.powerMultiplier = activeItem.ownerPowerMultiplier()
+        projectileCfg.power = projectileCfg.power or callback
+        projectileCfg.powerMultiplier = projectileCfg.powerMultiplier or activeItem.ownerPowerMultiplier()
     end
     --sb.logInfo("power 2nd %s", projectileCfg.power)
     for i = 1, (event.count or 1) do
@@ -128,8 +131,15 @@ function behavior_projectile(event)
     end
 end
 
-function behaviorEx.velocity(event)
+function setItemShieldPolys(partName, propertyName)
+    local shieldPoly = animator.partPoly(partName, propertyName)
+    if shieldPoly then
+        activeItem.setItemShieldPolys({shieldPoly})
+    end
+end
 
+function resetItemShieldPolys()
+    activeItem.setItemShieldPolys({})
 end
 
 function behaviorEx.callEntity(trackedEntity, functionName, variable)
@@ -197,6 +207,9 @@ function knockbackMomentum(knockback, knockbackMode, aimAngle, aimDirection)
     end
     return knockback
 end
+-----------------------------------------------------------------------------------
+
+
 
 -----------------------------------------------------------------------------------
 -- Math
@@ -232,11 +245,7 @@ function spawnPosition(cfg)
     elseif originPos == "ownerPos" then
         return vec2.add(ownerPos, posOffset or {0,0})
     elseif originPos == "fireOffset" then
-        if posOffset then
-            return vec2.add(mcontroller.position(), activeItem.handPosition(posOffset))
-        else
-            return firePosition()
-        end
+        return vec2.add(mcontroller.position(), activeItem.handPosition(posOffset or {0, 0}))
     elseif originPos == "cursor" then
         return vec2.add(activeItem.ownerAimPosition(), posOffset or {0,0})
     end

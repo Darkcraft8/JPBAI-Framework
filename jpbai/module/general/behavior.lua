@@ -196,7 +196,7 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                     return "Switching to Behavior | " .. behavior end
                 end
             else
-                local randomizedIndex = math.random(#self.behavior["possibleOutcome"])
+                local randomizedIndex = math.random(#self.behavior["possibleOutcome"] or 1)
                 local i, p = randomizedIndex, self.behavior["possibleOutcome"][randomizedIndex]
                 local useBehav = true
                 local behavior = p.behavior
@@ -433,6 +433,9 @@ end
 function check_Move(currentMove, value, behavior)
     local result = true
     local individialCheckResult = {}
+    if debugMode then 
+        sb.logInfo("currentMove %s", currentMove)
+    end
     if type(value) == "table" then
         for m, b in pairs(value) do
             if debugMode then sb.logInfo("move : %s", m) end

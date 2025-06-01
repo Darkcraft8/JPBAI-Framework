@@ -1,12 +1,16 @@
 -- Function's to interact with player resources|status
 statusEx = statusEx or {}
 function statusEx.hasResources(resourceList) -- return if the resources in the table are available
-    if not args then return end
-    for i, cfg in ipairs(args) do
-        if cfg.amount then
-            if not status.resource(cfg.resource) >= cfg.amount then return false end
-        else
-            if not status.resourcePositive(cfg.resource) then return false end
+    if not resourceList then return end
+    for i, cfg in ipairs(resourceList) do
+        if type(cfg) == "table" then
+            if cfg.amount then
+                if not (status.resource(cfg.resource) >= cfg.amount) then return false end
+            else
+                if not status.resourcePositive(cfg.resource) then return false end
+            end
+        elseif type(cfg) == "string" then
+            if not status.resourcePositive(cfg) then return false end
         end
     end
     return true
