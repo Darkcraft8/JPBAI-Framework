@@ -1,8 +1,10 @@
 ### Json Behavior Powered Active Item : Changelog
 
 #### Change
-  
+  -  aimVelocity renamed to addAimedVelocity
+
 #### Addition
+  -  aimedVelocity
 
 #### Fix
 

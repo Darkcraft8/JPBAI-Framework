@@ -1,4 +1,16 @@
 movementControl = {}
+local movementModifiers = {}
+local movementParameters = {}
+
+function movementControl.init()
+    movementParameters = mcontroller.baseParameters()
+    
+end
+function movementControl.update(dt)
+    mcontroller.controlModifiers(movementModifiers or {})
+    mcontroller.controlParameters(movementParameters or {})
+end
+
 function movementControl.translateAboveGround(distance)
     if not distance then return end
     local userPos = world.entityPosition(activeItem.ownerEntityId())
@@ -9,7 +21,14 @@ function movementControl.translateAboveGround(distance)
     end
 end
 
-function movementControl.aimVelocity(vel, verticalOffset)
+function movementControl.aimedVelocity(vel, verticalOffset)
+    if not vel then return end
+    local aimAngle = activeItem.aimAngle(verticalOffset or 0, activeItem.ownerAimPosition())
+    local newVec = vec2.rotate(vel, aimAngle)
+    mcontroller.setVelocity(newVec)
+end
+
+function movementControl.addAimedVelocity(vel, verticalOffset)
     if not vel then return end
     local aimAngle = activeItem.aimAngle(verticalOffset or 0, activeItem.ownerAimPosition())
     local newVec = vec2.add(mcontroller.velocity(), vec2.rotate(vel, aimAngle))
@@ -33,6 +52,22 @@ function movementControl.aimTranslation(vec, verticalOffset, checkForObstacle, o
     end
 end
 
+function movementControl.setParameters(ActorMovementParameters)
+    movementParameters = sb.jsonMerge(movementParameters, ActorMovementParameters)
+end
+
+function movementControl.resetParameters()
+    movementParameters = {}
+    if mcontroller.resetParameters then mcontroller.resetParameters() sb.logInfo("mcontroller.resetParameters exist %s", not (not mcontroller.resetParameters) ) end
+end
+
+function movementControl.setModifiers(ActorMovementParameters)
+    movementModifiers = sb.jsonMerge(movementModifiers, ActorMovementParameters)
+end
+
+function movementControl.resetModifiers()
+    movementModifiers = {}
+end
 --[[ [controlModifiers Possible Args]
     movementSuppressed
     facingSuppressed

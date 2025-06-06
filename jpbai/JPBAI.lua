@@ -3,14 +3,17 @@ require "/scripts/vec2.lua"
 require "/scripts/status.lua"
 -- Json Powered Behavioral Active Item >:D
 -- or JPBAI for short
--- a bunch of list for frequent func type
+-- a bunch of list for frequently called func
 initFunc = {
     "activeItemCfg",
     "initStances",
     "initBehavior",
+    "movementControl.init",
     "configInit"
 }
-updateFunc = {}  -- just so that incase a script has a update function it can be added
+updateFunc = { -- just so that incase a script has a update function it can be added
+    "movementControl.update"
+}
 uninitFunc = {
     "uninitBehavior",
     "uninitStance"

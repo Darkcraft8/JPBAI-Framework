@@ -86,9 +86,9 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
         --if type(value) == "number" then self.lightFlashDuration[lightName] = value end
     end
     
-    if self.player then
-        if self.player.rotate then self.stancePlayerRotation = copy(self.player.rotate) mcontroller.setRotation(util.toRadians(self.stancePlayerRotation) * mcontroller.facingDirection()) end
-        if self.player.primaryDirective then status.setPrimaryDirectives(self.player.primaryDirective) end
+    if self.stance.player then
+        if self.stance.player.rotate then self.stancePlayerRotation = copy(self.stance.player.rotate) mcontroller.setRotation(util.toRadians(self.stancePlayerRotation) * mcontroller.facingDirection()) end
+        if self.stance.player.primaryDirective then status.setPrimaryDirectives(self.stance.player.primaryDirective) end
     else
         if self.stancePlayerRotation then self.stancePlayerRotation = 0 mcontroller.setRotation(0) end -- reset player rotation because it can mess with collision
     end
@@ -237,10 +237,11 @@ function updateStance(dt) -- added updateAim in so that rotation and flip get up
                     if scale then animator.scaleTransformationGroup(group, scale * dt) end
                 end
             end
-            if self.player then
-                if self.player.velocity then 
-                    if self.player.velocity.rotate then
-                        self.stancePlayerRotation = self.stancePlayerRotation + (self.player.velocity.rotate * dt)
+            if self.stance.player then
+				if self.stance.player.primaryDirective then status.setPrimaryDirectives(self.stance.player.primaryDirective) end
+                if self.stance.player.velocity then 
+                    if self.stance.player.velocity.rotate then
+                        self.stancePlayerRotation = self.stancePlayerRotation + (self.stance.player.velocity.rotate * dt)
                         mcontroller.setRotation(util.toRadians(self.stancePlayerRotation) * mcontroller.facingDirection())
                     end
                 end
