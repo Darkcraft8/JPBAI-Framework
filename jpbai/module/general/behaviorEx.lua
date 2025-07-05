@@ -72,7 +72,7 @@ function behavior_hitbox(event) -- todo
     if damagePoly then if #damagePoly == 0 then damagePoly = nil damageLine = {{0, 0}, {0, 0}} end end
     
     if (event.damageScalingFunction or Weapon) and damage then damage = call({callback = (event.damageScalingFunction or "Weapon.basicDamage"), args = event}) end    
-    if knockback and event.directionalKnockback then knockback = knockbackMomentum(knockback, event.knockbackMode, (self.aimAngle or 0)- mcontroller.rotation(), self.aimDirection or 0) end
+    if knockback and event.directionalKnockback then knockback = knockbackMomentum(knockback, event.knockbackMode, (self.aimAngle or 0), self.aimDirection or 0) end
     local damageSource = {
         poly = damagePoly,
         line = damageLine,
