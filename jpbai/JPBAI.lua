@@ -50,6 +50,7 @@ function init()
             end
         end
     end
+    overrideTech(true)
 end
 
 function update(dt, fireMode, isShiftHeld, currentMove)
@@ -86,6 +87,7 @@ function uninit()
         end
     end
     behaviorEvents(config.getParameter("uninitEvent", {}))
+    overrideTech(false)
 end
 
 function activeItemCfg()
@@ -155,7 +157,7 @@ function call(eventCfg) -- because whe can't directly do _ENV[funcGroup.Func]()
         if callback then
             if type(eventCfg.args) == "table" then
                 if eventCfg.args[1] then
-                    return callback(eventCfg.args[1], eventCfg.args[2], eventCfg.args[3], eventCfg.args[4], eventCfg.args[5], eventCfg.args[6], eventCfg.args[7], eventCfg.args[8], eventCfg.args[9], eventCfg.args[10])
+                    return callback(table.unpack(eventCfg.args))
                 else
                     return callback(eventCfg.args)
                 end
@@ -214,4 +216,32 @@ function playerInteractBridge(interactionType, paneCfg, sourceEntityId)
 
     if type(paneCfg) == "string" then paneCfg = root.assetJson(paneCfg) end
     if paneCfg.dismissable ~= false and playerInteractTimer <= 0 then player.interact(interactionType, paneCfg) playerInteractTimer = 0.5 end -- to prevent bad actor from giving config that can't be dismissed
+end
+
+-- tech interaction
+local playerTech = {}
+function overrideTech(bool)
+    if config.getParameter("overrideTech") then
+        if not item.twoHanded() or not player then return end
+        if bool then
+            playerTech = {
+                head = player.equippedTech("head"),
+                body = player.equippedTech("body"),
+                legs = player.equippedTech("legs")
+            }
+            for slot, techName in pairs(playerTech) do 
+                player.unequipTech(techName)
+            end
+            for slot, techName in pairs(config.getParameter("overrideTech") or {}) do 
+                player.equipTech(techName)
+            end
+        else
+            for slot, techName in pairs(config.getParameter("overrideTech") or {}) do 
+                player.unequipTech(techName)
+            end
+            for slot, techName in pairs(playerTech) do 
+                player.equipTech(techName)
+            end
+        end
+    end
 end

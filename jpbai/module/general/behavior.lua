@@ -457,46 +457,95 @@ function behaviorTimer(list, operation, treshold) -- increase or decrease value 
     return asAFinishedTimer
 end
 
--- Callback
-function inflictedDamage(notifications)
-    --sb.logInfo("damageDealt %s", notifications)
-    if self.behavior["eventOnDamageDealt"] then
-        for _, notification in pairs(notifications) do
-            behaviorEvents(self.behavior["eventOnDamageDealt"], notification)
+-- Event
+    function inflictedDamage(notifications)
+        --sb.logInfo("damageDealt %s", notifications)
+        if self.behavior["eventOnDamageDealt"] then
+            for _, notification in pairs(notifications) do
+                behaviorEvents(self.behavior["eventOnDamageDealt"], notification)
+            end
         end
     end
-end
 
-function inflictedHits(notifications) 
-    --sb.logInfo("hitEvent %s", notifications)
-    if self.behavior["eventOnHitDealt"] then 
-        for _,notification in pairs(notifications) do
-            behaviorEvents(self.behavior["eventOnHitDealt"], notification)
+    function inflictedHits(notifications) 
+        --sb.logInfo("hitEvent %s", notifications)
+        if self.behavior["eventOnHitDealt"] then 
+            for _,notification in pairs(notifications) do
+                behaviorEvents(self.behavior["eventOnHitDealt"], notification)
+            end
         end
     end
-end
 
-function damageTaken(notifications) 
-    --sb.logInfo("damageTaken %s", notifications)
-    -- -65536 seem to be world or self 
-    if self.behavior["eventOnDamageTaken"] then
-        for _,notification in pairs(notifications) do
-            behaviorEvents(self.behavior["eventOnDamageTaken"], notification)
+    function damageTaken(notifications) 
+        --sb.logInfo("damageTaken %s", notifications)
+        -- -65536 seem to be world or self 
+        if self.behavior["eventOnDamageTaken"] then
+            for _,notification in pairs(notifications) do
+                behaviorEvents(self.behavior["eventOnDamageTaken"], notification)
+            end
         end
     end
-end
 
 -- Requirement Checks
-function check_Move(currentMove, value, behavior)
-    local result = true
-    local individialCheckResult = {}
-    if debugMode then 
-        sb.logInfo("currentMove %s", currentMove)
-    end
-    if type(value) == "table" then
-        for m, b in pairs(value) do
-            if debugMode then sb.logInfo("move : %s", m) end
-            if m == "forward" or m == "backward" then
+    function check_Move(currentMove, value, behavior)
+        local result = true
+        local individialCheckResult = {}
+        if debugMode then 
+            sb.logInfo("currentMove %s", currentMove)
+        end
+        if type(value) == "table" then
+            for m, b in pairs(value) do
+                if debugMode then sb.logInfo("move : %s", m) end
+                if m == "forward" or m == "backward" then
+                    local movingBackward, movingForward
+                    if mcontroller.facingDirection() < 0 then -- facing left
+                        movingForward = currentMove["left"] == true
+                        movingBackward = currentMove["right"] == true
+                    else -- facing right
+                        movingForward = currentMove["right"] == true
+                        movingBackward = currentMove["left"] == true
+                    end
+
+                    if debugMode then 
+                        sb.logInfo("direction : %s", mcontroller.facingDirection())
+                        sb.logInfo("left %s", currentMove["left"])
+                        sb.logInfo("right %s", currentMove["right"])
+
+                        sb.logInfo("is going forward %s", movingForward)
+                        sb.logInfo("is going backward %s", movingBackward)
+                    end
+
+                    if m == "forward" then
+                        if movingForward ~= b then
+                            result = false
+                            individialCheckResult[m] = false
+                        else
+                            individialCheckResult[m] = true
+                        end
+                    else
+                        if movingBackward ~= b then
+                            result = false
+                            individialCheckResult[m] = false
+                        else
+                            individialCheckResult[m] = true
+                        end
+                    end
+                else
+                    if not currentMove[m] then
+                        if b then
+                            result = false
+                            individialCheckResult[m] = false
+                        end
+                    elseif currentMove[m] ~= b then
+                        result = false
+                        individialCheckResult[m] = false
+                    else
+                        individialCheckResult[m] = true
+                    end
+                end
+            end
+        elseif type(value) == "string" then
+            if value == "forward" or value == "backward" then
                 local movingBackward, movingForward
                 if mcontroller.facingDirection() < 0 then -- facing left
                     movingForward = currentMove["left"] == true
@@ -505,191 +554,146 @@ function check_Move(currentMove, value, behavior)
                     movingForward = currentMove["right"] == true
                     movingBackward = currentMove["left"] == true
                 end
-
-                if debugMode then 
-                    sb.logInfo("direction : %s", mcontroller.facingDirection())
-                    sb.logInfo("left %s", currentMove["left"])
-                    sb.logInfo("right %s", currentMove["right"])
-
-                    sb.logInfo("is going forward %s", movingForward)
-                    sb.logInfo("is going backward %s", movingBackward)
-                end
-
                 if m == "forward" then
-                    if movingForward ~= b then
-                        result = false
-                        individialCheckResult[m] = false
+                    if movingForward == b then
+                        individialCheckResult[value] = true return true, individialCheckResult
+                    end
+                else
+                    if movingBackward == b then
+                        individialCheckResult[value] = true return true, individialCheckResult
+                    end
+                end
+                if value == "forward" then
+                    if mcontroller.facingDirection() < 0 then
+                        if currentMove["left"] then individialCheckResult[value] = true return true, individialCheckResult end
                     else
-                        individialCheckResult[m] = true
+                        if currentMove["right"] then individialCheckResult[value] = true return true, individialCheckResult end
                     end
                 else
-                    if movingBackward ~= b then
-                        result = false
-                        individialCheckResult[m] = false
+                    if mcontroller.facingDirection() < 0 then
+                        if currentMove["right"] then individialCheckResult[value] = true return true, individialCheckResult end
                     else
-                        individialCheckResult[m] = true
+                        if currentMove["left"] then individialCheckResult[value] = true return true, individialCheckResult end
                     end
                 end
             else
-                if not currentMove[m] then
-                    if b then
-                        result = false
-                        individialCheckResult[m] = false
-                    end
-                elseif currentMove[m] ~= b then
-                    result = false
-                    individialCheckResult[m] = false
-                else
-                    individialCheckResult[m] = true
-                end
-            end
-        end
-    elseif type(value) == "string" then
-        if value == "forward" or value == "backward" then
-            local movingBackward, movingForward
-            if mcontroller.facingDirection() < 0 then -- facing left
-                movingForward = currentMove["left"] == true
-                movingBackward = currentMove["right"] == true
-            else -- facing right
-                movingForward = currentMove["right"] == true
-                movingBackward = currentMove["left"] == true
-            end
-            if m == "forward" then
-                if movingForward == b then
-                    individialCheckResult[value] = true return true, individialCheckResult
-                end
-            else
-                if movingBackward == b then
-                    individialCheckResult[value] = true return true, individialCheckResult
-                end
-            end
-            if value == "forward" then
-                if mcontroller.facingDirection() < 0 then
-                    if currentMove["left"] then individialCheckResult[value] = true return true, individialCheckResult end
-                else
-                    if currentMove["right"] then individialCheckResult[value] = true return true, individialCheckResult end
-                end
-            else
-                if mcontroller.facingDirection() < 0 then
-                    if currentMove["right"] then individialCheckResult[value] = true return true, individialCheckResult end
-                else
-                    if currentMove["left"] then individialCheckResult[value] = true return true, individialCheckResult end
-                end
+                if currentMove[value] then individialCheckResult[value] = true return true, individialCheckResult end
             end
         else
-            if currentMove[value] then individialCheckResult[value] = true return true, individialCheckResult end
+            sb.logError("[JPBAI Framework] Invalid Move Requirement Config For Behavior | %s", behavior)
         end
-    else
-        sb.logError("[JPBAI Framework] Invalid Move Requirement Config For Behavior | %s", behavior)
+
+        return result, individialCheckResult
     end
 
-    return result, individialCheckResult
-end
-
-function check_Function(callbacks)
-    if debugMode then sb.logInfo("callbacks %s", callbacks) end
-    local funcReturned = true
-    for _, func in ipairs(callbacks or {}) do 
-        local args = nil
-        local callback = func
-        if type(func) == "table" then
-            callback = func.callback
-            args = func.args
+    function check_Function(callbacks)
+        if debugMode then sb.logInfo("callbacks %s", callbacks) end
+        local funcReturned = true
+        for _, func in ipairs(callbacks or {}) do 
+            local args = nil
+            local callback = func
+            if type(func) == "table" then
+                callback = func.callback
+                args = func.args
+            end
+            if funcReturned then funcReturned = call({callback = callback, args = args}) end
+            if not funcReturned then return funcReturned end
         end
-        if funcReturned then funcReturned = call({callback = callback, args = args}) end
-        if not funcReturned then return funcReturned end
+        return funcReturned
     end
-    return funcReturned
-end
 
-function check_Cooldown(behaviorName)
-    if type(behaviorName) == "number" then
-        if not self.behaviorCooldown[behaviorName] then return true end
-        if self.behaviorCooldown[behaviorName] <= 0 then return true end
-    elseif type(behaviorName) == "table" then
-        if not self.behaviorCooldown[behaviorName.cooldownName] then return true end
-        if self.behaviorCooldown[behaviorName.cooldownName] <= 0 then return true end
+    function check_Cooldown(behaviorName)
+        if type(behaviorName) == "number" then
+            if not self.behaviorCooldown[behaviorName] then return true end
+            if self.behaviorCooldown[behaviorName] <= 0 then return true end
+        elseif type(behaviorName) == "table" then
+            if not self.behaviorCooldown[behaviorName.cooldownName] then return true end
+            if self.behaviorCooldown[behaviorName.cooldownName] <= 0 then return true end
+        end
+        return false
     end
-    return false
-end
 
-function check_ExactParam(param) -- Todo
-    for p, v in pairs(param) do 
-        --sb.logInfo("%s, %s", sb.print(v), sb.print(config.getParameter(p)))
-        --sb.logInfo("%s", sb.print(v) ~= sb.print(config.getParameter(p)))
-        if sb.print(v) ~= sb.print(config.getParameter(p)) then return false end
+    function check_ExactParam(param) -- Todo
+        for p, v in pairs(param) do 
+            --sb.logInfo("%s, %s", sb.print(v), sb.print(config.getParameter(p)))
+            --sb.logInfo("%s", sb.print(v) ~= sb.print(config.getParameter(p)))
+            if sb.print(v) ~= sb.print(config.getParameter(p)) then return false end
+        end
+        return true
     end
-    return true
-end
 
-function check_GreaterParam(param) -- Todo
-    for p, v in pairs(param) do 
-        local typeKind = type(config.getParameter(p))
-        if typeKind == "number" then
-            if (config.getParameter(p) <= v) then
+    function check_GreaterParam(param) -- Todo
+        for p, v in pairs(param) do 
+            local typeKind = type(config.getParameter(p))
+            if typeKind == "number" then
+                if (config.getParameter(p) <= v) then
+                    return false
+                end
+            end
+            if typeKind == "boolean" then
+                if v == false then if config.getParameter(p) ~= nil then return false end end
+                if v == true then if config.getParameter(p) ~= true then return false end end
+            end
+            if  typeKind == "table" then
+                sb.logInfo("table can't be compared for the moment")
                 return false
             end
         end
-        if typeKind == "boolean" then
-            if v == false then if config.getParameter(p) ~= nil then return false end end
-            if v == true then if config.getParameter(p) ~= true then return false end end
-        end
-        if  typeKind == "table" then
-            sb.logInfo("table can't be compared for the moment")
-            return false
-        end
+        return true
     end
-    return true
-end
 
-function check_LowerParam(param) -- Todo
-    for p, v in pairs(param) do 
-        local typeKind = type(v)
-        if typeKind == "number" then
-            if (config.getParameter(p) >= v) then
-                 return false
-            end 
-        end
-        if typeKind == "boolean" then
-            if config.getParameter(p) then
+    function check_LowerParam(param) -- Todo
+        for p, v in pairs(param) do 
+            local typeKind = type(v)
+            if typeKind == "number" then
+                if (config.getParameter(p) >= v) then
+                    return false
+                end 
+            end
+            if typeKind == "boolean" then
+                if config.getParameter(p) then
+                    return false
+                end
+            end
+            if typeKind == "table" then
+                sb.logInfo("table can't be compared for the moment")
                 return false
             end
         end
-        if typeKind == "table" then
-            sb.logInfo("table can't be compared for the moment")
-            return false
-        end
+        return true
     end
-    return true
-end
 
-function check_raycastToSpawnPos(args)
-    return world.lineTileCollision(mcontroller.position(), spawnPosition(args))
-end
-
-
-function arrayEqual(tableA, TableB)
-    if tableA == nil and tableB == nil then return true end
-    if tableA == nil then return false elseif tableB == nil then return false end
-    for name, value in pairs(tableA) do
-        if TableB[name] then
-            if value ~= TableB[name] then return false end
-        else
-            return false
-        end
+    function check_raycastToSpawnPos(args)
+        return world.lineTileCollision(mcontroller.position(), spawnPosition(args))
     end
-    return true
-end
 
-function tableEqual(tableA, TableB)
-    if tableA == nil and tableB == nil then return true end
-    if tableA == nil then return false elseif tableB == nil then return false end
-    for index, value in ipairs(tableA) do 
-        if TableB[index] then
-            if value ~= TableB[index] then return false end
-        else
-            return false
+
+    function arrayEqual(tableA, TableB)
+        if tableA == nil and tableB == nil then return true end
+        if tableA == nil then return false elseif tableB == nil then return false end
+        for name, value in pairs(tableA) do
+            if TableB[name] then
+                if value ~= TableB[name] then return false end
+            else
+                return false
+            end
         end
+        return true
     end
-    return true
-end
+
+    function tableEqual(tableA, TableB)
+        if tableA == nil and tableB == nil then return true end
+        if tableA == nil then return false elseif tableB == nil then return false end
+        for index, value in ipairs(tableA) do 
+            if TableB[index] then
+                if value ~= TableB[index] then return false end
+            else
+                return false
+            end
+        end
+        return true
+    end
+-- Callback
+    function setCooldown(behaviorName, amount)
+        self.behaviorCooldown[behaviorName] = amount
+    end

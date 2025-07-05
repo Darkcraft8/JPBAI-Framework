@@ -3,12 +3,16 @@ local movementModifiers = {}
 local movementParameters = {}
 
 function movementControl.init()
-    movementParameters = mcontroller.baseParameters()
+    --movementParameters = mcontroller.baseParameters()
     
 end
 function movementControl.update(dt)
-    mcontroller.controlModifiers(movementModifiers or {})
-    mcontroller.controlParameters(movementParameters or {})
+    if movementModifiers then
+        mcontroller.controlModifiers(movementModifiers or {})
+    end
+    if movementParameters then
+        mcontroller.controlParameters(movementParameters or {})
+    end
 end
 
 function movementControl.translateAboveGround(distance)
@@ -46,27 +50,28 @@ function movementControl.aimTranslation(vec, verticalOffset, checkForObstacle, o
         end
     end
     --mcontroller.setPosition(new)
-    local resolvedCollision = world.resolvePolyCollision(mcontroller.collisionPoly(), vec2.add(new, offset or {0, 2.5}), maxCorrection or 3, {"Block", "Dynamic", "Null", "Slippery"})
+    local resolvedCollision = world.resolvePolyCollision(mcontroller.boundBox(), vec2.add(new, offset or {0, 2.5}), maxCorrection or 3, {"Block", "Dynamic", "Null", "Slippery"})
     if resolvedCollision then
         mcontroller.setPosition(resolvedCollision)
     end
 end
 
 function movementControl.setParameters(ActorMovementParameters)
+    if not movementParameters then movementParameters = {} end
     movementParameters = sb.jsonMerge(movementParameters, ActorMovementParameters)
 end
 
 function movementControl.resetParameters()
-    movementParameters = {}
-    if mcontroller.resetParameters then mcontroller.resetParameters() sb.logInfo("mcontroller.resetParameters exist %s", not (not mcontroller.resetParameters) ) end
+    movementParameters = nil
 end
 
 function movementControl.setModifiers(ActorMovementParameters)
+    if not movementModifiers then movementModifiers = {} end
     movementModifiers = sb.jsonMerge(movementModifiers, ActorMovementParameters)
 end
 
 function movementControl.resetModifiers()
-    movementModifiers = {}
+    movementModifiers = nil
 end
 --[[ [controlModifiers Possible Args]
     movementSuppressed

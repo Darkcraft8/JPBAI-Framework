@@ -11,7 +11,7 @@ function initStances()
 end
 local function inherit(stanceName, json)
     if self.stances[stanceName]["inherit"] then
-        local parent = inherit(self.stances[stanceName]["inherit"], self.stances[stanceName])
+        --local parent = inherit(self.stances[stanceName]["inherit"], self.stances[stanceName])
         local result = sb.jsonMerge(copy(self.stances[self.stances[stanceName]["inherit"]]), copy(json) )
         return result
     else
@@ -36,11 +36,6 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
     status.setPrimaryDirectives("")
     if self.stances[stanceName] then
         self.stance = inheritResult(self.stances[stanceName])
-        --[[if self.stances[stanceName]["inherit"] then
-            self.stance = inherit(self.stances[stanceName]["inherit"], self.stances[stanceName])
-        else
-            self.stance = copy(self.stances[stanceName])
-        end]]
     else
         sb.logError("[JPBAI Framework] [setStance] stance %s couldn't be found", stanceName)
     end
@@ -198,11 +193,60 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
 		mcontroller.setRotation(0)
 		mcontroller.controlFace(mcontroller.facingDirection())
     end
+
+    if self.stance.handGrip == "wrap" then
+        activeItem.setOutsideOfHand(isFrontHand())
+    elseif self.stance.handGrip == "embed" then
+        activeItem.setOutsideOfHand(not isFrontHand())
+    elseif self.stance.handGrip == "outside" then
+        activeItem.setOutsideOfHand(true)
+    elseif self.stance.handGrip == "inside" then
+        activeItem.setOutsideOfHand(false)
+    end
+end
+
+function updateAim(allowRotate, allowFlip)
+  allowRotate = allowRotate or self.stance.allowRotate
+  allowFlip = allowFlip or self.stance.allowFlip
+
+  local aimAngle, aimDirection = activeItem.aimAngleAndDirection(self.fireOffset[2], activeItem.ownerAimPosition())
+  local rotation = math.abs(mcontroller.rotation())
+  if allowRotate then
+    self.aimAngle = aimAngle
+  end
+  aimAngle = self.aimAngle + util.toRadians(self.armRotation)
+
+  if allowRotate then  
+    self.armAngle = aimAngle - rotation -- we remove the player rotation so that the arms aim toward the correct position
+  else
+    self.armAngle = aimAngle
+  end
+  activeItem.setArmAngle(self.armAngle)
+
+  if allowFlip then
+    self.aimDirection = aimDirection
+  end
+  activeItem.setFacingDirection((self.aimDirection or 0))
 end
 
 function updateStance(dt) -- added updateAim in so that rotation and flip get updated
     if self.stance then
         updateAim(self.stance.allowRotate, self.stance.allowFlip)
+        --[[if self.stance.allowRotate then
+            local rotation = math.abs(mcontroller.rotation())
+            sb.setLogMap("1| stance", "aimAngle %s, mc.rotation %s, %s", self.aimAngle, rotation, self.aimAngle - (rotation))
+            self.aimAngle = self.aimAngle - (rotation)
+            activeItem.setArmAngle(self.aimAngle)
+        end]]
+        if self.stance.handGrip == "wrap" then
+            activeItem.setOutsideOfHand(isFrontHand())
+        elseif self.stance.handGrip == "embed" then
+            activeItem.setOutsideOfHand(not isFrontHand())
+        elseif self.stance.handGrip == "outside" then
+            activeItem.setOutsideOfHand(true)
+        elseif self.stance.handGrip == "inside" then
+            activeItem.setOutsideOfHand(false)
+        end
         
         if self.coroutine.lerp then
             local status, error = coroutine.resume(self.coroutine.lerp, dt)
@@ -403,3 +447,7 @@ end
 -- "allowFlip"
 -- "transitionFunction"
 -- "transition" can be added to a stance to change stances... don't remember seeing it used in vanilla
+
+function isFrontHand()
+  return (activeItem.hand() == "primary") == (self.aimDirection < 0)
+end

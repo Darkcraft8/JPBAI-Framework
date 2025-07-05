@@ -69,8 +69,10 @@ function behavior_hitbox(event) -- todo
         --if player then if player.say then player.say(string.format("^cyan;[JPBAI Framework] behavior_hitbox | poly not found for %s : %s", hitboxInfo.partName, hitboxInfo.polyName)) end end
     return end
     if #poly == 2 then damageLine = poly else damagePoly = poly end
+    if damagePoly then if #damagePoly == 0 then damagePoly = nil damageLine = {{0, 0}, {0, 0}} end end
+    
     if (event.damageScalingFunction or Weapon) and damage then damage = call({callback = (event.damageScalingFunction or "Weapon.basicDamage"), args = event}) end    
-    if knockback and event.directionalKnockback then knockback = knockbackMomentum(knockback, event.knockbackMode, self.aimAngle or 0, self.aimDirection or 0) end
+    if knockback and event.directionalKnockback then knockback = knockbackMomentum(knockback, event.knockbackMode, (self.aimAngle or 0)- mcontroller.rotation(), self.aimDirection or 0) end
     local damageSource = {
         poly = damagePoly,
         line = damageLine,
@@ -81,7 +83,7 @@ function behavior_hitbox(event) -- todo
         damageSourceKind = event.damageSourceKind,
         statusEffects = event.statusEffects or storage.damageStatusEffects,
         knockback = knockback or 0,
-        rayCheck = true,
+        rayCheck = not event.noRayCheck,
         damageRepeatGroup = damageRepeatGroup(event.timeoutGroup),
         damageRepeatTimeout = event.timeout or 0.1
     }
@@ -226,7 +228,7 @@ function behaviorEx.damageAreaUpdate(dt)
         if timer > 0 then self.damageSourcesTimer[name] = timer - dt end
         if timer <= 0 then self.damageSourcesTimer[name] = nil self.damageSources[name] = nil else table.insert(effectiveSources, self.damageSources[name]) end
     end
-    activeItem.setItemDamageSources(effectiveSources or {})
+    activeItem.setItemDamageSources(jarray(effectiveSources or {}))
 end
 -----------------------------------------------------------------------------------
 

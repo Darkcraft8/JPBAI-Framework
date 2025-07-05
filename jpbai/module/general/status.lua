@@ -17,6 +17,23 @@ function statusEx.hasResources(resourceList) -- return if the resources in the t
     return true
 end
 
+function statusEx.resourcesNegative(resourceList) -- return if the resources in the table are available
+    if not resourceList then return end
+    for i, cfg in ipairs(resourceList) do
+        if type(cfg) == "table" then
+            if cfg.amount then
+                --sb.logInfo("%s : %s", cfg.resource, status.resource(cfg.resource))
+                if (status.resource(cfg.resource) >= cfg.amount) then return false end
+            else
+                if status.resourcePositive(cfg.resource) then return false end
+            end
+        elseif type(cfg) == "string" then
+            if status.resourcePositive(cfg) then return false end
+        end
+    end
+    return true
+end
+
 function statusEx.hasStatus(status, hasAll) -- return bool
     if not status then return end
     local activeEffect = status.activeUniqueStatusEffectSummary()
@@ -35,4 +52,8 @@ function statusEx.hasStatus(status, hasAll) -- return bool
     else
         return hasOne
     end
+end
+
+function statusEx.statNegative(statName)
+    return not status.statPositive(statName)
 end
