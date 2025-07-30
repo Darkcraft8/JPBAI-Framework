@@ -175,7 +175,8 @@ end
 function findCallback(functionPath, bypassBlacklist, bypassBridge)
     -- Stop the function returning nil and logging the attempt in the logs
     if JPBAIConfig.funcAllowedlist[functionPath] == false and not bypassBlacklist then sb.logWarn('[JPBAI] Item %s:%s, behavior "%s", tried to call blacklisted function %s!', item.name(), item.friendlyName(), behaviorName, functionPath) return end
-
+	if type(functionPath) ~= "string" then sb.logWarn('[JPBAI] Item %s:%s, behavior "%s", function %s ins\'t string!', item.name(), item.friendlyName(), behaviorName, functionPath) return  end
+	
     if JPBAIConfig.override[functionPath] and not bypassBridge then
         functionPath = JPBAIConfig.override[functionPath]
     end -- swap function with the given variant... primarily for safety consern or compatibility

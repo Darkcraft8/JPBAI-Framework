@@ -234,7 +234,7 @@ end
 
 -- Other's
 function spawnPosition(cfg)
-    local originPos = cfg.spawnPos -- Possible | ownerHandPos, ownerPosFaceDirection, ownerPos
+    local originPos = cfg.spawnPos -- Possible | ownerHandPos, ownerPosFaceDirection, ownerPos, fireOffset, cursor
     local posOffset = cfg.spawnOffset
     local aimAngle, aimDirection = activeItem.aimAngleAndDirection(self.fireOffset[2], activeItem.ownerAimPosition())
     local ownerPos = entity.position()

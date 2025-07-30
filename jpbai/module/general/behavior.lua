@@ -45,7 +45,7 @@ function behaviorPathBuild()
 end
 
 function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to lower the amount of time we check for possible outcome
-    
+    sb.setLogMap("[JPBAI] Item "..item.name()..":"..item.friendlyName().."-"..activeItem.hand(), "BehavName %s", behaviorName)
     -- Event
         self.inflictedDamage_Listener:update()
         self.inflictedHits_Listener:update()
