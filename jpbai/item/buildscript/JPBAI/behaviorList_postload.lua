@@ -10,7 +10,7 @@ for i = 1, #behaviorCfgs do --Search for named behavior and add them to the buil
   if behaviorName then
     if not behaviorList[behaviorName] then
         registered[behaviorName] = behaviorCfg
-        --sb.logInfo("[BehaviorList Postload] added at %s : %s", behaviorName, behaviorCfg)
+        sb.logInfo("[BehaviorList Postload] added %s : %s", behaviorName, behaviorCfg)
         count = count + 1
     end
   end

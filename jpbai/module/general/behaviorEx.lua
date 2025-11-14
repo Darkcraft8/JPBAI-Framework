@@ -71,9 +71,11 @@ function behavior_hitbox(event) -- todo
     if #poly == 2 then damageLine = poly else damagePoly = poly end
     if damagePoly then if #damagePoly == 0 then damagePoly = nil damageLine = {{0, 0}, {0, 0}} end end
     
-    if (event.damageScalingFunction or Weapon) and damage then damage = call({callback = (event.damageScalingFunction or "Weapon.basicDamage"), args = event}) end    
+    if (event.damageScalingFunction or Weapon) and damage then damage = call({callback = (event.damageScalingFunction or "Weapon.basicDamage"), args = event}) end
     if knockback and event.directionalKnockback then knockback = knockbackMomentum(knockback, event.knockbackMode, (self.aimAngle or 0), self.aimDirection or 0) end
     local damageSource = {
+        priority = event.priority or 0,
+        duration = event.duration or event.timeout or 0.1,
         poly = damagePoly,
         line = damageLine,
         damage = damage,
@@ -88,9 +90,8 @@ function behavior_hitbox(event) -- todo
         damageRepeatTimeout = event.timeout or 0.1
     }
     if not self.damageSources then self.damageSources = {} end
-    if not self.damageSourcesTimer then self.damageSourcesTimer = {} end
-    self.damageSources[behaviorName] = damageSource
-    self.damageSourcesTimer[behaviorName] = event.duration or event.timeout or 0.1
+    if not self.damageSources[behaviorName] then self.damageSources[behaviorName] = {} end
+    table.insert(self.damageSources[behaviorName], damageSource)
 end
 
 function behavior_monster(event) -- function to spawn monster based on weapon level or scaling function
@@ -108,11 +109,13 @@ function behavior_monster(event) -- function to spawn monster based on weapon le
     local pos = spawnPosition(event)
 
     monsterCfg.parentEntity = entity.id()
-    local monsterId, message = pcall(world.spawnMonster(event.type, pos, monsterCfg))
+    local monsterId = world.spawnMonster(event.type, pos, monsterCfg)
     --sb.logInfo("%s", pos) sb.logInfo("%s", event.type) sb.logInfo("%s", monsterCfg)
     --sb.logInfo("spawnMonster | %s, %s", status, message)
     if monsterId and event.trackMonster then
-        activeItem.setInstanceValue(event.trackMonster, monsterId)
+        setStorage(event.trackMonster, monsterId)
+    else
+        return monsterId
     end
     if not message then sb.logError("[JPBAI Framework] monster | %s", message) end
 end
@@ -128,8 +131,11 @@ function behavior_projectile(event)
     end
     --sb.logInfo("power 2nd %s", projectileCfg.power)
     for i = 1, (event.count or 1) do
-        local direction = aimVector((event.inaccuracy or 0))
+        local direction = event.direction or aimVector((event.inaccuracy or 0))
         local projectileId = world.spawnProjectile(event.type, pos, activeItem.ownerEntityId(), direction, event.posRelativeToOwner, projectileCfg)
+        if i == (event.count or 1) then
+            return projectileId
+        end
     end
 end
 
@@ -149,7 +155,7 @@ function behaviorEx.callEntity(trackedEntity, functionName, variable)
         local entityId = config.getParameter(trackedEntity)
         if functionName and variable and entityId then
             if world.entityExists(entityId) then
-                world.callScriptedEntity(entityId, functionName, variable)
+                return world.callScriptedEntity(entityId, functionName, variable)
             end
         end
     end
@@ -197,7 +203,11 @@ function knockbackMomentum(knockback, knockbackMode, aimAngle, aimDirection)
     knockbackMode = knockbackMode or "aim"
   
     if type(knockback) == "table" then
-      return knockback
+        if knockbackMode == "facing" then
+            return {aimDirection * knockback[1], knockback[2]}
+        else
+            return knockback
+        end
     end
   
     if knockbackMode == "facing" then
@@ -224,10 +234,25 @@ end -- Todo
 
 function behaviorEx.damageAreaUpdate(dt)
     local effectiveSources = {}
-    for name, timer in pairs(self.damageSourcesTimer or {}) do 
-        if timer > 0 then self.damageSourcesTimer[name] = timer - dt end
-        if timer <= 0 then self.damageSourcesTimer[name] = nil self.damageSources[name] = nil else table.insert(effectiveSources, self.damageSources[name]) end
+    for name, _ in pairs(self.damageSources or {}) do
+        local remove = true
+        for id, source in pairs(self.damageSources[name] or {}) do
+            if source.duration > 0 then self.damageSources[name][id]["duration"] = source.duration - dt end
+            if source.duration <= 0 then 
+                self.damageSources[name][id] = nil 
+            else 
+                table.insert(effectiveSources, source)
+                remove = false
+            end
+        end
+        if remove then
+            self.damageSources[name] = nil 
+        end
     end
+    
+    table.sort(effectiveSources, function(a,b)
+        return a.priority > b.priority
+    end)
     activeItem.setItemDamageSources(jarray(effectiveSources or {}))
 end
 -----------------------------------------------------------------------------------
@@ -239,15 +264,16 @@ function spawnPosition(cfg)
     local aimAngle, aimDirection = activeItem.aimAngleAndDirection(self.fireOffset[2], activeItem.ownerAimPosition())
     local ownerPos = entity.position()
     local handPos = activeItem.handPosition()
-
+    local rotation = mcontroller.rotation()
+    
     if originPos == "ownerHandPos" then
-        return vec2.add(mcontroller.position(), activeItem.handPosition())
+        return vec2.add(mcontroller.position(), vec2.rotate(activeItem.handPosition(), rotation))
     elseif originPos == "ownerPosFaceDirection" then
-        return vec2.mul(vec2.add(ownerPos, posOffset or {0,0}), {aimDirection, 1})
+        return vec2.add(ownerPos, vec2.mul(posOffset or {0,0}, {aimDirection, 1}))
     elseif originPos == "ownerPos" then
         return vec2.add(ownerPos, posOffset or {0,0})
     elseif originPos == "fireOffset" then
-        return vec2.add(mcontroller.position(), activeItem.handPosition(posOffset or {0, 0}))
+        return vec2.add(mcontroller.position(), vec2.rotate(activeItem.handPosition(posOffset or {0, 0}), rotation))
     elseif originPos == "cursor" then
         return vec2.add(activeItem.ownerAimPosition(), posOffset or {0,0})
     end

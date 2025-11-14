@@ -178,8 +178,8 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
     if self.stance.backArmFrame ~= nil then activeItem.setBackArmFrame(self.stance.backArmFrame) end
     if self.stance.holdingItem ~= nil then activeItem.setHoldingItem(self.stance.holdingItem) end
     if self.stance.twoHanded ~= nil then activeItem.setTwoHandedGrip(self.stance.twoHanded) end
-
-    updateAim(self.stance.allowRotate, self.stance.allowFlip)
+    
+    updateAim(self.stance.allowRotate, self.stance.allowFlip, nil, true)
     if self.stance.invertDirection then
         activeItem.setFacingDirection(-1 * (self.aimDirection or 0))
     end
@@ -205,14 +205,26 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
     end
 end
 
-function updateAim(allowRotate, allowFlip)
+function updateAim(allowRotate, allowFlip, aimSpeed, initAtAimAngle)
   allowRotate = allowRotate or self.stance.allowRotate
   allowFlip = allowFlip or self.stance.allowFlip
-
-  local aimAngle, aimDirection = activeItem.aimAngleAndDirection(self.fireOffset[2], activeItem.ownerAimPosition())
+  aimSpeed = aimSpeed or self.stance.aimSpeed
+  --aimSpeed = 0.5
+  local aimAngle, aimDirection = activeItem.aimAngleAndDirection((self.stance.aimVerticalOffset or {})[2] or 0, activeItem.ownerAimPosition())
   local rotation = math.abs(mcontroller.rotation())
   if allowRotate then
-    self.aimAngle = aimAngle
+    if aimSpeed then
+        if not initAtAimAngle then
+            local distance = ((aimAngle - self.aimAngle) * (aimSpeed * script.updateDt())) 
+            sb.setLogMap("0| Behav Stance : updateAim", "aimSpeed %s, prevAimAngle = %s, curaimAngle = %s, distance %s", aimSpeed, self.aimAngle, aimAngle, distance)
+            self.aimAngle = self.aimAngle + distance
+        else
+            self.aimAngle = aimAngle
+        end
+    else
+        self.aimAngle = aimAngle
+    end
+
   end
   aimAngle = self.aimAngle + util.toRadians(self.armRotation)
 
@@ -232,21 +244,6 @@ end
 function updateStance(dt) -- added updateAim in so that rotation and flip get updated
     if self.stance then
         updateAim(self.stance.allowRotate, self.stance.allowFlip)
-        --[[if self.stance.allowRotate then
-            local rotation = math.abs(mcontroller.rotation())
-            sb.setLogMap("1| stance", "aimAngle %s, mc.rotation %s, %s", self.aimAngle, rotation, self.aimAngle - (rotation))
-            self.aimAngle = self.aimAngle - (rotation)
-            activeItem.setArmAngle(self.aimAngle)
-        end]]
-        if self.stance.handGrip == "wrap" then
-            activeItem.setOutsideOfHand(isFrontHand())
-        elseif self.stance.handGrip == "embed" then
-            activeItem.setOutsideOfHand(not isFrontHand())
-        elseif self.stance.handGrip == "outside" then
-            activeItem.setOutsideOfHand(true)
-        elseif self.stance.handGrip == "inside" then
-            activeItem.setOutsideOfHand(false)
-        end
         
         if self.coroutine.lerp then
             local status, error = coroutine.resume(self.coroutine.lerp, dt)
@@ -258,27 +255,29 @@ function updateStance(dt) -- added updateAim in so that rotation and flip get up
             if self.stance.armAngularVelocity ~= nil then self.armRotation = self.armRotation + self.stance.armAngularVelocity end
             if sb.printJson(self.stance.transformations or {}) ~= "{}" then end
             for group, transform in pairs(self.stance.transformations or {}) do
-                local velocity = copy(transform.velocity)
-                local translate, rotate, scale, rotationCenter
-                if velocity then
-                    translate, rotate, scale, rotationCenter = copy(velocity.translate), copy(velocity.rotate), copy(velocity.scale), copy(transform.rotationCenter) or {0, 0}
-                end
-
-                if transform.inherit then
-                    local inheritedValue = self.stance.transformations[transform.inherit]
-                    if inheritedValue.velocity then
-                        if not velocity then velocity = jarray() end
-                        --sb.logInfo("inheritedValue.velocity %s", inheritedValue.velocity)
-                        if inheritedValue.velocity.translate then translate = vec2.add(inheritedValue.velocity.translate or {0, 0}, translate or {0, 0}) end
-                        if inheritedValue.velocity.rotate then rotate = (inheritedValue.velocity.rotate or 0) + (rotate or 0) end
-                        if inheritedValue.velocity.scale then scale = (inheritedValue.velocity.scale or 0) + (scale or 0) end
+                if (transform.inherit or transform.velocity) then 
+                    local velocity = copy(transform.velocity)
+                    local translate, rotate, scale, rotationCenter
+                    if velocity then
+                        translate, rotate, scale, rotationCenter = copy(velocity.translate), copy(velocity.rotate), copy(velocity.scale), copy(transform.rotationCenter) or {0, 0}
                     end
-                end
-                if translate or rotate or scale then
-                    --sb.logInfo("%s, %s, %s, %s", translate, rotate, scale, rotationCenter)
-                    if translate then animator.translateTransformationGroup(group, vec2.mul(translate, dt)) end
-                    if velocity.rotate then animator.rotateTransformationGroup(group, util.toRadians((velocity.rotate * dt)), rotationCenter) end
-                    if scale then animator.scaleTransformationGroup(group, scale * dt) end
+
+                    if transform.inherit then
+                        local inheritedValue = self.stance.transformations[transform.inherit]
+                        if inheritedValue.velocity then
+                            if not velocity then velocity = jarray() end
+                            --sb.logInfo("inheritedValue.velocity %s", inheritedValue.velocity)
+                            if inheritedValue.velocity.translate then translate = vec2.add(inheritedValue.velocity.translate or {0, 0}, translate or {0, 0}) end
+                            if inheritedValue.velocity.rotate then rotate = (inheritedValue.velocity.rotate or 0) + (rotate or 0) end
+                            if inheritedValue.velocity.scale then scale = (inheritedValue.velocity.scale or 0) + (scale or 0) end
+                        end
+                    end
+                    if translate or rotate or scale then
+                        --sb.logInfo("%s, %s, %s, %s", translate, rotate, scale, rotationCenter)
+                        if translate then animator.translateTransformationGroup(group, vec2.mul(translate, dt)) end
+                        if velocity.rotate then animator.rotateTransformationGroup(group, util.toRadians((velocity.rotate * dt)), rotationCenter) end
+                        if scale then animator.scaleTransformationGroup(group, scale * dt) end
+                    end
                 end
             end
             if self.stance.player then
@@ -387,7 +386,9 @@ function lerpStance(dt)
         end
         
         local aimAngle = activeItem.aimAngleAndDirection(self.fireOffset[2], activeItem.ownerAimPosition())
+        local rotation = math.abs(mcontroller.rotation())
         armAngle = 0
+        
         armProgress = util.toRadians(interp.linear(progress, from.armRotation or 0, to.armRotation or 0) )
         aimProgress = interp.linear(progress, fromAimAngle, aimAngle or 0)
         
@@ -398,6 +399,12 @@ function lerpStance(dt)
         else
             armAngle = armProgress
         end
+        sb.setLogMap("1| Behav Stance : Lerp", "Rotation = %s, armAngle = %s, %s", rotation, armAngle, armAngle - rotation)
+        if (from.allowRotate or to.allowRotate) then
+            armAngle = armAngle - rotation
+        end
+        
+
         activeItem.setArmAngle(armAngle)
         if progress > 0.5 then 
             if to.frontArmFrame ~= nil then activeItem.setFrontArmFrame(to.frontArmFrame) end
@@ -420,8 +427,12 @@ function lerpStance(dt)
 
         progress = math.min(1.0, progress + (dt / from.duration))
     end)
+    local rotation = math.abs(mcontroller.rotation())
     self.armRotation = to.armRotation or 0
-    if tostring.resetAim then
+    if to.allowRotate then
+        self.armRotation = self.armRotation + rotation
+    end
+    if to.resetAim then
         self.aimAngle = 0
     elseif to.aimAngle then
         self.aimAngle = to.aimAngle

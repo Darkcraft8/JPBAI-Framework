@@ -14,4 +14,4 @@
 --
 
 
---activeItem.callOtherHandScript()
+--activeItem.callOtherHandScript(call, eventCfg)

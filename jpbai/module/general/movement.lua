@@ -3,9 +3,10 @@ local movementModifiers = {}
 local movementParameters = {}
 
 function movementControl.init()
-    --movementParameters = mcontroller.baseParameters()
-    
+    --movementControl.resetParameters()
+    --movementControl.resetModifiers()
 end
+
 function movementControl.update(dt)
     if movementModifiers then
         mcontroller.controlModifiers(movementModifiers or {})
@@ -64,7 +65,6 @@ end
 function movementControl.resetParameters()
     movementParameters = nil
 end
-
 function movementControl.setModifiers(ActorMovementParameters)
     if not movementModifiers then movementModifiers = {} end
     movementModifiers = sb.jsonMerge(movementModifiers, ActorMovementParameters)
@@ -73,6 +73,7 @@ end
 function movementControl.resetModifiers()
     movementModifiers = nil
 end
+
 --[[ [controlModifiers Possible Args]
     movementSuppressed
     facingSuppressed

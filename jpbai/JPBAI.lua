@@ -3,6 +3,7 @@ require "/scripts/vec2.lua"
 require "/scripts/status.lua"
 -- Json Powered Behavioral Active Item >:D
 -- or JPBAI for short
+-- Can also be called behavioral items
 -- a bunch of list for frequently called func
 initFunc = {
     "activeItemCfg",
@@ -50,7 +51,12 @@ function init()
             end
         end
     end
+    
+    for _, scriptPath in ipairs(config.getParameter("pRequire", {})) do 
+        pRequire(scriptPath)
+    end
     overrideTech(true)
+    storage = config.getParameter("scriptStorage", {})
 end
 
 function update(dt, fireMode, isShiftHeld, currentMove)
@@ -88,6 +94,7 @@ function uninit()
     end
     behaviorEvents(config.getParameter("uninitEvent", {}))
     overrideTech(false)
+    activeItem.setInstanceValue("scriptStorage", storage)
 end
 
 function activeItemCfg()
@@ -128,21 +135,6 @@ function configInit()
     --sb.logInfo("Config Override Initialisation Done\nconfig.rootParameter | Vanilla getParameter\nconfig.getParameter  | getParameter from a list that can get updated using setParameter")
 end
 
-function segmentPath(path)
-    local pathSegment = {}
-    if string.find(path, "[.]") then
-    while string.find(path, "[.]") do
-        local dotNumber = string.find(path, "[.]")
-        if dotNumber then
-        table.insert(pathSegment, string.sub(path, 1, dotNumber - 1))
-        path = string.sub(path, dotNumber + 1, string.len(path))
-        end
-    end
-    end
-    table.insert(pathSegment, path)
-    return pathSegment
-end
-
 function call(eventCfg) -- because whe can't directly do _ENV[funcGroup.Func]()
     --sb.logInfo("eventCfg %s", eventCfg)
     if type(eventCfg) == "string" then
@@ -155,14 +147,26 @@ function call(eventCfg) -- because whe can't directly do _ENV[funcGroup.Func]()
     else
         callback = findCallback(tostring(eventCfg.callback))
         if callback then
+            local args = {}
+            for i, arg in pairs(eventCfg.args) do
+                args[i] = checkStorage(arg)
+            end
             if type(eventCfg.args) == "table" then
+                local result
                 if eventCfg.args[1] then
-                    return callback(table.unpack(eventCfg.args))
+                    --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), sb.printJson(args))
+                    result = callback(table.unpack(args))
                 else
-                    return callback(eventCfg.args)
+                    --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), eventCfg.args)
+                    result = callback(args)
                 end
+                if eventCfg.storage then
+                    setStorage(eventCfg.storage, result)
+                end
+                return result
             else
-                return callback(eventCfg.args)
+                --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), eventCfg.args)
+                return callback(args)
             end
         else
             sb.logError("[JPBAI Framework] Function %s Couldn't be found", eventCfg.callback)
@@ -182,19 +186,8 @@ function findCallback(functionPath, bypassBlacklist, bypassBridge)
     end -- swap function with the given variant... primarily for safety consern or compatibility
 
     local findCallback = function(path)
-        local pathSegment = {}
-        if string.find(path, "[.:]") then
-          while string.find(path, "[.:]") do
-            local dotNumber = string.find(path, "[.:]")
-            if dotNumber then
-              table.insert(pathSegment, string.sub(path, 1, dotNumber - 1))
-              path = string.sub(path, dotNumber + 1, string.len(path))
-            end
-          end
-        end
-        table.insert(pathSegment, path)
         local currentResult = nil
-        for _, string in ipairs(pathSegment) do
+        for _, string in ipairs(segmentPath(path)) do
           if not currentResult then 
             currentResult = _ENV[string]
           else
@@ -215,10 +208,59 @@ end
 function playerInteractBridge(interactionType, paneCfg, sourceEntityId)
     if not interactionType or not paneCfg then return end
 
-    if type(paneCfg) == "string" then paneCfg = root.assetJson(paneCfg) end
-    if paneCfg.dismissable ~= false and playerInteractTimer <= 0 then player.interact(interactionType, paneCfg) playerInteractTimer = 0.5 end -- to prevent bad actor from giving config that can't be dismissed
+    --if type(paneCfg) == "string" then paneCfg = root.assetJson(paneCfg) end -- was used to make sure that pane where dismissable...
+    if playerInteractTimer <= 0 then player.interact(interactionType, paneCfg) playerInteractTimer = 0.5 end -- just so that it doesn't open a insane amount of pane
 end
 
+function segmentPath(path)
+    local pathSegment = {}
+    if string.find(path, "[.:]") then
+      while string.find(path, "[.:]") do
+        local dotNumber = string.find(path, "[.:]")
+        if dotNumber then
+          table.insert(pathSegment, string.sub(path, 1, dotNumber - 1))
+          path = string.sub(path, dotNumber + 1, string.len(path))
+        end
+      end
+    end
+    table.insert(pathSegment, path)
+    return pathSegment
+end
+
+function checkStorage(path)
+    if type(path) == "string" then
+        if string.find(path, "storage:") == 1 then
+            path = string.gsub(path, "storage:", "")
+            if storage[path] then return storage[path] else return nil end
+            --[[
+            local currentResult = nil
+            for _, string in ipairs(segmentPath(path)) do
+                if not currentResult then 
+                    currentResult = storage[string]
+                else
+                    currentResult = currentResult[string]
+                end
+            end
+            if currentResult ~= nil then
+                return currentResult
+            else
+                return nil
+            end
+            --]]
+        end
+    end
+    
+    return path
+end
+
+function setStorage(name, value)
+    storage[name] = value
+end
+
+function insertInStorageTable(name, value)
+    if type(storage[name]) ~= "table" then storage[name] = {} end
+    table.insert(storage[name], value)
+end
 -- tech interaction
 local playerTech = {}
 function overrideTech(bool)
@@ -244,5 +286,14 @@ function overrideTech(bool)
                 player.equipTech(techName)
             end
         end
+    end
+end
+
+function pRequire(scriptPath)
+    if not scriptPath then return end
+    if pcall(require, scriptPath) then
+        require(scriptPath)
+    else
+        sb.logError("Couldn't Load Script %s, file doesn't exist", scriptPath)
     end
 end

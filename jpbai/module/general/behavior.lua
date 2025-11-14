@@ -61,8 +61,8 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                     triggerEvent = false
                 end
                 if triggerEvent and not self.behaviorPeriodicEventLock[behaviorName] then
-                    behaviorEvent(e)
-                    if e['repeat'] then
+                    behaviorEvents({e['event']})
+                    if e['repeat'] ~= false then
                         self.behaviorPeriodicEventTimer[behaviorName] = dt
                     else
                         self.behaviorPeriodicEventLock[behaviorName] = true
@@ -106,8 +106,14 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                             if self.behaviors[behavior] then
                                 if debugMode then sb.logInfo("--[ behavior %s", behavior) end
                                 for k, v in pairs(p.require or {}) do
-                                    if player then -- player specific check
+                                    if player then -- player specific check(s)
                                         if k == "inSwapSlot" and not player.swapSlotItem() then
+                                            if useBehav then
+                                                useBehav = false
+                                            end  
+                                        end
+                                    else
+                                        if k == "inSwapSlot" then
                                             if useBehav then
                                                 useBehav = false
                                             end  
@@ -203,7 +209,7 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                                 if debugMode then sb.logInfo("--] require %s", p.require) end
                             else
                                 useBehav = false
-                                sb.logInfo("Behavior %s doesn't exist!!!")
+                                sb.setLogMap("[JPBAI] Item "..item.name()..":"..item.friendlyName().."-"..activeItem.hand().."behav-"..behavior, "Behavior %s doesn't exist!!!")
                             end
                             
                             if useBehav == true then
@@ -411,7 +417,7 @@ end
 
 function behaviorEvent(eventCfg, notification) -- Handle the Different Event kind|Type
     if eventCfg.event then
-        if not eventCfg.event.includeSelfDamage and notification then 
+        if (not eventCfg.event.includeSelfDamage) and notification then 
             if notification.sourceEntityId == notification.targetEntityId then return end
         end
         if string.lower(eventCfg.event) == "monster" then behavior_monster(eventCfg) return end
@@ -460,9 +466,10 @@ end
 -- Event
     function inflictedDamage(notifications)
         --sb.logInfo("damageDealt %s", notifications)
-        if self.behavior["eventOnDamageDealt"] then
-            for _, notification in pairs(notifications) do
-                behaviorEvents(self.behavior["eventOnDamageDealt"], notification)
+        for _, notification in pairs(notifications) do
+            if self.behavior["eventOnDamageDealt"] then behaviorEvents(self.behavior["eventOnDamageDealt"], notification) end
+            if string.lower(notification.hitType) == "kill" then
+                if self.behavior["eventOnKill"] then behaviorEvents(self.behavior["eventOnKill"], notification) end
             end
         end
     end
@@ -592,11 +599,19 @@ end
         for _, func in ipairs(callbacks or {}) do 
             local args = nil
             local callback = func
+			local inverse = false
             if type(func) == "table" then
                 callback = func.callback
                 args = func.args
+				inverse = func.inverse
             end
-            if funcReturned then funcReturned = call({callback = callback, args = args}) end
+            if funcReturned then
+				if inverse then
+					funcReturned = not call({callback = callback, args = args}) 
+				else
+					funcReturned = call({callback = callback, args = args}) 
+				end
+			end
             if not funcReturned then return funcReturned end
         end
         return funcReturned
