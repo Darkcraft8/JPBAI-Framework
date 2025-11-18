@@ -1,5 +1,4 @@
-require "/scripts/util.lua"
-require "/scripts/vec2.lua"
+require "/scripts/poly.lua"
 require "/scripts/status.lua"
 -- Json Powered Behavioral Active Item >:D
 -- or JPBAI for short
@@ -17,7 +16,8 @@ updateFunc = { -- just so that incase a script has a update function it can be a
 }
 uninitFunc = {
     "uninitBehavior",
-    "uninitStance"
+    "uninitStance",
+    "movementControl.uninit"
 }
 
 require "/jpbai/module/general/stance.lua"
@@ -148,22 +148,28 @@ function call(eventCfg) -- because whe can't directly do _ENV[funcGroup.Func]()
         callback = findCallback(tostring(eventCfg.callback))
         if callback then
             local args = {}
-            for i, arg in pairs(eventCfg.args) do
+            for i, arg in pairs(eventCfg.args or {}) do
                 args[i] = checkStorage(arg)
             end
             if type(eventCfg.args) == "table" then
                 local result
                 if eventCfg.args[1] then
                     --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), sb.printJson(args))
-                    result = callback(table.unpack(args))
+                    result = table.pack(callback(table.unpack(args)))
                 else
                     --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), eventCfg.args)
-                    result = callback(args)
+                    result = table.pack(callback(args))
                 end
                 if eventCfg.storage then
-                    setStorage(eventCfg.storage, result)
+                    if type(eventCfg.storage) == "table" then
+                        for i, a in pairs(result or {}) do
+                            setStorage(eventCfg.storage[i], result)
+                        end
+                    else
+                        setStorage(eventCfg.storage, table.unpack(result))
+                    end
                 end
-                return result
+                return table.unpack(result)
             else
                 --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), eventCfg.args)
                 return callback(args)
@@ -296,4 +302,9 @@ function pRequire(scriptPath)
     else
         sb.logError("Couldn't Load Script %s, file doesn't exist", scriptPath)
     end
+end
+
+function worldCallScriptedEntity(entityId, ...)
+    if not entityId then return end
+    if world.entityExists(entityId) then return world.callScriptedEntity(entityId, ...) end
 end

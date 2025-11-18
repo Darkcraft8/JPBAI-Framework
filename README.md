@@ -3,7 +3,7 @@ A bundle of script that implement a behavior/state machine for activeItem
 
 ### Table of Content
 - [**`Requirement`**](#Required)
-- [**`Documentation`**](#Required)
+- [**`Documentation`**](#Documentation)
 ---
 
 #### Requirement <a name="Required"></a>

@@ -31,6 +31,10 @@ local function inheritResult(stance)
     end
 end
 
+function aimDirection()
+    return self.aimDirection > 0
+end
+
 function setStance(stanceName) -- replace and expend on the old version in stances.lua
     self.stanceName = stanceName
     status.setPrimaryDirectives("")
@@ -81,12 +85,6 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
         --if type(value) == "number" then self.lightFlashDuration[lightName] = value end
     end
     
-    if self.stance.player then
-        if self.stance.player.rotate then self.stancePlayerRotation = copy(self.stance.player.rotate) mcontroller.setRotation(util.toRadians(self.stancePlayerRotation) * mcontroller.facingDirection()) end
-        if self.stance.player.primaryDirective then status.setPrimaryDirectives(self.stance.player.primaryDirective) end
-    else
-        if self.stancePlayerRotation then self.stancePlayerRotation = 0 mcontroller.setRotation(0) end -- reset player rotation because it can mess with collision
-    end
     -- Convert Weapon.lua weapon rotation and offset to proper Transformation for weapon group, merge if a transformation for weapon group already exist
 		if self.stance.weaponRotation or self.stance.weaponOffset then
 			if debugMode then
@@ -180,18 +178,23 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
     if self.stance.twoHanded ~= nil then activeItem.setTwoHandedGrip(self.stance.twoHanded) end
     
     updateAim(self.stance.allowRotate, self.stance.allowFlip, nil, true)
+    if self.stance.aimDirection then
+        self.aimDirection = self.stance.aimDirection
+    end
     if self.stance.invertDirection then
         activeItem.setFacingDirection(-1 * (self.aimDirection or 0))
     end
 
     if self.stance.user then
-        if self.stance.user.rotate then mcontroller.rotate(util.toRadians(self.stance.user.rotate)) end
-        if self.stance.user.angle then mcontroller.setRotation(self.stance.user.angle) end
         if self.stance.user.resetAngle then mcontroller.setRotation(0) end
+        if self.stance.user.rotate then mcontroller.rotate(util.toRadians(self.stance.user.rotate)) end
+        if self.stance.user.angle then mcontroller.setRotation(util.toRadians(self.stance.user.angle)) end
         if self.stance.user.invertFacingDirection then mcontroller.controlFace(-1 * mcontroller.facingDirection()) end
+        if self.stance.user.primaryDirective then status.setPrimaryDirectives(self.stance.user.primaryDirective) end
 	elseif self.stance.resetUser then 
 		mcontroller.setRotation(0)
 		mcontroller.controlFace(mcontroller.facingDirection())
+        status.setPrimaryDirectives("")
     end
 
     if self.stance.handGrip == "wrap" then
@@ -203,6 +206,7 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
     elseif self.stance.handGrip == "inside" then
         activeItem.setOutsideOfHand(false)
     end
+    self.stancePlayerRotation = 0
 end
 
 function updateAim(allowRotate, allowFlip, aimSpeed, initAtAimAngle)
@@ -253,7 +257,6 @@ function updateStance(dt) -- added updateAim in so that rotation and flip get up
             end
         else
             if self.stance.armAngularVelocity ~= nil then self.armRotation = self.armRotation + self.stance.armAngularVelocity end
-            if sb.printJson(self.stance.transformations or {}) ~= "{}" then end
             for group, transform in pairs(self.stance.transformations or {}) do
                 if (transform.inherit or transform.velocity) then 
                     local velocity = copy(transform.velocity)
@@ -280,11 +283,11 @@ function updateStance(dt) -- added updateAim in so that rotation and flip get up
                     end
                 end
             end
-            if self.stance.player then
-				if self.stance.player.primaryDirective then status.setPrimaryDirectives(self.stance.player.primaryDirective) end
-                if self.stance.player.velocity then 
-                    if self.stance.player.velocity.rotate then
-                        self.stancePlayerRotation = self.stancePlayerRotation + (self.stance.player.velocity.rotate * dt)
+            if self.stance.user then
+				if self.stance.user.primaryDirective then status.setPrimaryDirectives(self.stance.user.primaryDirective) end
+                if self.stance.user.velocity then 
+                    if self.stance.user.velocity.rotate then
+                        self.stancePlayerRotation = (self.stancePlayerRotation or 0) + (self.stance.user.velocity.rotate * dt)
                         mcontroller.setRotation(util.toRadians(self.stancePlayerRotation) * mcontroller.facingDirection())
                     end
                 end

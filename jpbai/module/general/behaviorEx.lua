@@ -60,19 +60,20 @@ end
 -- Events
 function behavior_hitbox(event) -- todo
     local hitboxInfo = event.hitbox or {}
-    local poly = animator.partPoly(hitboxInfo.partName, hitboxInfo.polyName or "damageArea")
+    local _poly = animator.partPoly(hitboxInfo.partName, hitboxInfo.polyName or "damageArea")
     local damageLine, damagePoly
     local knockback = event.knockback or 0
     local damage = event.baseDamage or 0
-    if not poly then
+    if not _poly then
         sb.logError("[JPBAI Framework] behavior_hitbox | poly not found for %s | %s : %s", hitboxInfo, hitboxInfo.partName, hitboxInfo.polyName)
         --if player then if player.say then player.say(string.format("^cyan;[JPBAI Framework] behavior_hitbox | poly not found for %s : %s", hitboxInfo.partName, hitboxInfo.polyName)) end end
     return end
-    if #poly == 2 then damageLine = poly else damagePoly = poly end
+    if #_poly == 2 then damageLine = _poly else damagePoly = _poly end
     if damagePoly then if #damagePoly == 0 then damagePoly = nil damageLine = {{0, 0}, {0, 0}} end end
-    
+
     if (event.damageScalingFunction or Weapon) and damage then damage = call({callback = (event.damageScalingFunction or "Weapon.basicDamage"), args = event}) end
     if knockback and event.directionalKnockback then knockback = knockbackMomentum(knockback, event.knockbackMode, (self.aimAngle or 0), self.aimDirection or 0) end
+    
     local damageSource = {
         priority = event.priority or 0,
         duration = event.duration or event.timeout or 0.1,
@@ -254,6 +255,11 @@ function behaviorEx.damageAreaUpdate(dt)
         return a.priority > b.priority
     end)
     activeItem.setItemDamageSources(jarray(effectiveSources or {}))
+end
+
+function behaviorEx.resetDamageArea()
+    self.damageSources = {}
+    activeItem.setItemDamageSources(jarray(self.damageSources or {}))
 end
 -----------------------------------------------------------------------------------
 

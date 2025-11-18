@@ -1,8 +1,14 @@
 function initBehavior()
     self.behaviors = config.getParameter("behaviors", {})
     self.behaviorPaths = config.getParameter("behaviorPaths", {})
+    if type(self.behaviors) == "string" then 
+        if pcall(root.assetJson, self.behaviors) then
+            self.behaviors = root.assetJson(self.behaviors) or {}
+        else
+            self.behaviors = {}
+        end
+    end
     behaviorPathBuild()
-    if type(self.behaviors) == "string" then self.behaviors = root.assetJson(self.behaviors) or {} end
     self.behavior = {}
     self.behaviorEvents = config.getParameter("behaviorEvents", {}) -- event can be placed in this table to be directly referred to instead of copying in each behavior
     self.behaviorCooldown = {}
@@ -31,13 +37,15 @@ local lastPlayerInput = {
 }
 function behaviorPathBuild()
     if debugMode then sb.logInfo("[JPBAI] Building Behaviors Path") end
-    for behavName, behavParam in pairs(self.behaviors) do
+    for behavName, behavParam in pairs(self.behaviors or {}) do
         if debugMode then sb.logInfo("Building Behaviors Path for %s", behavName) end
-        for i, p in ipairs(behavParam["possibleOutcome"]) do
+        for i, p in ipairs(behavParam["possibleOutcome"] or {}) do
             if type(p) == "string" then 
                 if debugMode then sb.logInfo("Fetching Behaviors Path for %s, outcome n'%s named %s", behavName, i, p) end
                 self.behaviors[behavName]["possibleOutcome"][i] = self.behaviorPaths[p]
                 if debugMode then sb.logInfo("path now %s", self.behaviors[behavName]["possibleOutcome"][i]) end
+            else
+                
             end
         end
     end
@@ -50,22 +58,23 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
         self.inflictedDamage_Listener:update()
         self.inflictedHits_Listener:update()
         self.damageTaken_Listener:update()
-
+        
         if self.behavior["periodicEvent"] then
             for i, e in ipairs(self.behavior["periodicEvent"]) do 
                 local triggerEvent = true
-                if self.behaviorPeriodicEventTimer[behaviorName] then
-                    triggerEvent = (self.behaviorPeriodicEventTimer[behaviorName] > e.time)
+                if self.behaviorPeriodicEventTimer[behaviorName][i] then
+                    triggerEvent = (self.behaviorPeriodicEventTimer[behaviorName][i] > e.time)
                 else
-                    self.behaviorPeriodicEventTimer[behaviorName] = dt
+                    self.behaviorPeriodicEventTimer[behaviorName][i] = dt
                     triggerEvent = false
                 end
-                if triggerEvent and not self.behaviorPeriodicEventLock[behaviorName] then
-                    behaviorEvents({e['event']})
+                if triggerEvent and not self.behaviorPeriodicEventLock[behaviorName][i] then
+                    if e['event'].event then e['event'] = {e['event']} end
+                    behaviorEvents(e['event'])
                     if e['repeat'] ~= false then
-                        self.behaviorPeriodicEventTimer[behaviorName] = dt
+                        self.behaviorPeriodicEventTimer[behaviorName][i] = dt
                     else
-                        self.behaviorPeriodicEventLock[behaviorName] = true
+                        self.behaviorPeriodicEventLock[behaviorName][i] = true
                     end
                 end
             end
@@ -83,7 +92,7 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
     -- Timer
         local aCooldownFinished = behaviorTimer(self.behaviorCooldown, "decrease")
         local aWaitFinished = behaviorTimer(self.behaviorCurrentTime, "increase", self.behaviorTime)
-        behaviorTimer(self.behaviorPeriodicEventTimer, "increase")
+        behaviorTimer(self.behaviorPeriodicEventTimer[behaviorName], "increase")
     --
 
     local curPlayerInput = {
@@ -375,11 +384,20 @@ function shouldCheckBehavior(dt, curPlayerInput, lastPlayerInput, aCooldownFinis
 end
 
 function setBehavior(newBehaviorName)
+    if not newBehaviorName then return end
+    if not self.behaviors[newBehaviorName] then return end
     if debugMode then sb.logInfo("--[ newBehaviorName %s", newBehaviorName) end
     if self.behavior["eventOnUninit"] then behaviorEvents(self.behavior["eventOnUninit"]) end
     resetBehavior()
     behaviorName = newBehaviorName
     self.behavior = self.behaviors[behaviorName]
+    self.behaviorPeriodicEventTimer[behaviorName] = {}
+    self.behaviorPeriodicEventLock[behaviorName] = {}
+    if self.behavior["periodicEvent"] then
+        for i, e in ipairs(self.behavior["periodicEvent"]) do 
+            self.behaviorPeriodicEventTimer[behaviorName][i] = -(e.delay or 0)
+        end
+    end
     self.eventDone = {}
     if self.behavior["eventOnStance"] then self.eventDone.stance = {} end
     if self.behavior["eventOnInit"] then behaviorEvents(self.behavior["eventOnInit"]) end

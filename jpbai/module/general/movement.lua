@@ -3,8 +3,15 @@ local movementModifiers = {}
 local movementParameters = {}
 
 function movementControl.init()
-    --movementControl.resetParameters()
-    --movementControl.resetModifiers()
+    movementControl.resetParameters()
+    movementControl.resetModifiers()
+    mcontroller.setRotation(0)
+end
+
+function movementControl.uninit()
+    movementControl.resetParameters()
+    movementControl.resetModifiers()
+    mcontroller.setRotation(0)
 end
 
 function movementControl.update(dt)
@@ -51,7 +58,16 @@ function movementControl.aimTranslation(vec, verticalOffset, checkForObstacle, o
         end
     end
     --mcontroller.setPosition(new)
-    local resolvedCollision = world.resolvePolyCollision(mcontroller.boundBox(), vec2.add(new, offset or {0, 2.5}), maxCorrection or 3, {"Block", "Dynamic", "Null", "Slippery"})
+    local resolvedCollision = world.resolvePolyCollision(mcontroller.collisionPoly(), vec2.add(new, offset or {0, 2.5}), maxCorrection or 3, {"Block", "Dynamic", "Null", "Slippery"})
+    if resolvedCollision then
+        mcontroller.setPosition(resolvedCollision)
+    end
+end
+
+function movementControl.translatePos(pos, maxCorrection)
+    if not pos then return end
+    local new = vec2.add(mcontroller.position(), pos)
+    local resolvedCollision = world.resolvePolyCollision(mcontroller.collisionPoly(), new, maxCorrection or 3, {"Block", "Dynamic", "Null", "Slippery"})
     if resolvedCollision then
         mcontroller.setPosition(resolvedCollision)
     end
@@ -72,6 +88,12 @@ end
 
 function movementControl.resetModifiers()
     movementModifiers = nil
+end
+
+function movementControl.multVelocity(x, y)
+    local velocity = mcontroller.velocity()
+    if x then mcontroller.setXVelocity(velocity[1] * x) end
+    if y then mcontroller.setYVelocity(velocity[2] * y) end
 end
 
 --[[ [controlModifiers Possible Args]

@@ -15,7 +15,7 @@ function Weapon_uninit() end
 function Weapon.update(dt) 
     if debugHitScan then
         for i, pos in pairs(debugHitScan or {}) do 
-            world.debugLine(pos[1], pos[2], {255 * (i / debugHitScan), 0, 0})
+            world.debugLine(pos[1], pos[2], {255 * (i / #debugHitScan), 0, 0})
         end
     end
 end
@@ -59,12 +59,10 @@ function Weapon.hitscan(projectileType, projectileParameters, range, spawnPos, i
             })
             local target
             for i = 1, #entList do 
-                if world.entityCanDamage(activeItem.ownerEntityId(), entList[i]) then 
+                if world.entityCanDamage(activeItem.ownerEntityId(), entList[i]) then --need to find a way to reduce the lenght
                     local hitpos = world.entityPosition(entList[i])
                     local mag = world.magnitude(hitpos, endPos)
-
-                    sb.logInfo("%s, %s", endPos, vec2.mul(endPos, mag))
-                    return vec2.sub(endPos, vec2.mul(endPos, mag))
+                    return vec2.add(startPos, vec2.rotate({mag, 0}, vec2.angle(direction)))
                 end
             end
         end
