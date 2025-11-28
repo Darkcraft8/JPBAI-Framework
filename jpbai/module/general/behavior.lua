@@ -1,6 +1,8 @@
+local state = "init"
 function initBehavior()
     self.behaviors = config.getParameter("behaviors", {})
-    self.behaviorPaths = config.getParameter("behaviorPaths", {})
+    self.behaviorEvents = config.getParameter("behaviorEvents", {}) -- event can be placed in this table to be directly referred to instead of copying in each behavior
+    self.behaviorPaths = config.getParameter("behaviorPaths", {}) -- similar to the event one but for outcome
     if type(self.behaviors) == "string" then 
         if pcall(root.assetJson, self.behaviors) then
             self.behaviors = root.assetJson(self.behaviors) or {}
@@ -8,9 +10,23 @@ function initBehavior()
             self.behaviors = {}
         end
     end
+    if type(self.behaviorEvents) == "string" then 
+        if pcall(root.assetJson, self.behaviorEvents) then
+            self.behaviorEvents = root.assetJson(self.behaviorEvents) or {}
+        else
+            self.behaviorEvents = {}
+        end
+    end
+    if type(self.behaviorPaths) == "string" then 
+        if pcall(root.assetJson, self.behaviorPaths) then
+            self.behaviorPaths = root.assetJson(self.behaviorPaths) or {}
+        else
+            self.behaviorPaths = {}
+        end
+    end
     behaviorPathBuild()
     self.behavior = {}
-    self.behaviorEvents = config.getParameter("behaviorEvents", {}) -- event can be placed in this table to be directly referred to instead of copying in each behavior
+    
     self.behaviorCooldown = {}
     self.behaviorTime = {}
     self.behaviorCurrentTime = {}
@@ -18,14 +34,15 @@ function initBehavior()
     self.behaviorPeriodicEventLock = {}
     self.behaviorBlocked = false
     self.initBehavior = config.getParameter("initBehavior", "idle")
-    setBehavior(self.initBehavior)
     
     self.inflictedDamage_Listener = damageListener("inflictedDamage", inflictedDamage)
     self.inflictedHits_Listener = damageListener("inflictedHits", inflictedHits)
     self.damageTaken_Listener = damageListener("damageTaken", damageTaken)
     table.insert(updateFunc, "behaviorUpdate")
     table.insert(updateFunc, "behaviorEx.damageAreaUpdate")
-    
+
+    setBehavior(self.initBehavior)
+    state = "running"
 end
 behaviorName = ""
 local behavCheck = false
@@ -35,6 +52,7 @@ local lastPlayerInput = {
     isShiftHeld = false,
     currentMove = nil
 }
+
 function behaviorPathBuild()
     if debugMode then sb.logInfo("[JPBAI] Building Behaviors Path") end
     for behavName, behavParam in pairs(self.behaviors or {}) do
@@ -53,6 +71,7 @@ function behaviorPathBuild()
 end
 
 function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to lower the amount of time we check for possible outcome
+    if state ~= "running" then return end
     sb.setLogMap("[JPBAI] Item "..item.name()..":"..item.friendlyName().."-"..activeItem.hand(), "BehavName %s", behaviorName)
     -- Event
         self.inflictedDamage_Listener:update()
@@ -451,7 +470,7 @@ function behaviorTimer(list, operation, treshold) -- increase or decrease value 
     local dt = script.updateDt()
     local asAFinishedTimer = false
     if operation == 'decrease' then
-        for n, t in pairs(list) do
+        for n, t in pairs(list or {}) do
             if t > 0 then
                 list[n] = t - dt
             end
@@ -460,7 +479,7 @@ function behaviorTimer(list, operation, treshold) -- increase or decrease value 
             end
         end
     elseif operation == 'increase' then
-        for n, t in pairs(list) do
+        for n, t in pairs(list or {}) do
             if (treshold or {})[n] then
                 if t < treshold[n] then
                     list[n] = t + dt

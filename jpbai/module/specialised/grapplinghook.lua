@@ -14,14 +14,21 @@ function reelTowardEntity(entityId, speed, maxControlForce)
 end
 
 function spawnHookProjectile(projectileType, spawnPositionCfg, direction, trackSource, projectileParameters, inaccuracy, hookToEntity, hookToEnemy)
-    local position = spawnPosition({
+	local position, position2 = 1, 1
+    position = spawnPosition({
         spawnPos = spawnPositionCfg.anchor or "ownerPosFaceDirection",
         spawnOffset = {0, 0}
     })
-    local position2 = spawnPosition({
+    position2 = spawnPosition({
         spawnPos = spawnPositionCfg.anchor or "ownerPosFaceDirection",
         spawnOffset = spawnPositionCfg.offset or {0, 0}
     })
+	if direction then
+		position2 = spawnPosition({
+			spawnPos = spawnPositionCfg.anchor or "ownerPosFaceDirection",
+			spawnOffset = vec2.rotate(spawnPositionCfg.offset or {0, 0}, vec2.angle(direction))
+		})
+	end
     -- collision physic
     local collisionPoint = world.lineCollision(position, position2, {"Block", "Dynamic", "Null", "Slippery"})
     if collisionPoint then collisionPoint = spawnPosition({
@@ -29,23 +36,38 @@ function spawnHookProjectile(projectileType, spawnPositionCfg, direction, trackS
         spawnOffset = {world.magnitude(position, collisionPoint) - 1.25, 0}
     }) end
     -- hurtBox collision
-    local entityList = {}
-    if (hookToEntity or hookToEnemy) then entityList = world.entityLineQuery(position, position2, {withoutEntityId = activeItem.ownerEntityId(), order = "nearest"}) end
-    local entityPoint = nil
-    for _, id in pairs(entityList or {}) do
-        local add = true
-        if hookToEnemy then add = world.entityCanDamage(activeItem.ownerEntityId(), id) end
-        if add then --need to find a way to reduce the lenght
-            local targPos = vec2.add(world.entityPosition(id), {0, 1.29993})
-            local dist = world.distance(world.entityPosition(activeItem.ownerEntityId()), targPos)
-            local mag = world.magnitude(world.entityPosition(activeItem.ownerEntityId()), targPos)
-            entityPoint = spawnPosition({
-                spawnPos = spawnPositionCfg.anchor or "ownerPosFaceDirection",
-                spawnOffset = {mag - 1.25, 0}
-            })
-            break
-        end
-    end
+    local entityPoint
+    if (hookToEntity or hookToEnemy) then -- note that the projectile sticking to the entity has to be done in the projectile.
+		for _, id in pairs(world.entityLineQuery(position, position2, {withoutEntityId = activeItem.ownerEntityId(), order = "nearest"}) or {}) do
+			local add = true
+			if hookToEnemy then add = world.entityCanDamage(activeItem.ownerEntityId(), id) end
+			if add then --need to find a way to reduce the lenght
+				local targPos = vec2.add(world.entityPosition(id), {0, 1.29993})
+				local dist = world.distance(world.entityPosition(activeItem.ownerEntityId()), targPos)
+				local mag = world.magnitude(world.entityPosition(activeItem.ownerEntityId()), targPos)
+				if direction then 
+					entityPoint = spawnPosition({
+						spawnPos = spawnPositionCfg.anchor or "ownerPosFaceDirection",
+						spawnOffset = vec2.rotate({mag - 1.25, 0}, vec2.angle(direction))
+					})
+				else
+					local direction = copy(spawnPositionCfg.offset or {0, 0})
+					if direction[1] ~= 0 then direction[1] = ((direction[1] / direction[1]) * mag) - 1.25 end
+					if direction[2] ~= 0 then direction[2] = ((direction[2] / direction[2]) * mag) - 1.25 end
+					if (direction[1] ~= 0) and (direction[2] ~= 0) then
+						direction = vec2.rotate({mag - 1.25, 0}, vec2.angle(spawnPositionCfg.offset or {0, 0}))
+					end
+					
+					entityPoint = spawnPosition({
+						spawnPos = spawnPositionCfg.anchor or "ownerPosFaceDirection",
+						spawnOffset = direction
+					})
+					
+				end
+				break
+			end
+		end 
+	end
     if collisionPoint and entityPoint then
         local distA, distB = world.magnitude(position, collisionPoint), world.magnitude(position, entityPoint)
         if distA < distB then

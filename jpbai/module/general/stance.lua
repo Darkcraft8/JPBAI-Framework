@@ -168,8 +168,9 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
     
     if self.stance.resetAim then
         self.aimAngle = 0
-    elseif self.stance.aimAngle then
-        self.aimAngle = self.stance.aimAngle
+    end
+	if self.stance.aimAngle then
+        self.aimAngle = math.rad(self.stance.aimAngle)
     end
 
     if self.stance.frontArmFrame ~= nil then activeItem.setFrontArmFrame(self.stance.frontArmFrame) end

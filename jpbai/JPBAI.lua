@@ -304,7 +304,14 @@ function pRequire(scriptPath)
     end
 end
 
+function worldentityExists(entityId)
+    if not entityId then return false end
+    return world.entityExists(entityId)
+end
+
 function worldCallScriptedEntity(entityId, ...)
-    if not entityId then return end
-    if world.entityExists(entityId) then return world.callScriptedEntity(entityId, ...) end
+    if not entityId then return false end
+    if world.entityExists(entityId) then
+        return world.callScriptedEntity(entityId, ...)
+    end
 end

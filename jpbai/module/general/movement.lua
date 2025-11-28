@@ -64,6 +64,13 @@ function movementControl.aimTranslation(vec, verticalOffset, checkForObstacle, o
     end
 end
 
+function movementControl.resolvedCollision()
+    local resolvedCollision = world.resolvePolyCollision(mcontroller.collisionPoly(), mcontroller.position(), maxCorrection or 3, {"Block", "Dynamic", "Null", "Slippery"})
+    if resolvedCollision then
+        mcontroller.setPosition(resolvedCollision)
+    end
+end
+
 function movementControl.translatePos(pos, maxCorrection)
     if not pos then return end
     local new = vec2.add(mcontroller.position(), pos)
@@ -90,10 +97,16 @@ function movementControl.resetModifiers()
     movementModifiers = nil
 end
 
-function movementControl.multVelocity(x, y)
-    local velocity = mcontroller.velocity()
-    if x then mcontroller.setXVelocity(velocity[1] * x) end
-    if y then mcontroller.setYVelocity(velocity[2] * y) end
+function movementControl.multVelocity(vec)
+    local _vec = mcontroller.velocity()
+    mcontroller.setVelocity({_vec[1] * (vec[1] or 1), _vec[2] * (vec[2] or 1)})
+    return mcontroller.velocity()
+end
+
+function movementControl.addVelocity(vec)
+    local _vec = mcontroller.velocity()
+    mcontroller.setVelocity(vec2.add(_vec, vec))
+    return mcontroller.velocity()
 end
 
 --[[ [controlModifiers Possible Args]
