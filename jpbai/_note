@@ -5,12 +5,13 @@ to be presentable as a preview of what to come
 General
 --Resource requirement/manipulation : Done
 --Energy Scaling Func : Done
---Add way to allow for movement altering event in behavior "ex: spin slash" : To be Tested
+--Add way to allow for movement altering event in behavior "ex: spin slash" : Done
 --Add support for the creation of the following type of item
-* Staff|Wand
-* Magnorbs|Boomerang|Chakram
+* Staff|Wand -- Possibly done... need to try recreating one
+* Magnorbs|Boomerang|Chakram  -- mostlikely done
 * Laser|Erchius Eye
+--Add some premade custom item to showcase the capability of the framework
 
-D8Weap Part
+D8Weap Part -- it contained in D8Weap
 --better physical reload system (optional)
---attachment/modular part ? (optional)
+--attachment/modular part ? (planned for future update)

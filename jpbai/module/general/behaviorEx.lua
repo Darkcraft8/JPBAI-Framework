@@ -134,14 +134,25 @@ function behavior_projectile(event)
     for i = 1, (event.count or 1) do
         local direction = event.direction or aimVector((event.inaccuracy or 0))
         local projectileId = world.spawnProjectile(event.type, pos, activeItem.ownerEntityId(), direction, event.posRelativeToOwner, projectileCfg)
-        if i == (event.count or 1) then
-            return projectileId
+        if event.storage then
+            if type(event.storage) == "table" then
+                setStorage(event.storage[i], projectileId)
+                if i == (event.count or 1) then
+                    return projectileId
+                end
+            else
+                setStorage(event.storage, projectileId)
+                return projectileId
+            end
         end
     end
 end
 
-function setItemShieldPolys(partName, propertyName)
+function setItemShieldPolys(partName, propertyName, scale)
     local shieldPoly = animator.partPoly(partName, propertyName)
+    if scale then
+        shieldPoly = poly.scale(shieldPoly, scale)
+    end
     if shieldPoly then
         activeItem.setItemShieldPolys({shieldPoly})
     end

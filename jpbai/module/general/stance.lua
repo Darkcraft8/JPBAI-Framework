@@ -7,6 +7,8 @@ local oldUpdateStance = updateStance
 local oldInitStances = initStances
 function initStances()
     oldInitStances()
+    local baseStances = config.getParameter("baseStances", {}) -- in case you make a bunch of base stances for inheritance and don't want to copy them everywhere
+    self.stances = sb.jsonMerge(baseStances, self.stances)  
     table.insert(updateFunc, "updateStance")
 end
 local function inherit(stanceName, json)

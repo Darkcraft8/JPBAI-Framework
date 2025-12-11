@@ -1,1 +1,1 @@
--- Todo so that npc(s) can use these kind of item(s)
+-- Todo so that npc(s) can use these kind of item(s) without too much jank

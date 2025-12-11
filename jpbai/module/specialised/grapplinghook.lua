@@ -12,8 +12,8 @@ function reelTowardEntity(entityId, speed, maxControlForce)
     local vel = vec2.rotate({speed, 0}, vec2.angle(dist))
     mcontroller.setVelocity(vel, maxControlForce or 250)
 end
-
-function spawnHookProjectile(projectileType, spawnPositionCfg, direction, trackSource, projectileParameters, inaccuracy, hookToEntity, hookToEnemy)
+-- maybe i should move this
+function spawnFalseHitscanProjectile(projectileType, spawnPositionCfg, direction, trackSource, projectileParameters, inaccuracy, hookToEntity, hookToEnemy, collisionSet)
 	local position, position2 = 1, 1
     position = spawnPosition({
         spawnPos = spawnPositionCfg.anchor or "ownerPosFaceDirection",
@@ -30,17 +30,48 @@ function spawnHookProjectile(projectileType, spawnPositionCfg, direction, trackS
 		})
 	end
     -- collision physic
-    local collisionPoint = world.lineCollision(position, position2, {"Block", "Dynamic", "Null", "Slippery"})
-    if collisionPoint then collisionPoint = spawnPosition({
-        spawnPos = spawnPositionCfg.anchor or "ownerPosFaceDirection",
-        spawnOffset = {world.magnitude(position, collisionPoint) - 1.25, 0}
-    }) end
+    local collisionPoint = world.lineCollision(position, position2, collisionSet or {"Block", "Dynamic", "Null", "Slippery"})
+    if collisionPoint then 
+        local mag = world.magnitude(position, collisionPoint)
+        if direction then 
+			collisionPoint = spawnPosition({
+				spawnPos = spawnPositionCfg.anchor or "ownerPosFaceDirection",
+				spawnOffset = vec2.rotate({mag - 1.25, 0}, vec2.angle(direction))
+		    })
+		else
+	    	local direction = copy(spawnPositionCfg.offset or {0, 0})
+			if direction[1] ~= 0 then direction[1] = ((direction[1] / direction[1]) * mag) - 1.25 end
+		    if direction[2] ~= 0 then direction[2] = ((direction[2] / direction[2]) * mag) - 1.25 end
+			if (direction[1] ~= 0) and (direction[2] ~= 0) then
+				direction = vec2.rotate({mag - 1.25, 0}, vec2.angle(spawnPositionCfg.offset or {0, 0}))
+		    end
+					
+			collisionPoint = spawnPosition({
+				spawnPos = spawnPositionCfg.anchor or "ownerPosFaceDirection",
+				spawnOffset = direction
+			})			
+		end
+    end
     -- hurtBox collision
     local entityPoint
     if (hookToEntity or hookToEnemy) then -- note that the projectile sticking to the entity has to be done in the projectile.
 		for _, id in pairs(world.entityLineQuery(position, position2, {withoutEntityId = activeItem.ownerEntityId(), order = "nearest"}) or {}) do
 			local add = true
-			if hookToEnemy then add = world.entityCanDamage(activeItem.ownerEntityId(), id) end
+            local entType = world.entityType(id)
+            if hookToEnemy then add = world.entityCanDamage(activeItem.ownerEntityId(), id) end
+            if type(hookToEntity) == "table" then
+                add = false
+                for _, _entType in pairs(hookToEntity or {}) do 
+                    if string.lower(_entType) == string.lower(entType) then
+                        if hookToEnemy then
+                            add = world.entityCanDamage(activeItem.ownerEntityId(), id)
+                        else
+                            add = true
+                        end
+                        break
+                    end
+                end
+            end
 			if add then --need to find a way to reduce the lenght
 				local targPos = vec2.add(world.entityPosition(id), {0, 1.29993})
 				local dist = world.distance(world.entityPosition(activeItem.ownerEntityId()), targPos)
@@ -83,6 +114,8 @@ function spawnHookProjectile(projectileType, spawnPositionCfg, direction, trackS
     local direction = direction or aimVector((inaccuracy or 0))
     
     --sb.logInfo("type %s,\nposition %s,\ndirection %s,\ntrackSource %s,\nparameters %s", projectileType, position2, direction, trackSource, projectileParameters)
+    sb.setLogMap("0| spawnFalseHitScanProj", "offset %s, effOffset %s", sb.printJson(spawnPositionCfg.offset or {0, 0}) , sb.printJson(position2))
+    
     return world.spawnProjectile(projectileType, position2, activeItem.ownerEntityId(), direction, trackSource, projectileParameters)
 end
 

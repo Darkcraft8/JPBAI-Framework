@@ -454,15 +454,21 @@ end
 
 function behaviorEvent(eventCfg, notification) -- Handle the Different Event kind|Type
     if eventCfg.event then
+        local _eventCfg = copy(eventCfg)
         if (not eventCfg.event.includeSelfDamage) and notification then 
             if notification.sourceEntityId == notification.targetEntityId then return end
         end
-        if string.lower(eventCfg.event) == "monster" then behavior_monster(eventCfg) return end
-        if string.lower(eventCfg.event) == "projectile" then behavior_projectile(eventCfg) return end
-        if string.lower(eventCfg.event) == "function" then call(eventCfg) return end
-        if string.lower(eventCfg.event) == "setcursor" then activeItem.setCursor(eventCfg.cursor) return end
-        if string.lower(eventCfg.event) == "damagearea" then behavior_hitbox(eventCfg) return end
-        if string.lower(eventCfg.event) == "playsound" then animator.playSound(eventCfg.soundName, eventCfg.loopNumber or 0) return end
+        if string.lower(_eventCfg.event) ~= "function" then
+            for i, arg in pairs(eventCfg or {}) do
+                _eventCfg[i] = checkStorage(arg)
+            end
+        end
+        if string.lower(_eventCfg.event) == "monster" then behavior_monster(_eventCfg) return end
+        if string.lower(_eventCfg.event) == "projectile" then behavior_projectile(_eventCfg) return end
+        if string.lower(_eventCfg.event) == "function" then call(_eventCfg) return end
+        if string.lower(_eventCfg.event) == "setcursor" then activeItem.setCursor(_eventCfg.cursor) return end
+        if string.lower(_eventCfg.event) == "damagearea" then behavior_hitbox(_eventCfg) return end
+        if string.lower(_eventCfg.event) == "playsound" then animator.playSound(_eventCfg.soundName, _eventCfg.loopNumber or 0) return end
     end
 end
 
@@ -508,6 +514,15 @@ end
             if string.lower(notification.hitType) == "kill" then
                 if self.behavior["eventOnKill"] then behaviorEvents(self.behavior["eventOnKill"], notification) end
             end
+            --[[
+            if _ == 1 then
+                local _string = ""
+                for a, b in pairs(notification) do 
+                    _string = _string .. "\n" .. tostring(a) .. " : " .. sb.printJson(b, 1)
+                end
+                sb.logInfo("inflictedDamage : %s", _string)
+            end
+            ]]
         end
     end
 
@@ -643,11 +658,23 @@ end
 				inverse = func.inverse
             end
             if funcReturned then
+                local result = table.pack(call({callback = callback, args = args}))
 				if inverse then
-					funcReturned = not call({callback = callback, args = args}) 
+
+					funcReturned = not table.unpack(result)
 				else
-					funcReturned = call({callback = callback, args = args}) 
+					funcReturned = table.unpack(result)
 				end
+
+                if func.storage then
+                    if type(func.storage) == "table" then
+                        for i, a in pairs(result or {}) do
+                            setStorage(func.storage[i], result)
+                        end
+                    else
+                        setStorage(func.storage, table.unpack(result))
+                    end
+                end
 			end
             if not funcReturned then return funcReturned end
         end

@@ -20,6 +20,7 @@ uninitFunc = {
     "movementControl.uninit"
 }
 
+require "/jpbai/module/general/math.lua"
 require "/jpbai/module/general/stance.lua"
 require "/jpbai/module/general/animation.lua"
 require "/jpbai/module/general/inventory.lua"
@@ -33,6 +34,7 @@ local playerInteractTimer = 0
 function init()
     debugMode = config.getParameter("debug", false)
     JPBAIConfig = root.assetJson("/jpbai/JPBAI.config")
+    storage = config.getParameter("scriptStorage", {})
     for _, func in ipairs(initFunc) do
         if type(func) == "function" then
             func()
@@ -56,7 +58,6 @@ function init()
         pRequire(scriptPath)
     end
     overrideTech(true)
-    storage = config.getParameter("scriptStorage", {})
 end
 
 function update(dt, fireMode, isShiftHeld, currentMove)
@@ -162,8 +163,8 @@ function call(eventCfg) -- because whe can't directly do _ENV[funcGroup.Func]()
                 end
                 if eventCfg.storage then
                     if type(eventCfg.storage) == "table" then
-                        for i, a in pairs(result or {}) do
-                            setStorage(eventCfg.storage[i], result)
+                        for i, a in pairs(eventCfg.storage or {}) do
+                            setStorage(a or i, result[i])
                         end
                     else
                         setStorage(eventCfg.storage, table.unpack(result))
@@ -237,23 +238,15 @@ function checkStorage(path)
     if type(path) == "string" then
         if string.find(path, "storage:") == 1 then
             path = string.gsub(path, "storage:", "")
+            --sb.logInfo("storage[%s] %s", path, storage[path])
             if storage[path] then return storage[path] else return nil end
-            --[[
-            local currentResult = nil
-            for _, string in ipairs(segmentPath(path)) do
-                if not currentResult then 
-                    currentResult = storage[string]
-                else
-                    currentResult = currentResult[string]
-                end
-            end
-            if currentResult ~= nil then
-                return currentResult
-            else
-                return nil
-            end
-            --]]
         end
+    elseif type(path) == "table" then
+        local _path = {}
+        for a, b in pairs(path) do 
+            _path[a] = checkStorage(b)
+        end
+        return _path
     end
     
     return path
@@ -261,6 +254,7 @@ end
 
 function setStorage(name, value)
     storage[name] = value
+    --sb.logInfo("storage[%s] = %s", name, value)
 end
 
 function insertInStorageTable(name, value)
