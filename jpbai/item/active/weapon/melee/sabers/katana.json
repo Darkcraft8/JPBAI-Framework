@@ -1,177 +1,177 @@
 {
-    "itemDescriptor" : {
+    "itemDescriptor_blade" : {
 		"name" : "parasol",
 		"count" : 1,
 		"parameters" : {
 			"shortdescription" : "Katana",
-			"description" : "^#fff0;Yes japanese uchigatana due to their shape and single edge technicaly fall under the moniker of sabers^reset;",
+			"description" : "^#fff0;Yes japanese uchigatana fall under the moniker of sabers^reset;",
 
 			"inventoryIcon" : [
 				{
-					"image" : "/assetmissing.png?crop;0;0;1;1?setcolor=fff?replace;fff0=fff?border=1;fff;000?scale=1.15;1.12?crop;1;1;3;3?replace;fbfbfb=0000;eaeaea=08000000;e4e4e4=00001800;6a6a6a=08001800?scale=7.5;23.5?crop=0;0;8;24?replace;00001000=ffb073;01000400=110;01000500=210;01000600=210;01000700=210;01000800=110;01000900=110;01000a00=210;01000b00=210;01000c00=210;01000d00=210;01000e00=110;01000f00=505050;01001000=eb9f49;01001100=5c3f15;01001200=73551a;01001300=5c3f15;01001400=321f00;01001500=5c3f15;01001600=73551a;01001700=010;02000100=110;02000200=210;02000300=210;02000400=310;02000500=110;02000600=110;02000700=110;02000800=310;02000900=310;02000a00=110;02000b00=110;02000c00=110;02000d00=110;02000e00=310;02000f00=505050;02001000=eb9f49;02001100=010;02001200=010;02001300=010;02001400=321f00;02001500=010;02001600=010;02001700=010;03000000=110;03000100=310;03000200=110;03000300=110;03001000=ffb073;05000400=510;05000500=510;05000600=510;05000700=610;05000800=a17f4c;05000900=a17f4c;05000a00=a17f4c;05000b00=610;05000c00=510;05000d00=510;05000e00=510;05000f00=410;06000000=510;06000100=510;06000200=510;06000300=410;06000400=610;06000500=610;06000600=610;06000700=410;06000800=510;06000900=510;06000a00=510;06000b00=410;06000c00=610;06000d00=610;06000e00=610;06000f00=410;07000000=610;07000100=610;07000200=610;07000300=410?replace;010=472e0a;110=9b9b9b;210=c7c7c7;310=6f6f6f;410=37280e;510=6b563a;610=59452a?crop;0;0;4;24",
+					"image" : "/assetmissing.png?crop;0;0;1;1?setcolor=fff?replace;fff0=fff?border=1;fff;000?scale=1.15;1.12?crop;1;1;3;3?replace;fbfbfb=0000;eaeaea=07000000;e4e4e4=00001800;6a6a6a=07001800?scale=6.5;23.5?crop=0;0;7;24?replace;00000700=ffb073;00001400=010;00001500=010;00001600=110;00001700=010;01000000=210;01000100=73551a;01000200=5c3f15;01000300=321f00;01000400=5c3f15;01000500=73551a;01000600=5c3f15;01000700=eb9f49;01000800=505050;01000900=110;01000a00=010;01000b00=010;01000c00=010;01000d00=010;01000e00=110;01000f00=110;01001000=010;01001100=010;01001200=010;01001300=010;01001400=110;01001500=110;01001600=010;02000000=210;02000100=210;02000200=210;02000300=321f00;02000400=210;02000500=210;02000600=210;02000700=eb9f49;02000800=505050;02000900=6f6f6f;02000a00=110;02000b00=110;02000c00=110;02000d00=110;02000e00=6f6f6f;02000f00=6f6f6f;02001000=110;02001100=110;02001200=110;02001300=110;03000700=ffb073;04001400=410;04001500=310;04001600=310;04001700=310;05000800=510;05000900=310;05000a00=310;05000b00=310;05000c00=410;05000d00=a17f4c;05000e00=a17f4c;05000f00=a17f4c;05001000=410;05001100=310;05001200=310;05001300=310;05001400=510;05001500=410;05001600=410;05001700=410;06000800=510;06000900=410;06000a00=410;06000b00=410;06000c00=510;06000d00=310;06000e00=310;06000f00=310;06001000=510;06001100=410;06001200=410;06001300=410?replace;010=c7c7c7;110=9b9b9b;210=472e0a;310=6b563a;410=59452a;510=37280e?crop;0;0;4;24",
 					"scale" : 1,
 					"note"  : "Weapon"
 				}
 			],
 			"animation" : {
-			"globalTagDefaults" : {
-				"paletteSwaps" : "",
-				"globalDirectives" : "",
-				"paperNote" : "/objects/human/prisonpaper3/prisonpaper3.png:black?flipx?scalenearest=0.5",
-				"itemSprite" : "/assetmissing.png?crop;0;0;1;1?setcolor=fff?replace;fff0=fff?border=1;fff;000?scale=1.15;1.12?crop;1;1;3;3?replace;fbfbfb=0000;eaeaea=08000000;e4e4e4=00001800;6a6a6a=08001800?scale=7.5;23.5?crop=0;0;8;24?replace;00001000=ffb073;01000400=110;01000500=210;01000600=210;01000700=210;01000800=110;01000900=110;01000a00=210;01000b00=210;01000c00=210;01000d00=210;01000e00=110;01000f00=505050;01001000=eb9f49;01001100=5c3f15;01001200=73551a;01001300=5c3f15;01001400=321f00;01001500=5c3f15;01001600=73551a;01001700=010;02000100=110;02000200=210;02000300=210;02000400=310;02000500=110;02000600=110;02000700=110;02000800=310;02000900=310;02000a00=110;02000b00=110;02000c00=110;02000d00=110;02000e00=310;02000f00=505050;02001000=eb9f49;02001100=010;02001200=010;02001300=010;02001400=321f00;02001500=010;02001600=010;02001700=010;03000000=110;03000100=310;03000200=110;03000300=110;03001000=ffb073;05000400=510;05000500=510;05000600=510;05000700=610;05000800=a17f4c;05000900=a17f4c;05000a00=a17f4c;05000b00=610;05000c00=510;05000d00=510;05000e00=510;05000f00=410;06000000=510;06000100=510;06000200=510;06000300=410;06000400=610;06000500=610;06000600=610;06000700=410;06000800=510;06000900=510;06000a00=510;06000b00=410;06000c00=610;06000d00=610;06000e00=610;06000f00=410;07000000=610;07000100=610;07000200=610;07000300=410?replace;010=472e0a;110=9b9b9b;210=c7c7c7;310=6f6f6f;410=37280e;510=6b563a;610=59452a",
-				"saberFrame" : "?crop;0;0;4;24",
-                "sheathFrame" : "?crop;4;0;8;24"
-			},
-
-			"animatedParts" : {
-				"stateTypes" : {
-				"weapon" : {
-					"default" : "paperNote",
-					"states" : {
-						"paperNote" : {},
-						"idle"  : {},
-						"hide"  : {}
-					}
-				},
-				"swoosh" : {
-					"default" : "idle",
-					"states" : {
-						"idle"  : {},
-						"dive"  : {},
-						"swipe"  : {
-							"frames" : 5,
-							"cycle" : 0.15,
-							"mode" : "transition",
-							"transition" : "idle",
-							"properties" : {}
-						}
-					}
-				},
-				"hurtBox" : {
-					"default" : "idle",
-					"states" : {
-						"idle"  : {},
-						"dive"  : {},
-						"swipe"  : {
-							"frames" : 5,
-							"cycle" : 0.15,
-							"mode" : "transition",
-							"transition" : "idle",
-							"properties" : {}
-						}
-					}
-				}
+				"globalTagDefaults" : {
+					"paletteSwaps" : "",
+					"globalDirectives" : "",
+					"paperNote" : "/objects/human/prisonpaper3/prisonpaper3.png:black?flipx?scalenearest=0.5",
+					"itemSprite" : "/assetmissing.png?crop;0;0;1;1?setcolor=fff?replace;fff0=fff?border=1;fff;000?scale=1.15;1.12?crop;1;1;3;3?replace;fbfbfb=0000;eaeaea=07000000;e4e4e4=00001800;6a6a6a=07001800?scale=6.5;23.5?crop=0;0;7;24?replace;00000700=ffb073;00001400=010;00001500=010;00001600=110;00001700=010;01000000=210;01000100=73551a;01000200=5c3f15;01000300=321f00;01000400=5c3f15;01000500=73551a;01000600=5c3f15;01000700=eb9f49;01000800=505050;01000900=110;01000a00=010;01000b00=010;01000c00=010;01000d00=010;01000e00=110;01000f00=110;01001000=010;01001100=010;01001200=010;01001300=010;01001400=110;01001500=110;01001600=010;02000000=210;02000100=210;02000200=210;02000300=321f00;02000400=210;02000500=210;02000600=210;02000700=eb9f49;02000800=505050;02000900=6f6f6f;02000a00=110;02000b00=110;02000c00=110;02000d00=110;02000e00=6f6f6f;02000f00=6f6f6f;02001000=110;02001100=110;02001200=110;02001300=110;03000700=ffb073;04001400=410;04001500=310;04001600=310;04001700=310;05000800=510;05000900=310;05000a00=310;05000b00=310;05000c00=410;05000d00=a17f4c;05000e00=a17f4c;05000f00=a17f4c;05001000=410;05001100=310;05001200=310;05001300=310;05001400=510;05001500=410;05001600=410;05001700=410;06000800=510;06000900=410;06000a00=410;06000b00=410;06000c00=510;06000d00=310;06000e00=310;06000f00=310;06001000=510;06001100=410;06001200=410;06001300=410?replace;010=c7c7c7;110=9b9b9b;210=472e0a;310=6b563a;410=59452a;510=37280e",
+					"saberFrame" : "?crop;0;0;4;24",
+					"sheathFrame" : "?crop;4;0;7;24"
 				},
 
-				"parts" : {
-				"weapon" : {
-					"properties" : {
-						"zLevel" : 0,
-						"centered" : true,
-						"offset" : [0, -0.25],
-						"transformationGroups" : ["weapon"],
-						"rotationCenter" : [0, 0]
+				"animatedParts" : {
+					"stateTypes" : {
+					"weapon" : {
+						"default" : "paperNote",
+						"states" : {
+							"paperNote" : {},
+							"idle"  : {},
+							"hide"  : {}
+						}
 					},
-					
-					"partStates" : {
-						"weapon" : {
-							"paperNote" : {
-								"properties" : {
-									"image" : "<paperNote>"
-								}
-							},
-							"idle" : {
-								"properties" : {
-									"image" : "<itemSprite><saberFrame><globalDirectives>"
-								}
-							},
-							"hide" : {
+					"swoosh" : {
+						"default" : "idle",
+						"states" : {
+							"idle"  : {},
+							"dive"  : {},
+							"swipe"  : {
+								"frames" : 5,
+								"cycle" : 0.15,
+								"mode" : "transition",
+								"transition" : "idle",
+								"properties" : {}
+							}
+						}
+					},
+					"hurtBox" : {
+						"default" : "idle",
+						"states" : {
+							"idle"  : {},
+							"dive"  : {},
+							"swipe"  : {
+								"frames" : 5,
+								"cycle" : 0.15,
+								"mode" : "transition",
+								"transition" : "idle",
 								"properties" : {}
 							}
 						}
 					}
-				},
-				"swoosh" : {
-					"properties" : {
-						"zLevel" : -1,
-						"centered" : true,
-						"offset" : [0, -0.25],
-						"transformationGroups" : ["swoosh"],
-						"rotationCenter" : [0, 0]
 					},
-					
-					"partStates" : {
-						"swoosh" : {
-							"dive" : {
-								"properties" : {
-									"image" : "/items/active/weapons/melee/spear/swoosh/physicalswoosh.png:1",
-									"offset" : [0, -0.25]
-								}
-							},
-							"swipe" : {
-								"properties" : {
-									"image" : "/projectiles/npcs/swipe/swipe.png:<frameIndex>?scalenearest=4;0.75",
-									"offset" : [-1, 0]
-								}
-							}
-						}
-					}
-				},
-				"hurtBox" : {
-					"properties" : {
-						"zLevel" : -1,
-						"centered" : true,
-						"offset" : [0, -0.25],
-						"transformationGroups" : ["hurtBox"],
-						"rotationCenter" : [0, 0]
-					},
+
+					"parts" : {
+					"weapon" : {
+						"properties" : {
+							"zLevel" : 0,
+							"centered" : true,
+							"offset" : [0, -0.25],
+							"transformationGroups" : ["weapon"],
+							"rotationCenter" : [0, 0]
+						},
 						
-					"partStates" : {
-						"hurtBox" : {
-							"dive" : {
-								"properties" : {
-									"damageArea" : [[2, 0], [1, 1], [-3, 1], [-4.5, 0], [-3, -1], [1, -1]],
-									"offset" : [0, -0.25]
+						"partStates" : {
+							"weapon" : {
+								"paperNote" : {
+									"properties" : {
+										"image" : "<paperNote>"
+									}
+								},
+								"idle" : {
+									"properties" : {
+										"image" : "<itemSprite><saberFrame><globalDirectives>"
+									}
+								},
+								"hide" : {
+									"properties" : {}
 								}
-							},
-							"swipe" : {
-								"properties" : {
-									"damageArea" : [[0.5, 1.5], [6.5, 1.5], [8, 0], [6.5, -1], [0.5, -1.4], [0, 0]],
-									"offset" : [-1, 0]
+							}
+						}
+					},
+					"swoosh" : {
+						"properties" : {
+							"zLevel" : -1,
+							"centered" : true,
+							"offset" : [0, -0.25],
+							"transformationGroups" : ["swoosh"],
+							"rotationCenter" : [0, 0]
+						},
+						
+						"partStates" : {
+							"swoosh" : {
+								"dive" : {
+									"properties" : {
+										"image" : "/items/active/weapons/melee/spear/swoosh/physicalswoosh.png:1",
+										"offset" : [0, -0.25]
+									}
+								},
+								"swipe" : {
+									"properties" : {
+										"image" : "/projectiles/npcs/swipe/swipe.png:<frameIndex>?scalenearest=4;0.75",
+										"offset" : [-1, 0]
+									}
+								}
+							}
+						}
+					},
+					"hurtBox" : {
+						"properties" : {
+							"zLevel" : -1,
+							"centered" : true,
+							"offset" : [0, -0.25],
+							"transformationGroups" : ["hurtBox"],
+							"rotationCenter" : [0, 0]
+						},
+							
+						"partStates" : {
+							"hurtBox" : {
+								"dive" : {
+									"properties" : {
+										"damageArea" : [[2, 0], [1, 1], [-3, 1], [-4.5, 0], [-3, -1], [1, -1]],
+										"offset" : [0, -0.25]
+									}
+								},
+								"swipe" : {
+									"properties" : {
+										"damageArea" : [[0.5, 1.5], [6.5, 1.5], [8, 0], [6.5, -1], [0.5, -1.4], [0, 0]],
+										"offset" : [-1, 0]
+									}
 								}
 							}
 						}
 					}
-				}
-				}
-			},
-
-			"transformationGroups" : {
-				"weapon" : {},
-				"swoosh" : {},
-				"hurtBox" : {}
-			},
-
-			"particleEmitters" : {},
-
-			"sounds" : {
-				"flipSlash" : {
-					"rangeMultiplier" : 1,
-					"pitchMultiplier" : 1,
-					"volume" : 1,
-					"pool" : ["/sfx/melee/flip_slash.ogg"]
+					}
 				},
-				"swing" : {
-					"rangeMultiplier" : 1,
-					"pitchMultiplier" : 1,
-					"volume" : 1,
-					"pool" : ["/sfx/melee/swing_spear.ogg"]
+
+				"transformationGroups" : {
+					"weapon" : {},
+					"swoosh" : {},
+					"hurtBox" : {}
+				},
+
+				"particleEmitters" : {},
+
+				"sounds" : {
+					"flipSlash" : {
+						"rangeMultiplier" : 1,
+						"pitchMultiplier" : 1,
+						"volume" : 1,
+						"pool" : ["/sfx/melee/flip_slash.ogg"]
+					},
+					"swing" : {
+						"rangeMultiplier" : 1,
+						"pitchMultiplier" : 1,
+						"volume" : 1,
+						"pool" : ["/sfx/melee/swing_spear.ogg"]
+					}
 				}
-			}
 			},
 			
 			"scripts" : ["/items/active/stationtransponder/stationtransponder.lua"],
-			"replacementScripts" : ["/jpbai/JPBAI.lua", "/jpbai/module/specialised/weapon.lua", "/jpbai/module/specialised/instrument.lua", "/jpbai/module/specialised/grapplinghook.lua"],
+			"replacementScripts" : ["/jpbai/JPBAI.lua", "/jpbai/module/specialised/weapon.lua", "/jpbai/module/specialised/instrument.lua"],
 			"stances" : {
 				"init" : {
 					"inherit" : "idle",
@@ -181,9 +181,8 @@
 				"idle" : {
 					"allowRotate" : false,
 					"allowFlip" : true,
-					"twoHanded" : true,
+					"twoHanded" : false,
 					"resetAim" : true,
-					"resetUser" : true,
 					
 					"armRotation" : -70,		
 					"transformations" : {
@@ -204,17 +203,44 @@
 					},
 					"frontArmFrame" : "rotation",
 					"backArmFrame" : "rotation"
+				},
+				"sheathed" : {
+					"allowRotate" : false,
+					"allowFlip" : true,
+					"twoHanded" : false,
+					"resetAim" : true,
+					"holdingItem" : true,
+					
+					"armRotation" : 0,		
+					"transformations" : {
+						"weapon" : {
+							"translate" : [0, 0],
+							"rotate" : 0,
+							"rotationCenter" : [0, 0]
+						}
+					},
+					
+					"animationStates" : {
+						"weapon" : "idle",
+						"swoosh" : "idle",
+						"hurtBox" : "idle"
+					},
+					"globalTags" : {
+						"globalDirectives" : ""
+					},
+					"frontArmFrame" : "rotation",
+					"backArmFrame" : "rotation"
 				}
 			},
-			"twoHanded" : true,
+			"twoHanded" : false,
 			"initBehavior" : "init",
 			"initFunction" : [],		
 			"uninitFunction" : [],		
 			"uninitEvent" : ["uninit"],
 			
-			"behaviors" : "/jpbai/item/active/weapon/other/reference/jave line/jave line.json:behaviors", 
-			"behaviorPaths" : "/jpbai/item/active/weapon/other/reference/jave line/jave line.json:behaviorPaths",
-			"behaviorEvents" : "/jpbai/item/active/weapon/other/reference/jave line/jave line.json:behaviorEvents",
+			"behaviors" : "/jpbai/item/active/weapon/melee/sabers/katana.json:behaviors_blade", 
+			"behaviorPaths" : "/jpbai/item/active/weapon/melee/sabers/katana.json:behaviorPaths_blade",
+			"behaviorEvents" : "/jpbai/item/active/weapon/melee/sabers/katana.json:behaviorEvents_blade",
 			
 			"createdBy" : "Darkcraft8",
 			"tooltipKind" : "fishingrod",
@@ -230,7 +256,7 @@
 						"note" : "E"
 					}
 				], 
-				"subTitle" : "^shadow,orange;Javeline  ^shadow,gray;(JPBAI)^reset;", 
+				"subTitle" : "^shadow,orange;Saber  ^shadow,gray;(JPBAI)^reset;", 
 				"rarityLabel" : "^darkgray;behav not in the item descriptor^reset;\n3\n4\n5\n6\n7\n8\n9\n11\n12\n13\n14\n^gray,shadow;By^#fa0,shadow; Darkcraft8^reset;"
 			},
 			
@@ -238,7 +264,309 @@
 			"interactData" : {"gui":{"background":{"zlevel":0,"type":"background","fileHeader":"/interface/scripted/papernote/header.png","fileBody":"/interface/scripted/papernote/body.png","fileFooter":""},"close":{"type":"button","base":"/interface/x.png","hover":"/interface/xhover.png","pressed":"/interface/xpress.png","pressedOffset":[0,0],"position":[185,241]},"scrollArea":{"type":"scrollArea","rect":[5,18,198,230],"children":{"lblNoteText":{"type":"label","zlevel":1,"position":[17,230],"hAnchor":"left","vAnchor":"top","color":"#4c4b3e","fontSize":7,"value" : "Some Items could require a client sided mod called \"JPBAI Framework\",\nIt concept is basicaly creating behavior in json format that the active items use...\n\nIt was created to lower the amount of script that had to be coded and also allow to create a greater variety of item with almost only one script.\nKnow that no having the mod will not crash your character if you pickup a properly made vanilla compatible item due to a small script change made to station transponder lua.\n\nYou can access the mod at\n^blue;https://github.com/Darkcraft8/JPBAI-Framework/tree/developement^reset;","wrapWidth":180}}}}}
 		}
 	},
-	"behaviors" : {
+    "itemDescriptor_sheath" : {
+		"name" : "parasol",
+		"count" : 1,
+		"parameters" : {
+			"shortdescription" : "Wooden Katana Sheath",
+			"description" : "^#fff0;Yes japanese uchigatana fall under the moniker of sabers^reset;",
+
+			"inventoryIcon" : [
+				{
+					"image" : "/assetmissing.png?crop;0;0;1;1?setcolor=fff?replace;fff0=fff?border=1;fff;000?scale=1.15;1.12?crop;1;1;3;3?replace;fbfbfb=0000;eaeaea=07000000;e4e4e4=00001800;6a6a6a=07001800?scale=6.5;23.5?crop=0;0;7;24?replace;00000700=ffb073;00001400=010;00001500=010;00001600=110;00001700=010;01000000=210;01000100=73551a;01000200=5c3f15;01000300=321f00;01000400=5c3f15;01000500=73551a;01000600=5c3f15;01000700=eb9f49;01000800=505050;01000900=110;01000a00=010;01000b00=010;01000c00=010;01000d00=010;01000e00=110;01000f00=110;01001000=010;01001100=010;01001200=010;01001300=010;01001400=110;01001500=110;01001600=010;02000000=210;02000100=210;02000200=210;02000300=321f00;02000400=210;02000500=210;02000600=210;02000700=eb9f49;02000800=505050;02000900=6f6f6f;02000a00=110;02000b00=110;02000c00=110;02000d00=110;02000e00=6f6f6f;02000f00=6f6f6f;02001000=110;02001100=110;02001200=110;02001300=110;03000700=ffb073;04001400=410;04001500=310;04001600=310;04001700=310;05000800=510;05000900=310;05000a00=310;05000b00=310;05000c00=410;05000d00=a17f4c;05000e00=a17f4c;05000f00=a17f4c;05001000=410;05001100=310;05001200=310;05001300=310;05001400=510;05001500=410;05001600=410;05001700=410;06000800=510;06000900=410;06000a00=410;06000b00=410;06000c00=510;06000d00=310;06000e00=310;06000f00=310;06001000=510;06001100=410;06001200=410;06001300=410?replace;010=c7c7c7;110=9b9b9b;210=472e0a;310=6b563a;410=59452a;510=37280e?crop;4;0;7;24",
+					"scale" : 1,
+					"note"  : "Weapon"
+				}
+			],
+			"animation" : {
+				"globalTagDefaults" : {
+					"paletteSwaps" : "",
+					"globalDirectives" : "",
+					"paperNote" : "/objects/human/prisonpaper3/prisonpaper3.png:black?flipx?scalenearest=0.5",
+					"itemSprite" : "/assetmissing.png?crop;0;0;1;1?setcolor=fff?replace;fff0=fff?border=1;fff;000?scale=1.15;1.12?crop;1;1;3;3?replace;fbfbfb=0000;eaeaea=07000000;e4e4e4=00001800;6a6a6a=07001800?scale=6.5;23.5?crop=0;0;7;24?replace;00000700=ffb073;00001400=010;00001500=010;00001600=110;00001700=010;01000000=210;01000100=73551a;01000200=5c3f15;01000300=321f00;01000400=5c3f15;01000500=73551a;01000600=5c3f15;01000700=eb9f49;01000800=505050;01000900=110;01000a00=010;01000b00=010;01000c00=010;01000d00=010;01000e00=110;01000f00=110;01001000=010;01001100=010;01001200=010;01001300=010;01001400=110;01001500=110;01001600=010;02000000=210;02000100=210;02000200=210;02000300=321f00;02000400=210;02000500=210;02000600=210;02000700=eb9f49;02000800=505050;02000900=6f6f6f;02000a00=110;02000b00=110;02000c00=110;02000d00=110;02000e00=6f6f6f;02000f00=6f6f6f;02001000=110;02001100=110;02001200=110;02001300=110;03000700=ffb073;04001400=410;04001500=310;04001600=310;04001700=310;05000800=510;05000900=310;05000a00=310;05000b00=310;05000c00=410;05000d00=a17f4c;05000e00=a17f4c;05000f00=a17f4c;05001000=410;05001100=310;05001200=310;05001300=310;05001400=510;05001500=410;05001600=410;05001700=410;06000800=510;06000900=410;06000a00=410;06000b00=410;06000c00=510;06000d00=310;06000e00=310;06000f00=310;06001000=510;06001100=410;06001200=410;06001300=410?replace;010=c7c7c7;110=9b9b9b;210=472e0a;310=6b563a;410=59452a;510=37280e",
+					"saberFrame" : "?crop;0;0;4;24",
+					"sheathFrame" : "?crop;4;0;7;24"
+				},
+
+				"animatedParts" : {
+					"stateTypes" : {
+					"weapon" : {
+						"default" : "paperNote",
+						"states" : {
+							"paperNote" : {},
+							"idle"  : {},
+							"hide"  : {},
+							"noBlade"  : {}
+						}
+					},
+					"swoosh" : {
+						"default" : "idle",
+						"states" : {
+							"idle"  : {},
+							"dive"  : {},
+							"swipe"  : {
+								"frames" : 5,
+								"cycle" : 0.15,
+								"mode" : "transition",
+								"transition" : "idle",
+								"properties" : {}
+							}
+						}
+					},
+					"hurtBox" : {
+						"default" : "idle",
+						"states" : {
+							"idle"  : {},
+							"dive"  : {},
+							"swipe"  : {
+								"frames" : 5,
+								"cycle" : 0.15,
+								"mode" : "transition",
+								"transition" : "idle",
+								"properties" : {}
+							}
+						}
+					}
+					},
+
+					"parts" : {
+						"weapon" : {
+							"properties" : {
+								"zLevel" : 0,
+								"centered" : true,
+								"offset" : [0, -0.25],
+								"transformationGroups" : ["weapon"],
+								"rotationCenter" : [0, 0]
+							},
+							
+							"partStates" : {
+								"weapon" : {
+									"paperNote" : {
+										"properties" : {
+											"image" : "<paperNote>"
+										}
+									},
+									"idle" : {
+										"properties" : {
+											"image" : "<itemSprite><saberFrame><globalDirectives>?flipx"
+										}
+									},
+									"hide" : {
+										"properties" : {}
+									},
+									"noBlade" : {
+										"properties" : {}
+									}
+								}
+							}
+						},
+						"sheath" : {
+							"properties" : {
+								"zLevel" : 1,
+								"centered" : true,
+								"offset" : [0.0625, -0.25],
+								"transformationGroups" : ["weapon"],
+								"rotationCenter" : [0, 0]
+							},
+							
+							"partStates" : {
+								"weapon" : {
+									"paperNote" : {
+										"properties" : {
+											"image" : "<paperNote>"
+										}
+									},
+									"idle" : {
+										"properties" : {
+											"image" : "<itemSprite><sheathFrame><globalDirectives>?flipx"
+										}
+									},
+									"hide" : {
+										"properties" : {}
+									},
+									"noBlade" : {
+										"properties" : {
+											"image" : "<itemSprite><sheathFrame><globalDirectives>?flipx"
+										}
+									}
+								}
+							}
+						},
+						"swoosh" : {
+							"properties" : {
+								"zLevel" : -1,
+								"centered" : true,
+								"offset" : [0, -0.25],
+								"transformationGroups" : ["swoosh"],
+								"rotationCenter" : [0, 0]
+							},
+							
+							"partStates" : {
+								"swoosh" : {
+									"dive" : {
+										"properties" : {
+											"image" : "/items/active/weapons/melee/spear/swoosh/physicalswoosh.png:1",
+											"offset" : [0, -0.25]
+										}
+									},
+									"swipe" : {
+										"properties" : {
+											"image" : "/projectiles/npcs/swipe/swipe.png:<frameIndex>?scalenearest=4;0.75",
+											"offset" : [-1, 0]
+										}
+									}
+								}
+							}
+						},
+						"hurtBox" : {
+							"properties" : {
+								"zLevel" : -1,
+								"centered" : true,
+								"offset" : [0, -0.25],
+								"transformationGroups" : ["hurtBox"],
+								"rotationCenter" : [0, 0]
+							},
+								
+							"partStates" : {
+								"hurtBox" : {
+									"dive" : {
+										"properties" : {
+											"damageArea" : [[2, 0], [1, 1], [-3, 1], [-4.5, 0], [-3, -1], [1, -1]],
+											"offset" : [0, -0.25]
+										}
+									},
+									"swipe" : {
+										"properties" : {
+											"damageArea" : [[0.5, 1.5], [6.5, 1.5], [8, 0], [6.5, -1], [0.5, -1.4], [0, 0]],
+											"offset" : [-1, 0]
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+
+				"transformationGroups" : {
+					"weapon" : {},
+					"swoosh" : {},
+					"hurtBox" : {}
+				},
+
+				"particleEmitters" : {},
+
+				"sounds" : {
+					"flipSlash" : {
+						"rangeMultiplier" : 1,
+						"pitchMultiplier" : 1,
+						"volume" : 1,
+						"pool" : ["/sfx/melee/flip_slash.ogg"]
+					},
+					"swing" : {
+						"rangeMultiplier" : 1,
+						"pitchMultiplier" : 1,
+						"volume" : 1,
+						"pool" : ["/sfx/melee/swing_spear.ogg"]
+					}
+				}
+			},
+			
+			"scripts" : ["/items/active/stationtransponder/stationtransponder.lua"],
+			"replacementScripts" : ["/jpbai/JPBAI.lua", "/jpbai/module/specialised/weapon.lua", "/jpbai/module/specialised/instrument.lua"],
+			"stances" : {
+				"init" : {
+					"inherit" : "idle",
+					"duration" : 0.1,
+					"transition" : "idle"
+				},
+				"idle" : {
+					"allowRotate" : false,
+					"allowFlip" : true,
+					"twoHanded" : false,
+					"resetAim" : true,
+					"holdingItem" : false,
+					
+					"armRotation" : -70,		
+					"transformations" : {
+						"weapon" : {
+							"translate" : [0, 0.5],
+							"rotate" : -180,
+							"rotationCenter" : [0, 0]
+						}
+					},
+					
+					"animationStates" : {
+						"weapon" : "idle",
+						"swoosh" : "idle",
+						"hurtBox" : "idle"
+					},
+					"globalTags" : {
+						"globalDirectives" : ""
+					},
+					"frontArmFrame" : "rotation",
+					"backArmFrame" : "rotation"
+				},
+				"sheathed" : {
+					"allowRotate" : false,
+					"allowFlip" : true,
+					"twoHanded" : false,
+					"resetAim" : true,
+					"holdingItem" : true,
+					
+					"armRotation" : -70,		
+					"transformations" : {
+						"weapon" : {
+							"translate" : [0, 0.5],
+							"rotate" : -180,
+							"rotationCenter" : [0, 0]
+						}
+					},
+					
+					"animationStates" : {
+						"weapon" : "idle",
+						"swoosh" : "idle",
+						"hurtBox" : "idle"
+					},
+					"globalTags" : {
+						"globalDirectives" : ""
+					},
+					"frontArmFrame" : "rotation",
+					"backArmFrame" : "rotation"
+				}
+			},
+			"twoHanded" : false,
+			"initBehavior" : "init",
+			"initFunction" : [],		
+			"uninitFunction" : [],		
+			"uninitEvent" : ["uninit"],
+			
+			"behaviors" : "/jpbai/item/active/weapon/melee/sabers/katana.json:behaviors_blade", 
+			"behaviorPaths" : "/jpbai/item/active/weapon/melee/sabers/katana.json:behaviorPaths_blade",
+			"behaviorEvents" : "/jpbai/item/active/weapon/melee/sabers/katana.json:behaviorEvents_blade",
+			
+			"createdBy" : "Darkcraft8",
+			"tooltipKind" : "fishingrod",
+			"tooltipFields" : { 
+				"objectImage" : "/assetmissing.png",
+				"reelNameLabel" : "",
+				"lureNameLabel" : "",
+				"reelIconImage" : "/assetmissing.png", 
+				"lureIconImage" : [
+					{
+						"image" : "/assetmissing.png?crop;0;0;1;1",
+						"position" : [0, 0],
+						"note" : "E"
+					}
+				], 
+				"subTitle" : "^shadow,orange;Saber Sheath  ^shadow,gray;(JPBAI)^reset;", 
+				"rarityLabel" : "^darkgray;behav not in the item descriptor^reset;\n3\n4\n5\n6\n7\n8\n9\n11\n12\n13\n14\n^gray,shadow;By^#fa0,shadow; Darkcraft8^reset;"
+			},
+			
+			"interactAction" : "ScriptPane",
+			"interactData" : {"gui":{"background":{"zlevel":0,"type":"background","fileHeader":"/interface/scripted/papernote/header.png","fileBody":"/interface/scripted/papernote/body.png","fileFooter":""},"close":{"type":"button","base":"/interface/x.png","hover":"/interface/xhover.png","pressed":"/interface/xpress.png","pressedOffset":[0,0],"position":[185,241]},"scrollArea":{"type":"scrollArea","rect":[5,18,198,230],"children":{"lblNoteText":{"type":"label","zlevel":1,"position":[17,230],"hAnchor":"left","vAnchor":"top","color":"#4c4b3e","fontSize":7,"value" : "Some Items could require a client sided mod called \"JPBAI Framework\",\nIt concept is basicaly creating behavior in json format that the active items use...\n\nIt was created to lower the amount of script that had to be coded and also allow to create a greater variety of item with almost only one script.\nKnow that no having the mod will not crash your character if you pickup a properly made vanilla compatible item due to a small script change made to station transponder lua.\n\nYou can access the mod at\n^blue;https://github.com/Darkcraft8/JPBAI-Framework/tree/developement^reset;","wrapWidth":180}}}}}
+		}
+	},
+	"behaviors_blade" : {
 		"init" : {
 			"stance" : "init",
 			"possibleOutcome" : ["idle"],
@@ -250,10 +578,10 @@
 			"eventOnInit" : []
 		}
 	}, 
-	"behaviorPaths" : {
-		"idle" : {"behavior" : "idle","require" : {"stance" : "idle"}},
+	"behaviorPaths_blade" : {
+		"idle" : {"behavior" : "idle","require" : {"stance" : "idle"}}
 	},
-	"behaviorEvents" : {
+	"behaviorEvents_blade" : {
 		"init" : [],
 		"uninit" : []
 	}

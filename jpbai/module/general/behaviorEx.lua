@@ -124,16 +124,16 @@ end
 function behavior_projectile(event)
     local projectileCfg = event.parameter or {}
     local pos = spawnPosition(event)
-    --sb.logInfo("power %s", projectileCfg.power)
     if event.scalingFunction or Weapon then -- Scale based on weapon stat or scaling function
         local callback = call({callback = event.scalingFunction or "Weapon.basicDamage", args = event})
         projectileCfg.power = projectileCfg.power or callback
         projectileCfg.powerMultiplier = projectileCfg.powerMultiplier or activeItem.ownerPowerMultiplier()
     end
-    --sb.logInfo("power 2nd %s", projectileCfg.power)
+    
     for i = 1, (event.count or 1) do
         local direction = event.direction or aimVector((event.inaccuracy or 0))
         local projectileId = world.spawnProjectile(event.type, pos, activeItem.ownerEntityId(), direction, event.posRelativeToOwner, projectileCfg)
+        
         if event.storage then
             if type(event.storage) == "table" then
                 setStorage(event.storage[i], projectileId)

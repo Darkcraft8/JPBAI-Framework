@@ -242,13 +242,21 @@ function checkStorage(path)
             if storage[path] then return storage[path] else return nil end
         end
     elseif type(path) == "table" then
+        if isEmpty(path) then return path end
         local _path = {}
-        for a, b in pairs(path) do 
+        local isArray = true
+        
+        for a, b in ipairs(path or {}) do
+            isArray = false
+            table.insert(_path, checkStorage(b))
+        end
+        for a, b in pairs(path or {}) do
+            if (not isArray) then break end
             _path[a] = checkStorage(b)
         end
         return _path
     end
-    
+
     return path
 end
 
