@@ -8,30 +8,26 @@ local oldInitStances = initStances
 function initStances()
     oldInitStances()
     local baseStances = config.getParameter("baseStances", {}) -- in case you make a bunch of base stances for inheritance and don't want to copy them everywhere
-    sb.logInfo("initStances")
-    self.stances = sb.jsonMerge(baseStances, self.stances or {})
-    table.insert(updateFunc, "updateStance")
-end
-local function inherit(stanceName, json)
-    if self.stances[stanceName]["inherit"] then
-        --local parent = inherit(self.stances[stanceName]["inherit"], self.stances[stanceName])
-        local result = sb.jsonMerge(copy(self.stances[self.stances[stanceName]["inherit"]]), copy(json) )
-        return result
-    else
-        if self.stances[stanceName] then
-            return sb.jsonMerge(copy(self.stances[stanceName]), copy(json))  
-        else
-            return json
+    if type(baseStances) == "table" then
+        for _, string in pairs(baseStances) do
+            self.stances = sb.jsonMerge(root.assetJson(string), self.stances or {})
         end
+    elseif type(baseStances) == "string" then 
+        self.stances = sb.jsonMerge(root.assetJson(baseStances), self.stances or {})
     end
-end
-
-local function inheritResult(stance)
-    if stance["inherit"] then
-        return inherit(stance["inherit"], stance)
-    else
-        return copy(stance)
+    local stances = {}
+    local function inherit(stanceData)
+        local result = copy(stanceData)
+        if stanceData.inherit then
+            result = sb.jsonMerge(inherit(self.stances[stanceData.inherit] or {}), result)
+        end
+        return result
     end
+    for stanceName, stanceData in pairs(self.stances) do 
+        stances[stanceName] = inherit(self.stances[stanceName])
+    end
+    self.stances = stances
+    table.insert(updateFunc, "updateStance")
 end
 
 function aimDirection()
@@ -39,10 +35,11 @@ function aimDirection()
 end
 
 function setStance(stanceName) -- replace and expend on the old version in stances.lua
+    if not self.stances then return end
     self.stanceName = stanceName
     status.setPrimaryDirectives("")
     if self.stances[stanceName] then
-        self.stance = inheritResult(self.stances[stanceName])
+        self.stance = copy(self.stances[stanceName])
     else
         sb.logError("[JPBAI Framework] [setStance] stance %s couldn't be found", stanceName)
     end
@@ -218,7 +215,7 @@ function updateAim(allowRotate, allowFlip, aimSpeed, initAtAimAngle)
   allowFlip = allowFlip or self.stance.allowFlip
   aimSpeed = aimSpeed or self.stance.aimSpeed
   --aimSpeed = 0.5
-  local aimAngle, aimDirection = activeItem.aimAngleAndDirection((self.stance.aimVerticalOffset or {})[2] or 0, activeItem.ownerAimPosition())
+  local aimAngle, aimDirection = activeItem.aimAngleAndDirection(self.stance.aimVerticalOffset or 0, activeItem.ownerAimPosition())
   local rotation = math.abs(mcontroller.rotation())
   if allowRotate then
     if aimSpeed then

@@ -20,7 +20,7 @@ uninitFunc = {
     "movementControl.uninit"
 }
 
-require "/jpbai/module/general/math.lua"
+require "/jpbai/module/general/logic.lua"
 require "/jpbai/module/general/stance.lua"
 require "/jpbai/module/general/animation.lua"
 require "/jpbai/module/general/inventory.lua"
@@ -95,7 +95,10 @@ function uninit()
     end
     behaviorEvents(config.getParameter("uninitEvent", {}))
     overrideTech(false)
-    activeItem.setInstanceValue("scriptStorage", storage)
+    if type(storage) ~= "nil" then
+        --sb.logInfo("storage == [ %s ]", storage)
+        activeItem.setInstanceValue("scriptStorage", storage)
+    end
 end
 
 function activeItemCfg()
@@ -167,7 +170,9 @@ function call(eventCfg) -- because whe can't directly do _ENV[funcGroup.Func]()
                             setStorage(a or i, result[i])
                         end
                     else
-                        setStorage(eventCfg.storage, table.unpack(result))
+                        if result[1] ~= nil then
+                            setStorage(eventCfg.storage, table.unpack(result))
+                        end
                     end
                 end
                 return table.unpack(result)

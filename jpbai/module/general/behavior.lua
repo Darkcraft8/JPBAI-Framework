@@ -1,29 +1,36 @@
 local state = "init"
+local behavTreeBuild = function(varName, varData)
+    if type(varData) == "string" then 
+        if pcall(root.assetJson, varData) then
+            self[varName] = root.assetJson(varData) or {}
+        else
+            self[varName] = {}
+        end
+    else
+        local isListOfResource = false
+        local _table = {}
+        for a, b in pairs(varData or {}) do 
+            if type(a) ~= "string" then
+                local _tableB = {}
+                if type(b) == "string" then
+                    if pcall(root.assetJson, b) then
+                        _tableB = root.assetJson(b) or {}
+                    end
+                else
+                    _tableB = copy(b)
+                end
+                _table = sb.jsonMerge(_table, _tableB)
+                isListOfResource = true
+            else break end
+        end
+        if isListOfResource then self[varName] = copy(_table) else self[varName] = varData end
+    end
+end
 function initBehavior()
-    self.behaviors = config.getParameter("behaviors", {})
-    self.behaviorEvents = config.getParameter("behaviorEvents", {}) -- event can be placed in this table to be directly referred to instead of copying in each behavior
-    self.behaviorPaths = config.getParameter("behaviorPaths", {}) -- similar to the event one but for outcome
-    if type(self.behaviors) == "string" then 
-        if pcall(root.assetJson, self.behaviors) then
-            self.behaviors = root.assetJson(self.behaviors) or {}
-        else
-            self.behaviors = {}
-        end
-    end
-    if type(self.behaviorEvents) == "string" then 
-        if pcall(root.assetJson, self.behaviorEvents) then
-            self.behaviorEvents = root.assetJson(self.behaviorEvents) or {}
-        else
-            self.behaviorEvents = {}
-        end
-    end
-    if type(self.behaviorPaths) == "string" then 
-        if pcall(root.assetJson, self.behaviorPaths) then
-            self.behaviorPaths = root.assetJson(self.behaviorPaths) or {}
-        else
-            self.behaviorPaths = {}
-        end
-    end
+    behavTreeBuild("behaviors", config.getParameter("behaviors", {}))
+    behavTreeBuild("behaviorEvents", config.getParameter("behaviorEvents", {})) -- event can be placed in this table to be directly referred to instead of copying in each behavior
+    behavTreeBuild("behaviorPaths", config.getParameter("behaviorPaths", {})) -- similar to the event one but for outcome
+    
     behaviorPathBuild()
     self.behavior = {}
     
@@ -131,7 +138,7 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                             local useBehav = true
                             local behavior = p.behavior
                             local checkResult = {}
-                            if self.behaviors[behavior] then
+                            if self.behaviors[behavior] or p.event then
                                 if debugMode then sb.logInfo("--[ behavior %s", behavior) end
                                 for k, v in pairs(p.require or {}) do
                                     if player then -- player specific check(s)
@@ -224,6 +231,9 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                                     if k == "hasLineOfSight" then
                                         if useBehav then
                                             useBehav = not check_raycastToSpawnPos(v)
+                                            if v.invert then
+                                                useBehav = not useBehav
+                                            end
                                         end 
                                         if debugMode then sb.logInfo("hasLineOfSight %s", useBehav) end
                                     end
@@ -237,7 +247,7 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                                 if debugMode then sb.logInfo("--] require %s", p.require) end
                             else
                                 useBehav = false
-                                sb.setLogMap("[JPBAI] Item "..item.name()..":"..item.friendlyName().."-"..activeItem.hand().."behav-"..behavior, "Behavior %s doesn't exist!!!")
+                                if behavior then sb.setLogMap("[JPBAI] Item "..item.name()..":"..item.friendlyName().."-"..activeItem.hand().."behav-"..behavior, "Behavior %s doesn't exist!!!") end
                             end
                             
                             if useBehav == true then
@@ -246,8 +256,15 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                                 elseif type(p.cooldown) == "table" then
                                     self.behaviorCooldown[p.cooldown.cooldownName] = p.cooldown.time
                                 end
-                                setBehavior(behavior)
-                            return "Switching to Behavior | " .. behavior end
+                                    
+                                if p.event then 
+                                    behaviorEvents(p.event)
+                                end
+                                if behavior then 
+                                    setBehavior(behavior) 
+                                    return "Switching to Behavior | " .. behavior
+                                end
+                            end
                         end
                     else
                         local randomizedIndex = math.random(#self.behavior["possibleOutcome"] or 1)
@@ -255,7 +272,7 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                         local useBehav = true
                         local behavior = p.behavior
                         local checkResult = {}
-                        if self.behaviors[behavior] then
+                        if self.behaviors[behavior] or p.event then
                             if debugMode then sb.logInfo("--[ behavior %s", behavior) end
                             for k, v in pairs(p.require or {}) do
                                 if player then -- player specific check
@@ -355,7 +372,7 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                             if debugMode then sb.logInfo("--] require %s", p.require) end
                         else
                             useBehav = false
-                            sb.logInfo("Behavior %s doesn't exist!!!")
+                            if behavior then sb.setLogMap("[JPBAI] Item "..item.name()..":"..item.friendlyName().."-"..activeItem.hand().."behav-"..behavior, "Behavior %s doesn't exist!!!") end
                         end
                             
                         if useBehav == true then
@@ -366,8 +383,15 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                                     self.behaviorCooldown[p.cooldown.cooldownName] = p.cooldown.time
                                 end
                             end
-                            setBehavior(behavior)
-                        return "Switching to Behavior | " .. behavior end
+                            
+                            if p.event then 
+                                behaviorEvents(p.event)
+                            end
+                            if behavior then 
+                                setBehavior(behavior) 
+                                return "Switching to Behavior | " .. behavior
+                            end
+                        end
                     end
                 end    
             end)
@@ -510,10 +534,15 @@ end
     function inflictedDamage(notifications)
         --sb.logInfo("damageDealt %s", notifications)
         for _, notification in pairs(notifications) do
-            if self.behavior["eventOnDamageDealt"] then behaviorEvents(self.behavior["eventOnDamageDealt"], notification) end
             if string.lower(notification.hitType) == "kill" then
                 if self.behavior["eventOnKill"] then behaviorEvents(self.behavior["eventOnKill"], notification) end
+            else
+                if world.entityExists(notification.targetEntityId) then
+                    storage["script_damagedEntity"] = notification.targetEntityId
+                end
             end
+            if self.behavior["eventOnDamageDealt"] then behaviorEvents(self.behavior["eventOnDamageDealt"], notification) end
+            
             --[[
             if _ == 1 then
                 local _string = ""
@@ -530,6 +559,9 @@ end
         --sb.logInfo("hitEvent %s", notifications)
         if self.behavior["eventOnHitDealt"] then 
             for _,notification in pairs(notifications) do
+                if world.entityExists(notification.targetEntityId) then
+                    storage["script_hitEntity"] = notification.targetEntityId
+                end
                 behaviorEvents(self.behavior["eventOnHitDealt"], notification)
             end
         end
@@ -540,6 +572,9 @@ end
         -- -65536 seem to be world or self 
         if self.behavior["eventOnDamageTaken"] then
             for _,notification in pairs(notifications) do
+                if world.entityExists(notification.sourceEntityId) and not (notification.sourceEntityId == -65536) then
+                    storage["script_hitByEntity"] = notification.sourceEntityId
+                end
                 behaviorEvents(self.behavior["eventOnDamageTaken"], notification)
             end
         end

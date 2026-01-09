@@ -6,7 +6,7 @@
     "rarity" : "Common",
     "category" : "Custom Item",
     "shortdescription" : "JPBAI Template",
-    "description" : "Replace Parameters with your own... Not For Use On A Server That Doesn't Have The Mod Installed!!!",
+    "description" : "Replace Parameters with your own... Not For Use On A Server That Doesn't Have The Mod Installed, This Item Is Moreso Meant To Be A Template!!!",
     "twoHanded" : true,
     "itemTags" : [],
     "inventoryIcon" : "/assetmissing.png",

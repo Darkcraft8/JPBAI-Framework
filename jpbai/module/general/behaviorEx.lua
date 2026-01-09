@@ -131,7 +131,7 @@ function behavior_projectile(event)
     end
     
     for i = 1, (event.count or 1) do
-        local direction = event.direction or aimVector((event.inaccuracy or 0))
+        local direction = event.direction or aimVector((event.inaccuracy or 0), event.aimAngle)
         local projectileId = world.spawnProjectile(event.type, pos, activeItem.ownerEntityId(), direction, event.posRelativeToOwner, projectileCfg)
         
         if event.storage then
@@ -296,8 +296,8 @@ function spawnPosition(cfg)
     end
 end
 
-function aimVector(inaccuracy) -- straight out of gunFire.lua with one change
-    local aimVector = vec2.rotate({1, 0}, (self.aimAngle or 0) + sb.nrand(inaccuracy, 0))
+function aimVector(inaccuracy, aimShift, aimAngle) -- straight out of gunFire.lua with one change
+    local aimVector = vec2.rotate({1, 0}, (aimAngle or self.aimAngle or 0) + sb.nrand(inaccuracy, 0) + (aimShift or 0))
     aimVector[1] = aimVector[1] * mcontroller.facingDirection()
     return aimVector
 end

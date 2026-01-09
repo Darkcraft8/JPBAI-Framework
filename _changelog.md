@@ -12,11 +12,13 @@
      The item's uninitialization will cause any events in this `table` parameter to be executed.
     - added storage parameter for events.<br>
      The script can now store result of function such as spawnMonster and others for use in other events by adding "storage:'variableName'" ex : "storage:grappleId"
+
   - `Behavior Extra`
     - setItemShieldPolys(partName, propertyName)<br>
      set the item's current shield polygons based on the given partName and propertyName
     - resetItemShieldPolys()<br>
      reset the items shield polygons
+
   - `Movement Module`
 	- movementControl.translateAboveGround(distance)<br>
 	 shift the owner position upward based on the given distance (in tiles) to the ground
@@ -30,9 +32,11 @@
 	 If checkForObstacle isn't false or nil, Then the translation distance will be reduced to prevent the traversal of obstacle.<br>
 	 The user position will be resolved before being applied as to **Hopefully** not cause them to be stuck
 	 an offset(default [0, 2.5]) and the number of maximum Correction(3 by default) can be given.
+
 #### Fix
   - added `nil` check to callbacks so that<br>
     they don't cause problem if the given function(s) doesn't exist or for edge case like world.callEntityContext
+    
   - `Status Module`
 	- Fixed statusEx.hasResources(resourceList) using the old args passing method causing any resource check to pass
 

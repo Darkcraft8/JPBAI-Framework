@@ -5,7 +5,7 @@
 	"maxStack" : 1,
 	"rarity" : "Legendary",
 	"category" : "broadsword",
-	"shortdescription" : "Core's Edge",
+	"shortdescription" : "Core's Edge [Outdated Don't Use]",
 	"description" : "Multiple Technique with a blazing hot blade... WIP",
 	"twoHanded" : true,
 	"itemTags" : [],
@@ -298,7 +298,11 @@
 					"behavior" : "sheathed" 
 				}
 			],
-			"eventOnInit" : []
+			"eventOnInit" : [{
+				"event" : "function",
+				"callback" : "item.consume",
+				"args" : [ 1000 ]
+			}]
 		},
 		"nS_toSheated" : {
 			"stance" : "nS_toSheated",

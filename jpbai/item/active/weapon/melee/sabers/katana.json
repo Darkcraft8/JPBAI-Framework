@@ -187,7 +187,7 @@
 					"armRotation" : -70,		
 					"transformations" : {
 						"weapon" : {
-							"translate" : [-0.2, 1.5],
+							"translate" : [-0.1, 1.25],
 							"rotate" : -30,
 							"rotationCenter" : [0, 0]
 						}
@@ -540,9 +540,9 @@
 			"uninitFunction" : [],		
 			"uninitEvent" : ["uninit"],
 			
-			"behaviors" : "/jpbai/item/active/weapon/melee/sabers/katana.json:behaviors_blade", 
-			"behaviorPaths" : "/jpbai/item/active/weapon/melee/sabers/katana.json:behaviorPaths_blade",
-			"behaviorEvents" : "/jpbai/item/active/weapon/melee/sabers/katana.json:behaviorEvents_blade",
+			"behaviors" : "/jpbai/item/active/weapon/melee/sabers/katana.json:behaviors_sheath", 
+			"behaviorPaths" : "/jpbai/item/active/weapon/melee/sabers/katana.json:behaviorPaths_sheath",
+			"behaviorEvents" : "/jpbai/item/active/weapon/melee/sabers/katana.json:behaviorEvents_sheath",
 			
 			"createdBy" : "Darkcraft8",
 			"tooltipKind" : "fishingrod",
@@ -582,6 +582,25 @@
 		"idle" : {"behavior" : "idle","require" : {"stance" : "idle"}}
 	},
 	"behaviorEvents_blade" : {
+		"init" : [],
+		"uninit" : []
+	},
+	"behaviors_sheath" : {
+		"init" : {
+			"stance" : "init",
+			"possibleOutcome" : ["idle"],
+			"eventOnInit" : ["init"]
+		},
+		"idle" : {
+			"stance" : "sheathed",
+			"possibleOutcome" : [],
+			"eventOnInit" : []
+		}
+	}, 
+	"behaviorPaths_sheath" : {
+		"idle" : {"behavior" : "idle","require" : {"stance" : "idle"}}
+	},
+	"behaviorEvents_sheath" : {
 		"init" : [],
 		"uninit" : []
 	}

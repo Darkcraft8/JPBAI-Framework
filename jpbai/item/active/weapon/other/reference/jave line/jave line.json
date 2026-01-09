@@ -505,8 +505,8 @@
 			},
 			"twoHanded" : true,
 			"initBehavior" : "init",
-			"initFunction" : [],		
-			"uninitFunction" : [],		
+			"initFunction" : [],
+			"uninitFunction" : [],
 			"uninitEvent" : ["uninit"],
 			
 			"behaviors" : "/jpbai/item/active/weapon/other/reference/jave line/jave line.json:behaviors", 
