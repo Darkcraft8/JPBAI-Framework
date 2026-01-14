@@ -1,4 +1,5 @@
 {
+    "This Behavior Sample Require" : ["openStarbound"],
     "animationCustom" : {
         "sounds" : {
             "low1" : {

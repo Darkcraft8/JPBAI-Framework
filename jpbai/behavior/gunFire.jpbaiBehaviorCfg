@@ -8,7 +8,7 @@
         "cooldown" : {
             "duration" : 0.11,
             "lerpTo" : true,
-            "transition" : "init"
+            "transition" : "idle"
         }
     },
     "behaviors" : {
@@ -55,17 +55,40 @@
         }
     },
     "behaviorEvents" : {
-        "shoot" : {
-            "event" : "projectile",
-            "loop" : false,
-            "spawnPos" : "fireOffset",
-            "spawnOffset" : "<fireOffset>",
+        "init" : [
+            {
+                "event" : "function", "args" : ["fireOffset"],
+                "callback" : "config.getParameter",
+                "storage" : "fireOffset"
+            },
+            {
+                "event" : "function", "args" : ["projectileType"],
+                "callback" : "config.getParameter",
+                "storage" : "projectileType"
+            },
+            {
+                "event" : "function", "args" : ["inaccuracy"],
+                "callback" : "config.getParameter",
+                "storage" : "inaccuracy"
+            }
+        ],
+        "shoot" : [
+            {
+                "event" : "projectile",
+                "loop" : false,
+                "spawnPos" : "fireOffset",
+                "spawnOffset" : "storage:fireOffset",
 
-            "type" : "<projectileType>",
-            "inaccuracy" : "<inaccuracy>",
-            "param" : {}
-        }
+                "type" : "storage:projectileType",
+                "inaccuracy" : "storage:inaccuracy",
+                "param" : {}
+            }
+        ]
     },
+
+    "fireOffset" : "<fireOffset>",
+    "projectileType" : "<projectileType>",
+    "inaccuracy" : "<inaccuracy>",
 
     "behaviorName" : "gunFire"
 }

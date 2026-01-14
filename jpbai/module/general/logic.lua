@@ -78,3 +78,34 @@ function logic.equalAny(a, b)
         end
     end
 end
+
+function logic.tableContent(table, path)
+    if not table then sb.logError("logic.table, %s | %s ins't a table", itemId, table) return nil end
+    if not path then return table end
+    local pathSegment = segmentPath(path)
+    local currentResult = nil
+    
+    for _, string in ipairs(pathSegment) do
+        if not currentResult then 
+            if table[string] then
+                currentResult = table[string]
+            else
+                sb.logError("logic.table, %s | failed to find value with path : %s", itemId, path)
+                return nil
+            end
+        else
+            if currentResult[string] then
+                currentResult = currentResult[string]
+            else
+                sb.logError("logic.table, %s | failed to find value with path : %s", itemId, path)
+                return nil
+            end
+        end
+    end
+    if currentResult ~= nil then
+        return currentResult
+    else
+        sb.logError("logic.table, %s | failed to find value with path : %s", itemId, path)
+        return nil
+    end
+end

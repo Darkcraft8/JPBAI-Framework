@@ -35,6 +35,7 @@ function init()
     debugMode = config.getParameter("debug", false)
     JPBAIConfig = root.assetJson("/jpbai/JPBAI.config")
     storage = config.getParameter("scriptStorage", {})
+    itemId = item.name()..":"..item.friendlyName().."-"..activeItem.hand()
     for _, func in ipairs(initFunc) do
         if type(func) == "function" then
             func()
@@ -61,6 +62,7 @@ function init()
 end
 
 function update(dt, fireMode, isShiftHeld, currentMove)
+    --behaviorEvents(config.getParameter("updateEvent", {}))
     for _, func in ipairs(updateFunc) do 
         if type(func) == "function" then
             func(dt, fireMode, isShiftHeld, currentMove)
@@ -151,17 +153,21 @@ function call(eventCfg) -- because whe can't directly do _ENV[funcGroup.Func]()
     else
         callback = findCallback(tostring(eventCfg.callback))
         if callback then
+            local lastEvent = copy(eventCfg)
             local args = {}
             for i, arg in pairs(eventCfg.args or {}) do
                 args[i] = checkStorage(arg)
             end
+            lastEvent.args = copy(args)
             if type(eventCfg.args) == "table" then
                 local result
                 if eventCfg.args[1] then
                     --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), sb.printJson(args))
+                    sb.setLogMap("[JPBAI] Item "..itemId.."last processed event", sb.printJson(lastEvent))
                     result = table.pack(callback(table.unpack(args)))
                 else
                     --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), eventCfg.args)
+                    sb.setLogMap("[JPBAI] Item "..itemId.."last processed event", sb.printJson(lastEvent))
                     result = table.pack(callback(args))
                 end
                 if eventCfg.storage then
@@ -178,6 +184,7 @@ function call(eventCfg) -- because whe can't directly do _ENV[funcGroup.Func]()
                 return table.unpack(result)
             else
                 --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), eventCfg.args)
+                sb.setLogMap("[JPBAI] Item "..itemId.."last processed event", sb.printJson(lastEvent))
                 return callback(args)
             end
         else
@@ -268,6 +275,20 @@ end
 function setStorage(name, value)
     storage[name] = value
     --sb.logInfo("storage[%s] = %s", name, value)
+end
+
+function clearStorage(name) 
+    local _storage = {}
+    if name then
+        for a, b in pairs(storage or {}) do 
+            if not (a == name) then
+                _storage[a] = b
+            end
+        end
+        storage = _storage
+    else
+        storage = {}
+    end
 end
 
 function insertInStorageTable(name, value)

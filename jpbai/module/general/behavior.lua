@@ -79,7 +79,7 @@ end
 
 function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to lower the amount of time we check for possible outcome
     if state ~= "running" then return end
-    sb.setLogMap("[JPBAI] Item "..item.name()..":"..item.friendlyName().."-"..activeItem.hand(), "BehavName %s", behaviorName)
+    sb.setLogMap("[JPBAI] Item "..itemId, "BehavName %s", behaviorName)
     -- Event
         self.inflictedDamage_Listener:update()
         self.inflictedHits_Listener:update()
@@ -160,16 +160,21 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                                             useBehav = (v == fireMode)
                                         end 
                                     end
-                                    if k == "time" then 
-                                        if self.behaviorCurrentTime[behavior] then
-                                            if useBehav then useBehav = (self.behaviorCurrentTime[behavior] > v) end
+                                    if k == "time" then
+                                        local name, time = copy(behavior), copy(v)
+                                        if type(v) == "table" then
+                                            name = v.name
+                                            time = v.amount
+                                        end
+                                        if self.behaviorCurrentTime[name] then
+                                            if useBehav then useBehav = (self.behaviorCurrentTime[name] > time) end
                                         else
-                                            self.behaviorTime[behavior] = v
-                                            self.behaviorCurrentTime[behavior] = dt
+                                            self.behaviorTime[name] = time
+                                            self.behaviorCurrentTime[name] = dt
 
                                             useBehav = false
                                         end
-                                        if debugMode then sb.logInfo("time %s, %s", useBehav, self.behaviorCurrentTime[behavior]) end
+                                        if debugMode then sb.logInfo("time %s, %s", useBehav, self.behaviorCurrentTime[name]) end
                                     end
                                     if k == "move" then
                                         local individialCheckResult 
@@ -239,15 +244,19 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                                     end
                                 end
                                 if p.cooldown then
-                                    if useBehav then 
-                                        useBehav = check_Cooldown(behavior) 
+                                    if useBehav then
+                                        if type(p.cooldown) == "table" then
+                                            useBehav = check_Cooldown(p.cooldown.cooldownName)
+                                        else
+                                            useBehav = check_Cooldown(behavior)
+                                        end
                                     end 
                                     if debugMode then sb.logInfo("cooldown %s", useBehav) end
                                 end
                                 if debugMode then sb.logInfo("--] require %s", p.require) end
                             else
                                 useBehav = false
-                                if behavior then sb.setLogMap("[JPBAI] Item "..item.name()..":"..item.friendlyName().."-"..activeItem.hand().."behav-"..behavior, "Behavior %s doesn't exist!!!") end
+                                if behavior then sb.setLogMap("[JPBAI] Item "..itemId.."behav-"..behavior, "Behavior %s doesn't exist!!!") end
                             end
                             
                             if useBehav == true then
@@ -288,16 +297,21 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                                         useBehav = (v == fireMode)
                                     end 
                                 end
-                                if k == "time" then 
-                                    if self.behaviorCurrentTime[behavior] then
-                                        if useBehav then useBehav = (self.behaviorCurrentTime[behavior] > v) end
+                                if k == "time" then
+                                    local name, time = copy(behavior), copy(v)
+                                    if type(v) == "table" then
+                                        name = v.name
+                                        time = v.amount
+                                    end
+                                    if self.behaviorCurrentTime[name] then
+                                        if useBehav then useBehav = (self.behaviorCurrentTime[name] > time) end
                                     else
-                                        self.behaviorTime[behavior] = v
-                                        self.behaviorCurrentTime[behavior] = dt
+                                        self.behaviorTime[name] = time
+                                        self.behaviorCurrentTime[name] = dt
 
                                         useBehav = false
                                     end
-                                    if debugMode then sb.logInfo("time %s", time) end
+                                    if debugMode then sb.logInfo("time %s, %s", useBehav, self.behaviorCurrentTime[name]) end
                                 end
                                 if k == "move" then
                                     local individialCheckResult 
@@ -364,15 +378,17 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                                 end
                             end
                             if p.cooldown then
-                                if useBehav then 
-                                    useBehav = check_Cooldown(behavior) 
-                                end 
+                                if type(p.cooldown) == "table" then
+                                    useBehav = check_Cooldown(p.cooldown.cooldownName)
+                                else
+                                    useBehav = check_Cooldown(behavior)
+                                end
                                 if debugMode then sb.logInfo("cooldown %s", useBehav) end
                             end
                             if debugMode then sb.logInfo("--] require %s", p.require) end
                         else
                             useBehav = false
-                            if behavior then sb.setLogMap("[JPBAI] Item "..item.name()..":"..item.friendlyName().."-"..activeItem.hand().."behav-"..behavior, "Behavior %s doesn't exist!!!") end
+                            if behavior then sb.setLogMap("[JPBAI] Item "..itemId.."behav-"..behavior, "Behavior %s doesn't exist!!!") end
                         end
                             
                         if useBehav == true then
@@ -535,11 +551,10 @@ end
         --sb.logInfo("damageDealt %s", notifications)
         for _, notification in pairs(notifications) do
             if string.lower(notification.hitType) == "kill" then
+                storage["script_killedEntity_notif"] = notification
                 if self.behavior["eventOnKill"] then behaviorEvents(self.behavior["eventOnKill"], notification) end
             else
-                if world.entityExists(notification.targetEntityId) then
-                    storage["script_damagedEntity"] = notification.targetEntityId
-                end
+                storage["script_inflictDamage_notif"] = notification
             end
             if self.behavior["eventOnDamageDealt"] then behaviorEvents(self.behavior["eventOnDamageDealt"], notification) end
             
@@ -559,9 +574,7 @@ end
         --sb.logInfo("hitEvent %s", notifications)
         if self.behavior["eventOnHitDealt"] then 
             for _,notification in pairs(notifications) do
-                if world.entityExists(notification.targetEntityId) then
-                    storage["script_hitEntity"] = notification.targetEntityId
-                end
+                storage["script_inflictHit_notif"] = notification
                 behaviorEvents(self.behavior["eventOnHitDealt"], notification)
             end
         end
@@ -572,9 +585,7 @@ end
         -- -65536 seem to be world or self 
         if self.behavior["eventOnDamageTaken"] then
             for _,notification in pairs(notifications) do
-                if world.entityExists(notification.sourceEntityId) and not (notification.sourceEntityId == -65536) then
-                    storage["script_hitByEntity"] = notification.sourceEntityId
-                end
+                storage["script_damageTaken_notif"] = notification
                 behaviorEvents(self.behavior["eventOnDamageTaken"], notification)
             end
         end
@@ -717,12 +728,15 @@ end
     end
 
     function check_Cooldown(behaviorName)
-        if type(behaviorName) == "number" then
-            if not self.behaviorCooldown[behaviorName] then return true end
-            if self.behaviorCooldown[behaviorName] <= 0 then return true end
-        elseif type(behaviorName) == "table" then
+        if debugMode then sb.logInfo("cooldown : %s", behaviorName) end
+        if type(behaviorName) == "table" then
+            if debugMode then sb.logInfo("time left : %s", self.behaviorCooldown[behaviorName.cooldownName]) end
             if not self.behaviorCooldown[behaviorName.cooldownName] then return true end
             if self.behaviorCooldown[behaviorName.cooldownName] <= 0 then return true end
+        else
+            if debugMode then sb.logInfo("time left : %s", self.behaviorCooldown[behaviorName]) end
+            if not self.behaviorCooldown[behaviorName] then return true end
+            if self.behaviorCooldown[behaviorName] <= 0 then return true end
         end
         return false
     end

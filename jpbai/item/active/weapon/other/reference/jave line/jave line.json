@@ -1,7 +1,7 @@
 {
 	"note" : [
 		"This weapon is a reference to silksong. primary abilities are mostly close combat one while the secondaries are minealous others such as the clawline...",
-		"you can add ?saturation=-255?brightness=170 to the weapon sprite directive and `projectileDirectives` to get a look closer to Needle"
+		"you can add ?saturation=-255?brightness=170 to the weapon sprite directive and `hookDirectives` to get a look closer to Needle"
 	],
 	"itemDescriptor" : {
 		"name" : "parasol",
@@ -185,6 +185,9 @@
 				}
 			},
 			
+			"animationScripts" : ["/items/active/effects/renderrope.lua"],
+			"ropeWidth" : 1,
+			"ropeColor" : [115, 85, 26, 255],
 			"scripts" : ["/items/active/stationtransponder/stationtransponder.lua"],
 			"replacementScripts" : ["/jpbai/JPBAI.lua", "/jpbai/module/specialised/weapon.lua", "/jpbai/module/specialised/instrument.lua", "/jpbai/module/specialised/grapplinghook.lua"],
 			"stances" : {
@@ -219,6 +222,33 @@
 					},
 					"frontArmFrame" : "rotation",
 					"backArmFrame" : "rotation"
+				},
+				"idleLounge" : {
+					"allowRotate" : false,
+					"allowFlip" : false,
+					"twoHanded" : true,
+					"resetAim" : true,
+					"resetUser" : true,
+					
+					"armRotation" : 0,		
+					"transformations" : {
+						"weapon" : {
+							"translate" : [1.75, 0.5],
+							"rotate" : -190,
+							"rotationCenter" : [0, 0]
+						}
+					},
+					
+					"animationStates" : {
+						"weapon" : "idle",
+						"swoosh" : "idle",
+						"hurtBox" : "idle"
+					},
+					"globalTags" : {
+						"globalDirectives" : ""
+					},
+					"frontArmFrame" : "run.3",
+					"backArmFrame" : "idle.5"
 				},
 				"cIdle" : {
 					"allowRotate" : false,
@@ -342,7 +372,7 @@
 				
 				"swipe.1" : {
 					"allowRotate" : false,
-					"allowFlip" : false,
+					"allowFlip" : true,
 					"twoHanded" : true,
 					"resetAim" : true,
 					
@@ -398,10 +428,38 @@
 					"backArmFrame" : "rotation",
 					"playSounds" : ["swing"],
 					
-					"duration" : 0.25,
+					"duration" : 0.41,
 					"transition" : "idle"
 				},
 				"swipe2.1" : {
+					"allowRotate" : false,
+					"allowFlip" : true,
+					"twoHanded" : true,
+					
+					"armRotation" : -20,
+					"transformations" : {
+						"weapon" : {
+							"translate" : [-1, 2.5],
+							"rotate" : 90
+						},
+						"swoosh" : {
+							"translate" : [-1, 0],
+							"rotate" : 20
+						},
+						"hurtBox" : {
+							"translate" : [-1, 0],
+							"rotate" : 20
+						}
+					},
+					"globalTags" : {},
+					"frontArmFrame" : "walk.2",
+					"backArmFrame" : "rotation",
+					"playSounds" : [],
+					
+					"duration" : 0.1,
+					"transition" : "swipe2.2"
+				},
+				"swipe2.2" : {
 					"allowRotate" : false,
 					"allowFlip" : false,
 					"twoHanded" : true,
@@ -432,7 +490,7 @@
 					"backArmFrame" : "rotation",
 					"playSounds" : ["swing"],
 					
-					"duration" : 0.25,
+					"duration" : 0.41,
 					"transition" : "idle"
 				},
 				
@@ -501,6 +559,19 @@
 					"animationStates" : {
 						"weapon" : "hide"
 					}
+				},
+				
+				"mend_start" : {
+					"duration" : 0.1,
+					"transition" : "mend_loop"
+				},
+				"mend_loop" : {
+					"duration" : 1.1,
+					"transition" : "mend_finish"
+				},
+				"mend_finish" : {
+					"duration" : 0.17,
+					"transition" : "idle"
 				}
 			},
 			"twoHanded" : true,
@@ -531,745 +602,1098 @@
 				"rarityLabel" : "^darkgray;behav not in the item descriptor^reset;\n3\n4\n5\n6\n7\n8\n9\n11\n12\n13\n14\n^gray,shadow;By^#fa0,shadow; Darkcraft8^reset;"
 			},
 			
-			"projectileDirectives" : "?crop;0;0;1;1?setcolor=fff?replace;fff0=fff?border=1;fff;000?scale=1.15;1.12?crop;1;1;3;3?replace;fbfbfb=0000;eaeaea=25000000;e4e4e4=00000300;6a6a6a=25000300?scale=36.5;2.5?crop=0;0;37;3?replace;00000100=010;01000000=110;01000200=010;02000100=110;03000100=210;04000100=310;05000100=410;06000100=210;07000100=310;08000100=410;09000100=210;0a000100=310;0b000100=410;0c000100=210;0d000100=310;0e000000=310;0e000100=410;0e000200=210;0f000000=410;0f000100=210;0f000200=310;10000000=210;10000100=310;10000200=410;1000=310;11000100=410;11000200=210;12000000=010;12000100=210;12000200=010;13000000=510;13000100=010;13000200=510;14000000=110;14000100=510;14000200=110;15000000=010;15000100=110;15000200=010;16000000=510;16000100=010;16000200=510;17000000=510;17000100=110;17000200=510;18000000=510;18000100=110;18000200=510;19000000=510;19000100=110;19000200=510;1a000000=510;1a000100=610;1a000200=110;1b000000=510;1b000100=110;1b000200=510;1c000000=510;1c000100=110;1c000200=510;1d000000=510;1d000100=610;1d000200=110;1e000000=510;1e000100=610;1e000200=110;1f000000=510;1f000100=110;1f000200=510;20000000=510;20000100=610;20000200=110;21000000=510;21000100=610;21000200=110;2000=510;22000100=610;22000200=110;23000100=110;24000100=110?replace;010=1d1813;110=3f3525;210=321f00;310=5c3f15;410=472e0a;510=312a1d;610=70614a",
+			"hookDirectives" : "?crop;0;0;1;1?setcolor=fff?replace;fff0=fff?border=1;fff;000?scale=1.15;1.12?crop;1;1;3;3?replace;fbfbfb=0000;eaeaea=25000000;e4e4e4=00000300;6a6a6a=25000300?scale=36.5;2.5?crop=0;0;37;3?replace;00000100=010;01000000=110;01000200=010;02000100=110;03000100=210;04000100=310;05000100=410;06000100=210;07000100=310;08000100=410;09000100=210;0a000100=310;0b000100=410;0c000100=210;0d000100=310;0e000000=310;0e000100=410;0e000200=210;0f000000=410;0f000100=210;0f000200=310;10000000=210;10000100=310;10000200=410;1000=310;11000100=410;11000200=210;12000000=010;12000100=210;12000200=010;13000000=510;13000100=010;13000200=510;14000000=110;14000100=510;14000200=110;15000000=010;15000100=110;15000200=010;16000000=510;16000100=010;16000200=510;17000000=510;17000100=110;17000200=510;18000000=510;18000100=110;18000200=510;19000000=510;19000100=110;19000200=510;1a000000=510;1a000100=610;1a000200=110;1b000000=510;1b000100=110;1b000200=510;1c000000=510;1c000100=110;1c000200=510;1d000000=510;1d000100=610;1d000200=110;1e000000=510;1e000100=610;1e000200=110;1f000000=510;1f000100=110;1f000200=510;20000000=510;20000100=610;20000200=110;21000000=510;21000100=610;21000200=110;2000=510;22000100=610;22000200=110;23000100=110;24000100=110?replace;010=1d1813;110=3f3525;210=321f00;310=5c3f15;410=472e0a;510=312a1d;610=70614a?border;36;fff0;fff0?crop;0;36;79;39",
+			"mend_loopProjectile" : null,
+			"mend_finishProjectile" : null, 
 
 			"interactAction" : "ScriptPane",
 			"interactData" : {"gui":{"background":{"zlevel":0,"type":"background","fileHeader":"/interface/scripted/papernote/header.png","fileBody":"/interface/scripted/papernote/body.png","fileFooter":""},"close":{"type":"button","base":"/interface/x.png","hover":"/interface/xhover.png","pressed":"/interface/xpress.png","pressedOffset":[0,0],"position":[185,241]},"scrollArea":{"type":"scrollArea","rect":[5,18,198,230],"children":{"lblNoteText":{"type":"label","zlevel":1,"position":[17,230],"hAnchor":"left","vAnchor":"top","color":"#4c4b3e","fontSize":7,"value" : "Some Items could require a client sided mod called \"JPBAI Framework\",\nIt concept is basicaly creating behavior in json format that the active items use...\n\nIt was created to lower the amount of script that had to be coded and also allow to create a greater variety of item with almost only one script.\nKnow that no having the mod will not crash your character if you pickup a properly made vanilla compatible item due to a small script change made to station transponder lua.\n\nYou can access the mod at\n^blue;https://github.com/Darkcraft8/JPBAI-Framework/tree/developement^reset;","wrapWidth":180}}}}}
 		}
 	},
 	"behaviors" : {
-			"init" : {
-				"stance" : "init",
-				"possibleOutcome" : ["idle"],
-				"eventOnInit" : ["init"]
+		"init" : {
+			"stance" : "init",
+			"possibleOutcome" : ["idle"],
+			"eventOnInit" : ["init"]
+		},
+		"idle" : {
+			"stance" : "idle",
+			"possibleOutcome" : ["grapple", "diveLeft", "diveRight", "swipe", "mend", "idleLounge", "cIdle"],
+			"eventOnInit" : []
+		},
+		"cIdle" : {
+			"stance" : "cIdle",
+			"possibleOutcome" : ["grappleUpward",{"behavior" : "idle","require" : {
+				"function" : [{
+				"callback" : "mcontroller.crouching",
+				"inverse" : true,
+				"args" : []
+				}]
+			}}],
+			"eventOnInit" : []
+		},
+		"dive" : {
+			"stance" : "dive",
+			"possibleOutcome" : ["idleLand", "cIdleLand", "diveTimeout", "diveStop"],
+			"eventOnInit" : [],
+			"eventOnUninit" : ["resetMovementParam", "fixPos",{
+				"event" : "function",
+				"callback" : "behaviorEx.resetDamageArea",
+				"args" : []
+			}],
+			"eventOnStance" : {
+				"dive" : ["dive", "diveHurtBox"]
 			},
-			"idle" : {
-				"stance" : "idle",
-				"possibleOutcome" : ["grapple", "cIdle", "diveLeft", "diveRight", "swipe"],
-				"eventOnInit" : []
+			"eventOnHitDealt" : [{	
+				"event" : "function",
+				"callback" : "mcontroller.setVelocity",
+				"args" : [[0, 60]]
+			},{	
+				"event" : "function",
+				"callback" : "setBehavior",
+				"args" : ["flip"]
+			},"resetMovementParam",{
+				"event" : "function",
+				"callback" : "status.giveResource",
+				"args" : ["energy", 10]
+			}]
+		},
+		"diveLeft" : {
+			"stance" : "diveLeft",
+			"possibleOutcome" : ["idleLand", "cIdleLand", "diveTimeout", "diveStop"],
+			"eventOnInit" : [],
+			"eventOnUninit" : ["resetMovementParam", "fixPos",{
+				"event" : "function",
+				"callback" : "behaviorEx.resetDamageArea",
+				"args" : []
+			}],
+			"eventOnStance" : {
+				"diveLeft" : ["diveLeft", "diveHurtBox", "diveHitBox"]
 			},
-			"cIdle" : {
-				"stance" : "cIdle",
-				"possibleOutcome" : ["grappleUpward",{"behavior" : "idle","require" : {
-					"function" : [{
-						"callback" : "mcontroller.crouching",
-						"inverse" : true,
-						"args" : []
-					}]
-				}}],
-				"eventOnInit" : []
+			"eventOnHitDealt" : [{	
+				"event" : "function",
+				"callback" : "mcontroller.setVelocity",
+				"args" : [[-15, 45]]
+			},{	
+				"event" : "function",
+				"callback" : "setBehavior",
+				"args" : ["flip"]
+			},"resetMovementParam",{
+				"event" : "function",
+				"callback" : "status.giveResource",
+				"args" : ["energy", 10]
+			}],
+			"eventOnDamageTaken" : [{	
+				"event" : "function",
+				"callback" : "mcontroller.setVelocity",
+				"args" : [[-15, 45]]
+			},{	
+				"event" : "function",
+				"callback" : "setBehavior",
+				"args" : ["flip"]
+			},"resetMovementParam"]
+		},
+		"diveRight" : {
+			"stance" : "diveRight",
+			"possibleOutcome" : ["idleLand", "cIdleLand", "diveTimeout", "diveStop"],
+			"eventOnInit" : [],
+			"eventOnUninit" : ["resetMovementParam", "fixPos",{
+				"event" : "function",
+				"callback" : "behaviorEx.resetDamageArea",
+				"args" : []
+			}],
+			"eventOnStance" : {
+				"diveRight" : ["diveRight", "diveHurtBox", "diveHitBox"]
 			},
-			"dive" : {
-				"stance" : "dive",
-				"possibleOutcome" : ["idleLand", "cIdleLand", "diveTimeout", "diveStop"],
-				"eventOnInit" : [],
-				"eventOnUninit" : ["resetMovementParam", "fixPos",{
-					"event" : "function",
-					"callback" : "behaviorEx.resetDamageArea",
-					"args" : []
+			"eventOnHitDealt" : [{	
+				"event" : "function",
+				"callback" : "mcontroller.setVelocity",
+				"args" : [[15, 45]]
+			},{	
+				"event" : "function",
+				"callback" : "setBehavior",
+				"args" : ["flip"]
+			},"resetMovementParam",{
+				"event" : "function",
+				"callback" : "status.giveResource",
+				"args" : ["energy", 10]
+			}],
+			"eventOnDamageTaken" : [{	
+				"event" : "function",
+				"callback" : "mcontroller.setVelocity",
+				"args" : [[15, 45]]
+			},{	
+				"event" : "function",
+				"callback" : "setBehavior",
+				"args" : ["flip"]
+			},"resetMovementParam"]
+		},
+		"flip" : {
+			"stance" : "flip",
+			"possibleOutcome" : ["idle", "diveLeftFlip", "diveRightFlip"],
+			"eventOnStance" : {
+				"flip" : ["flip"]
+			},
+			"eventOnUninit" : ["resetMovementParam"]
+		},
+		
+		"grapple" : {
+			"stance" : "grapple.1",
+			"possibleOutcome" : ["reelIn", "reelIn2"],
+			"eventOnStance" : {
+				"grapple.1" : ["lowAirFriction",{	
+				"event" : "function",
+				"callback" : "mcontroller.setVelocity",
+				"args" : [[0, 0]]
 				}],
-				"eventOnStance" : {
-					"dive" : ["dive", "diveHurtBox"]
-				},
-				"eventOnHitDealt" : [{	
-					"event" : "function",
-					"callback" : "mcontroller.setVelocity",
-					"args" : [[0, 60]]
-				},{	
-					"event" : "function",
-					"callback" : "setBehavior",
-					"args" : ["flip"]
-				},"resetMovementParam",{
-					"event" : "function",
-					"callback" : "status.giveResource",
-					"args" : ["energy", 10]
+				"grapple.2" : ["spawnHook", {
+				"event" : "function",
+				"callback" : "status.consumeResource",
+				"args" : ["energy", 5]
 				}]
 			},
-			"diveLeft" : {
-				"stance" : "diveLeft",
-				"possibleOutcome" : ["idleLand", "cIdleLand", "diveTimeout", "diveStop"],
-				"eventOnInit" : [],
-				"eventOnUninit" : ["resetMovementParam", "fixPos",{
-					"event" : "function",
-					"callback" : "behaviorEx.resetDamageArea",
-					"args" : []
-				}],
-				"eventOnStance" : {
-					"diveLeft" : ["diveLeft", "diveHurtBox", "diveHitBox"]
-				},
-				"eventOnHitDealt" : [{	
+			"periodicEvent" : [{
+				"time" : 0.1,
+				"event" : [{	
 					"event" : "function",
 					"callback" : "mcontroller.setVelocity",
-					"args" : [[-15, 45]]
-				},{	
-					"event" : "function",
-					"callback" : "setBehavior",
-					"args" : ["flip"]
-				},"resetMovementParam",{
-					"event" : "function",
-					"callback" : "status.giveResource",
-					"args" : ["energy", 10]
+					"args" : [[0, 0]]
+				}, "hookLine"],
+				"repeat" : true
+			}],
+			"eventOnUninit" : [],
+			"eventOnHitDealt" : [{
+				"event" : "function",
+				"callback" : "status.giveResource",
+				"args" : ["energy", 5]
+			}]
+		},
+		"grappleUpward" : {
+			"stance" : "grapple.1Up",
+			"possibleOutcome" : ["reelIn", "reelIn2"],
+			"eventOnStance" : {
+				"grapple.1Up" : ["lowAirFriction",{	
+				"event" : "function",
+				"callback" : "mcontroller.setVelocity",
+				"args" : [[0, 0]]
 				}],
-				"eventOnDamageTaken" : [{	
-					"event" : "function",
-					"callback" : "mcontroller.setVelocity",
-					"args" : [[-15, 45]]
-				},{	
-					"event" : "function",
-					"callback" : "setBehavior",
-					"args" : ["flip"]
-				},"resetMovementParam"]
-			},
-			"diveRight" : {
-				"stance" : "diveRight",
-				"possibleOutcome" : ["idleLand", "cIdleLand", "diveTimeout", "diveStop"],
-				"eventOnInit" : [],
-				"eventOnUninit" : ["resetMovementParam", "fixPos",{
-					"event" : "function",
-					"callback" : "behaviorEx.resetDamageArea",
-					"args" : []
-				}],
-				"eventOnStance" : {
-					"diveRight" : ["diveRight", "diveHurtBox", "diveHitBox"]
-				},
-				"eventOnHitDealt" : [{	
-					"event" : "function",
-					"callback" : "mcontroller.setVelocity",
-					"args" : [[15, 45]]
-				},{	
-					"event" : "function",
-					"callback" : "setBehavior",
-					"args" : ["flip"]
-				},"resetMovementParam",{
-					"event" : "function",
-					"callback" : "status.giveResource",
-					"args" : ["energy", 10]
-				}],
-				"eventOnDamageTaken" : [{	
-					"event" : "function",
-					"callback" : "mcontroller.setVelocity",
-					"args" : [[15, 45]]
-				},{	
-					"event" : "function",
-					"callback" : "setBehavior",
-					"args" : ["flip"]
-				},"resetMovementParam"]
-			},
-			"flip" : {
-				"stance" : "flip",
-				"possibleOutcome" : ["idle", "diveLeftFlip", "diveRightFlip"],
-				"eventOnStance" : {
-					"flip" : ["flip"]
-				},
-				"eventOnUninit" : ["resetMovementParam"]
-			},
-			
-			"grapple" : {
-				"stance" : "grapple.1",
-				"possibleOutcome" : ["reelIn", "reelIn2"],
-				"eventOnStance" : {
-					"grapple.1" : ["lowAirFriction",{	
-						"event" : "function",
-						"callback" : "mcontroller.setVelocity",
-						"args" : [[0, 0]]
-					}],
-					"grapple.2" : ["spawnHook", {
-						"event" : "function",
-						"callback" : "status.consumeResource",
-						"args" : ["energy", 5]
-					}]
-				},
-				"periodicEvent" : [{
-					"time" : 0.1,
-					"event" : [{	
-						"event" : "function",
-						"callback" : "mcontroller.setVelocity",
-						"args" : [[0, 0]]
-					}],
-					"repeat" : true
-				}],
-				"eventOnUninit" : [],
-				"eventOnHitDealt" : [{
-					"event" : "function",
-					"callback" : "status.giveResource",
-					"args" : ["energy", 5]
+				"grapple.2" : ["spawnHookUpward", {
+				"event" : "function",
+				"callback" : "status.consumeResource",
+				"args" : ["energy", 15]
 				}]
 			},
-			"grappleUpward" : {
-				"stance" : "grapple.1Up",
-				"possibleOutcome" : ["reelIn", "reelIn2"],
-				"eventOnStance" : {
-					"grapple.1Up" : ["lowAirFriction",{	
-						"event" : "function",
-						"callback" : "mcontroller.setVelocity",
-						"args" : [[0, 0]]
-					}],
-					"grapple.2" : ["spawnHookUpward", {
-						"event" : "function",
-						"callback" : "status.consumeResource",
-						"args" : ["energy", 15]
-					}]
-				},
-				"periodicEvent" : [{
-					"time" : 0.1,
-					"event" : [{	
-						"event" : "function",
-						"callback" : "mcontroller.setVelocity",
-						"args" : [[0, 0]]
-					}],
-					"repeat" : true
-				}],
-				"eventOnUninit" : [],
-				"eventOnHitDealt" : [{
+			"periodicEvent" : [{
+				"time" : 0.1,
+				"event" : [{	
 					"event" : "function",
-					"callback" : "status.giveResource",
-					"args" : ["energy", 15]
-				}]
+					"callback" : "mcontroller.setVelocity",
+					"args" : [[0, 0]]
+				}, "hookLine"],
+				"repeat" : true
+			}],
+			"eventOnUninit" : [],
+			"eventOnHitDealt" : [{
+				"event" : "function",
+				"callback" : "status.giveResource",
+				"args" : ["energy", 15]
+			}]
+		},
+		"reelIn" : {
+			"stance" : "grapple.3",
+			"possibleOutcome" : ["reeledIn", "grappleExit", {"behavior" : "reeledIn","require" : {"time" : 2.5}}],
+			"periodicEvent" : [{
+				"time" : 0.1,
+				"event" : ["reelTowardHook", "hookLine"],
+				"repeat" : true
+			}],
+			"eventOnUninit" : []
+		},
+		"reeledIn" : {
+			"eventOnStance" : {
+				"grapple.3" : [{	
+				"event" : "function",
+				"callback" : "setBehavior",
+				"args" : ["flip"]
+				},"despawnHook"]
 			},
-			"reelIn" : {
-				"stance" : "grapple.3",
-				"possibleOutcome" : ["reeledIn", "grappleExit", {"behavior" : "reeledIn","require" : {"time" : 5}}],
-				"periodicEvent" : [{
-					"time" : 0.1,
-					"event" : ["reelTowardHook"],
-					"repeat" : true
-				}],
-				"eventOnUninit" : []
+			"eventOnUninit" : [{
+				"event" : "function",
+				"callback" : "movementControl.multVelocity",
+				"args" : [[0.25, 0.25]]
+			},{	
+				"event" : "function",
+				"callback" : "mcontroller.addMomentum",
+				"args" : [[0, 55]]
+			}, "resetMovementParam"]
+		},
+		
+		"swipe" : {
+			"stance" : "swipe.1",
+			"possibleOutcome" : ["swipe2", "idle"],
+			"eventOnStance" : {
+				"swipe.2" : ["swipe"]
 			},
-			"reeledIn" : {
-				"eventOnStance" : {
-					"grapple.3" : [{	
+			"eventOnHitDealt" : [{
+				"event" : "function",
+				"callback" : "status.giveResource",
+				"args" : ["energy", 10]
+			}]
+		},
+		"swipe2" : {
+			"stance" : "swipe2.1",
+			"possibleOutcome" : ["swipe2_To_1", "idle"],
+			"eventOnStance" : {
+				"swipe2.2" : ["swipe"]
+			},
+			"eventOnHitDealt" : [{
+				"event" : "function",
+				"callback" : "status.giveResource",
+				"args" : ["energy", 10]
+			}]
+		},
+
+		"idleLounge" : {
+			"stance" : "idleLounge",
+			"possibleOutcome" : ["idleLoungeOut"],
+			"eventOnStance" : {},
+			"eventOnHitDealt" : []
+		},
+		
+		"mend" : {
+			"stance" : "mend_start",
+			"possibleOutcome" : [{
+				"event" : [
+					{
 						"event" : "function",
 						"callback" : "setBehavior",
-						"args" : ["flip"]
-					},"despawnHook"]
-				},
-				"eventOnUninit" : [{
-						"event" : "function",
-						"callback" : "movementControl.multVelocity",
-						"args" : [[0.25, 0.25]]
-				},{	
-						"event" : "function",
-						"callback" : "mcontroller.addMomentum",
-						"args" : [[0, 55]]
+						"args" : ["idle"]
+					}, "resetMovementParam", "mendVisuals_clear"
+				],
+				"require" : {
+					"time" : {
+						"name" : "mend_timeOut",
+						"amount" : 1.37
+					},
+					"fireMode" : "none"
+				}
+			}],
+			"eventOnStance" : {
+				"mend_start" : ["mendVisuals_cast", "lowAirFriction"],
+				"mend_loop" : [],
+				"mend_finish" : ["mendVisuals_clear", "mendVisuals_finish", {
+					"event" : "function",
+					"callback" : "status.giveResource",
+					"args" : ["health", 60]
+				}],
+				"idle" : [{
+					"event" : "function",
+					"callback" : "setBehavior",
+					"args" : ["idle"]
 				}, "resetMovementParam"]
 			},
-			
-			"swipe" : {
-				"stance" : "swipe.1",
-				"possibleOutcome" : ["swipe2", "idle"],
-				"eventOnStance" : {
-					"swipe.2" : ["swipe"]
-				},
-				"eventOnHitDealt" : [{
+			"periodicEvent" : [{
+				"time" : 0.1,
+				"event" : [ {	
 					"event" : "function",
-					"callback" : "status.giveResource",
-					"args" : ["energy", 10]
-				}]
-			},
-			"swipe2" : {
-				"stance" : "swipe2.1",
-				"possibleOutcome" : ["idle"],
-				"eventOnStance" : {
-					"swipe2.1" : ["swipe"]
-				},
-				"eventOnHitDealt" : [{
+					"callback" : "mcontroller.setVelocity",
+					"args" : [[0, 0]]
+				},{
 					"event" : "function",
-					"callback" : "status.giveResource",
-					"args" : ["energy", 10]
-				}]
-			}
-		
+					"callback" : "status.consumeResource",
+					"args" : ["energy", 6.6]
+				}],
+				"repeat" : true
+			}],
+			"eventOnDamageTaken" : [{
+				"event" : "function",
+				"callback" : "setBehavior",
+				"args" : ["idle"]
+			}, "resetMovementParam", "mendVisuals_clear"]
+		}
 	}, 
 	"behaviorPaths" : {
-			"idle" : {"behavior" : "idle","require" : {"stance" : "idle"}},
-			"cIdle" : {"behavior" : "cIdle","require" : {"function" : [{
+		"idle" : {"behavior" : "idle","require" : {"stance" : "idle"}},
+		"cIdle" : {"behavior" : "cIdle","require" : {"function" : [{
 					"callback" : "mcontroller.crouching",
 					"inverse" : false,
 					"args" : []
-			}]}},
-			"idleLand" : {"behavior" : "idle","require" : {
-				"function" : [{
-					"callback" : "mcontroller.groundMovement",
-					"inverse" : false,
-					"args" : []
-				},{
-					"callback" : "mcontroller.crouching",
-					"inverse" : true,
-					"args" : []
-				}]
-			}},
-			"cIdleLand" : {"behavior" : "cIdle","require" : {
-				"function" : [{
-					"callback" : "mcontroller.groundMovement",
-					"inverse" : false,
-					"args" : []
-				},{
-					"callback" : "mcontroller.crouching",
-					"inverse" : false,
-					"args" : []
-				}]
-			}},
-			"swipe" : {"behavior" : "swipe","require" : {"time" : 0.1, "fireMode" : "primary"}},
-			"swipe2" : {"behavior" : "swipe2","require" : {"stance" : "swipe.2", "time" : 0.33, "fireMode" : "primary"}},
-			
-			"diveStop" : {"behavior" : "idle","require" : {"function" : [{
-				"callback" : "mcontroller.liquidMovement",
+		}]}},
+		"idleLand" : {"behavior" : "idle","require" : {
+			"function" : [{
+				"callback" : "mcontroller.groundMovement",
 				"inverse" : false,
 				"args" : []
-			}]}},
-			"diveTimeout" : {"behavior" : "idle","require" : {"time" : 3}},
-			
-			"dive" : {"behavior" : "dive","require" : {"time" : 0.1,
-				"fireMode" : "primary",
-				"move" : {
-					"down" : true,
-					"left" : false,
-					"right" : false
-				},
-				"function" : [{
-					"callback" : "mcontroller.groundMovement",
-					"inverse" : true,
-					"args" : []
-				},{
-					"callback" : "mcontroller.liquidMovement",
-					"inverse" : true,
-					"args" : []
-				}]
-			}},
-			"diveLeft" : {"behavior" : "diveLeft","require" : {"time" : 0.1,
-				"fireMode" : "primary",
-				"move" : {
-					"down" : true
-				},
-				"function" : [{
-					"callback" : "mcontroller.groundMovement",
-					"inverse" : true,
-					"args" : []
-				},{
-					"callback" : "aimDirection",
-					"inverse" : true,
-					"args" : []
-				},{
-					"callback" : "mcontroller.liquidMovement",
-					"inverse" : true,
-					"args" : []
-				}]
-			}},
-			"diveRight" : {"behavior" : "diveRight","require" : {"time" : 0.1,
-				"fireMode" : "primary",
-				"move" : {
-					"down" : true
-				},
-				"function" : [{
-					"callback" : "mcontroller.groundMovement",
-					"inverse" : true,
-					"args" : []
-				},{
-					"callback" : "aimDirection",
-					"inverse" : false,
-					"args" : []
-				},{
-					"callback" : "mcontroller.liquidMovement",
-					"inverse" : true,
-					"args" : []
-				}]
-			}},
-			"diveFlip" : {"behavior" : "dive","require" : {"time" : 0.25,
-				"fireMode" : "primary",
-				"move" : {
-					"down" : true,
-					"left" : false,
-					"right" : false
-				},
-				"function" : [{
-					"callback" : "mcontroller.groundMovement",
-					"inverse" : true,
-					"args" : []
-				}]
-			}}, 
-			"diveLeftFlip" : {"behavior" : "diveLeft","require" : {"time" : 0.25,
-				"fireMode" : "primary",
-				"move" : {
-					"down" : true
-				},
-				"function" : [{
-					"callback" : "mcontroller.groundMovement",
-					"inverse" : true,
-					"args" : []
-				},{
-					"callback" : "aimDirection",
-					"inverse" : true,
-					"args" : []
-				}]
-			}},
-			"diveRightFlip" : {"behavior" : "diveRight","require" : {"time" : 0.25,
-				"fireMode" : "primary",
-				"move" : {
-					"down" : true
-				},
-				"function" : [{
-					"callback" : "mcontroller.groundMovement",
-					"inverse" : true,
-					"args" : []
-				},{
-					"callback" : "aimDirection",
-					"inverse" : false,
-					"args" : []
-				}]
-			}},
+			},{
+				"callback" : "mcontroller.crouching",
+				"inverse" : true,
+				"args" : []
+			}]
+		}},
+		"cIdleLand" : {"behavior" : "cIdle","require" : {
+			"function" : [{
+				"callback" : "mcontroller.groundMovement",
+				"inverse" : false,
+				"args" : []
+			},{
+				"callback" : "mcontroller.crouching",
+				"inverse" : false,
+				"args" : []
+			}]
+		}},
+		"idleLounge" : {"behavior" : "idleLounge","require" : {
+			"function" : [{
+				"callback" : "player.isLounging",
+				"inverse" : false,
+				"args" : []
+			}]
+		}},
+		"idleLoungeOut" : {"behavior" : "idle","require" : {
+			"function" : [{
+				"callback" : "player.isLounging",
+				"inverse" : true,
+				"args" : []
+			}]
+		}},
+		"swipe" : {"behavior" : "swipe","require" : {"time" : 0.05, "fireMode" : "primary"}},
+		"swipe2" : {"behavior" : "swipe2","require" : {"stance" : "swipe.2", "time" : 0.41, "fireMode" : "primary"}},
+		"swipe2_To_1" : {"behavior" : "swipe","require" : {"stance" : "swipe2.2", "time" : 0.41, "fireMode" : "primary"}},
 		
-			"grapple" : {"behavior" : "grapple","require" : {"time" : 0.1,
-				"fireMode" : "alt",
-				"move" : {
-					"up" : true
-				},
-				"function" : [{
-					"callback" : "mcontroller.liquidMovement",
-					"inverse" : true,
-					"args" : []
-				},{
-					"callback" : "statusEx.hasResources",
-					"inverse" : false,
-					"args" : [[{"resource" : "energy", "amount" : 5}]]
-				}]
-			}},
-			"grappleUpward" : {"behavior" : "grappleUpward","require" : {"time" : 0.1,
-				"fireMode" : "alt",
-				"move" : {
-					"left" : false,
-					"right" : false
-				},
-				"function" : [{
-					"callback" : "mcontroller.liquidMovement",
-					"inverse" : true,
-					"args" : []
-				},{
-					"callback" : "statusEx.hasResources",
-					"inverse" : false,
-					"args" : [[{"resource" : "energy", "amount" : 15}]]
-				}]
-			}},
+		"diveStop" : {"behavior" : "idle","require" : {"function" : [{
+			"callback" : "mcontroller.liquidMovement",
+			"inverse" : false,
+			"args" : []
+		}]}},
+		"diveTimeout" : {"behavior" : "idle","require" : {"time" : 3}},
+		
+		"dive" : {"behavior" : "dive","require" : {"time" : 0.1,
+			"fireMode" : "primary",
+			"move" : {
+				"down" : true,
+				"left" : false,
+				"right" : false
+			},
+			"function" : [{
+				"callback" : "mcontroller.groundMovement",
+				"inverse" : true,
+				"args" : []
+			},{
+				"callback" : "mcontroller.liquidMovement",
+				"inverse" : true,
+				"args" : []
+			}]
+		}},
+		"diveLeft" : {"behavior" : "diveLeft","require" : {"time" : 0.1,
+			"fireMode" : "primary",
+			"move" : {
+				"down" : true
+			},
+			"function" : [{
+				"callback" : "mcontroller.groundMovement",
+				"inverse" : true,
+				"args" : []
+			},{
+				"callback" : "aimDirection",
+				"inverse" : true,
+				"args" : []
+			},{
+				"callback" : "mcontroller.liquidMovement",
+				"inverse" : true,
+				"args" : []
+			}]
+		}},
+		"diveRight" : {"behavior" : "diveRight","require" : {"time" : 0.1,
+			"fireMode" : "primary",
+			"move" : {
+				"down" : true
+			},
+			"function" : [{
+				"callback" : "mcontroller.groundMovement",
+				"inverse" : true,
+				"args" : []
+			},{
+				"callback" : "aimDirection",
+				"inverse" : false,
+				"args" : []
+			},{
+				"callback" : "mcontroller.liquidMovement",
+				"inverse" : true,
+				"args" : []
+			}]
+		}},
+		"diveFlip" : {"behavior" : "dive","require" : {"time" : 0.25,
+			"fireMode" : "primary",
+			"move" : {
+				"down" : true,
+				"left" : false,
+				"right" : false
+			},
+			"function" : [{
+				"callback" : "mcontroller.groundMovement",
+				"inverse" : true,
+				"args" : []
+			}]
+		}}, 
+		"diveLeftFlip" : {"behavior" : "diveLeft","require" : {"time" : 0.25,
+			"fireMode" : "primary",
+			"move" : {
+				"down" : true
+			},
+			"function" : [{
+				"callback" : "mcontroller.groundMovement",
+				"inverse" : true,
+				"args" : []
+			},{
+				"callback" : "aimDirection",
+				"inverse" : true,
+				"args" : []
+			}]
+		}},
+		"diveRightFlip" : {"behavior" : "diveRight","require" : {"time" : 0.25,
+			"fireMode" : "primary",
+			"move" : {
+				"down" : true
+			},
+			"function" : [{
+				"callback" : "mcontroller.groundMovement",
+				"inverse" : true,
+				"args" : []
+			},{
+				"callback" : "aimDirection",
+				"inverse" : false,
+				"args" : []
+			}]
+		}},
+		
+		"grapple" : {"behavior" : "grapple","require" : {"time" : 0.1,
+			"fireMode" : "alt",
+			"move" : {
+				"up" : true
+			},
+			"function" : [{
+				"callback" : "mcontroller.liquidMovement",
+				"inverse" : true,
+				"args" : []
+			},{
+				"callback" : "statusEx.hasResources",
+				"inverse" : false,
+				"args" : [[{"resource" : "energy", "amount" : 5}]]
+			}]
+		}},
+		"grappleUpward" : {"behavior" : "grappleUpward","require" : {"time" : 0.1,
+			"fireMode" : "alt",
+			"move" : {
+				"left" : false,
+				"right" : false
+			},
+			"function" : [{
+				"callback" : "mcontroller.liquidMovement",
+				"inverse" : true,
+				"args" : []
+			},{
+				"callback" : "statusEx.hasResources",
+				"inverse" : false,
+				"args" : [[{"resource" : "energy", "amount" : 15}]]
+			}]
+		}},
 
-			"reelIn" : {"behavior" : "reelIn","require" : {"stance" : "grapple.3", "function" : [{
-					"callback" : "world.entityExists",
-					"inverse" : false,
-					"args" : ["storage:grapple"]
-			},{
-					"callback" : "world.callScriptedEntity",
-					"inverse" : false,
-					"args" : ["storage:grapple", "anchored"]
-			}]}},
-			"reelIn2" : {"behavior" : "reelIn","require" : {"stance" : "grapple.3", "function" : [{
-					"callback" : "world.entityExists",
-					"inverse" : false,
-					"args" : ["storage:grapple"]
-			},{
-					"callback" : "world.entityVelocity",
-					"inverse" : false,
-					"args" : ["storage:grapple"],
-					"storage" : "grappleVelocity"
-			},{
-					"callback" : "exMath.vecLower",
-					"inverse" : false,
-					"args" : ["storage:grappleVelocity", [1, 1], true]
-			}]}},
-			"reelIn3" : {"behavior" : "reelIn","require" : {"stance" : "grapple.3", "time" : 10, "function" : [{
-					"callback" : "world.entityExists",
-					"inverse" : false,
-					"args" : ["storage:grapple"]
-			}]}},
-			"reeledIn" : {"behavior" : "reeledIn","require" : {"function" : [{
-					"callback" : "magBetweenEntity",
-					"inverse" : true,
-					"args" : ["storage:grapple", false, 3]
-			}]}},
-			"grappleExit" : {"behavior" : "idle","require" : {"function" : [{
-					"callback" : "world.entityExists",
-					"inverse" : true,
-					"args" : ["storage:grapple"]
-			}]}}
+		"reelIn" : {"behavior" : "reelIn","require" : {"stance" : "grapple.3", "function" : [{
+				"callback" : "world.entityExists",
+				"inverse" : false,
+				"args" : ["storage:grapple"]
+		},{
+				"callback" : "world.callScriptedEntity",
+				"inverse" : false,
+				"args" : ["storage:grapple", "anchored"]
+		}]}},
+		"reelIn2" : {"behavior" : "reelIn","require" : {"stance" : "grapple.3", "function" : [{
+				"callback" : "world.entityExists",
+				"inverse" : false,
+				"args" : ["storage:grapple"]
+		},{
+				"callback" : "world.entityVelocity",
+				"inverse" : false,
+				"args" : ["storage:grapple"],
+				"storage" : "grappleVelocity"
+		},{
+				"callback" : "exMath.vecLower",
+				"inverse" : false,
+				"args" : ["storage:grappleVelocity", [2, 2], true]
+		}]}},
+		"reelIn3" : {"behavior" : "reelIn","require" : {"stance" : "grapple.3", "time" : 5, "function" : [{
+				"callback" : "world.entityExists",
+				"inverse" : false,
+				"args" : ["storage:grapple"]
+		}]}},
+		"reeledIn" : {"behavior" : "reeledIn","require" : {"function" : [{
+				"callback" : "magBetweenEntity",
+				"inverse" : true,
+				"args" : ["storage:grapple", false, 3]
+		}]}},
+		"grappleExit" : {"behavior" : "idle","require" : {"function" : [{
+				"callback" : "world.entityExists",
+				"inverse" : true,
+				"args" : ["storage:grapple"]
+		}]}},
+
+		"mend" : {
+			"behavior" : "mend",
+			"require" : {
+				"fireMode" : "alt",
+				"time" : 0.1,
+				"function" : [
+					{
+						"callback" : "statusEx.hasResources",
+						"inverse" : false,
+						"args" : [[{"resource" : "energy", "amount" : 100}]]
+					}
+				]
+			}
+		}
 	},
 	"behaviorEvents" : {
-			"init" : [{	
-					"event" : "function",
-					"callback" : "status.setPersistentEffects",
-					"args" : [ "weaponEffect", [{"stat" : "energyRegenBlockTime", "amount" : 99999999999}]]
-				},{	
-					"event" : "function",
-					"callback" : "status.setResourcePercentage",
-					"args" : [ "energyRegenBlock", 1]
-				},{	
-					"event" : "function",
-					"callback" : "config.getParameter",
-					"args" : [ "projectileDirectives", "?crop;0;0;1;1?setcolor=fff?replace;fff0=fff"],
-					"storage" : "projDir"
+		"init" : [{	
+				"event" : "function",
+				"callback" : "status.setPersistentEffects",
+				"args" : [ "weaponEffect", [{"stat" : "energyRegenBlockTime", "amount" : 99999999999}]]
+			},{	
+				"event" : "function",
+				"callback" : "status.setResourcePercentage",
+				"args" : [ "energyRegenBlock", 1]
+			},{	
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : [ "hookDirectives", "?crop;0;0;1;1?setcolor=fff?replace;fff0=fff"],
+				"storage" : "projDir"
+			},{	
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : [ "mend_loopProjectile", {
+  					"timeToLive" : 3600,
+					"processing" : "?crop;0;0;1;1?setcolor=fff?replace;fff0=ffff?scalenearest=128?blendmult=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?saturation=-255?brightness=100?multiply=fffa?scalenearest=0.25",
+					"damageTeam" : { "type" : "ghostly" },
+					"actionOnReap" : [],
+					"periodicActions" : [
+						{
+							"time" : 0.1,
+							"repeat" : true,
+
+							"action" : "option",
+							"options" : [
+								{
+									"action" : "projectile",
+									"type" : "swipe",
+									"fuzzAngle" : 90,
+									"inheritDamageFactor" : 1,
+									"config" : {
+										"processing" : "?scalenearest;3=0.5?saturation=-255?brightness=100",
+										"speed" : 5,
+										"piercing" : true,
+										"damageKind" : "nodamage",
+										"damageTeam" : { "type" : "ghostly" },
+										"renderLayer" : "player+1"
+									}
+								},
+								{
+									"action" : "projectile",
+									"type" : "swipe",
+									"fuzzAngle" : 90,
+									"angleAdjust" : 180,
+									"inheritDamageFactor" : 1,
+									"config" : {
+										"processing" : "?scalenearest;3=0.5?saturation=-255?brightness=100",
+										"speed" : 5,
+										"piercing" : true,
+										"damageKind" : "nodamage",
+										"damageTeam" : { "type" : "ghostly" },
+										"renderLayer" : "player+1"
+									}
+								},
+								{
+									"action" : "projectile",
+									"type" : "swipe",
+									"fuzzAngle" : 90,
+									"inheritDamageFactor" : 1,
+									"config" : {
+										"processing" : "?scalenearest;3=0.5?saturation=-255?brightness=100?flipy",
+										"power" : 5.0,
+										"speed" : 5,
+										"piercing" : true,
+										"damageKind" : "nodamage",
+										"damageTeam" : { "type" : "ghostly" },
+										"renderLayer" : "player+1"
+									}
+								},
+								{
+									"action" : "projectile",
+									"type" : "swipe",
+									"fuzzAngle" : 90,
+									"angleAdjust" : 180,
+									"inheritDamageFactor" : 1,
+									"config" : {
+										"processing" : "?scalenearest;3=0.5?saturation=-255?brightness=100?flipy",
+										"power" : 5.0,
+										"speed" : 5,
+										"piercing" : true,
+										"damageKind" : "nodamage",
+										"damageTeam" : { "type" : "ghostly" },
+										"renderLayer" : "player+1"
+									}
+								}
+							]
+						},{
+							"time" : 0.1,
+							"repeat" : true,
+							
+							"action" : "sound",
+							"options" : [ "/sfx/melee/whip_swing1.ogg", "/sfx/melee/whip_swing2.ogg", "/sfx/melee/whip_swing3.ogg" ]
+						},{
+							"time" : 0,
+							"repeat" : false,
+							
+							"action" : "sound",
+							"options" : [ "/sfx/melee/shield_block_metal.ogg" ]
+						},
+						{
+							"time" : 0.05,
+							"repeat" : true,
+							"specification" : {
+								"fade" : 0.9,
+								"initialVelocity" : [0, 0],
+								"approach" : [0, 0],
+								"collidesLiquid" : false,
+								"layer" : "middle",
+								"destructionAction" : "shrink",
+								"fullbright" : true,
+								"variance" : {},
+								"type" : "ember",
+								"destructionTime" : 1,
+								"color" : [255, 255, 255, 0],
+								"size" : 1,
+								"finalVelocity" : [0, 0],
+								"timeToLive" : 0,
+								"light" : [125, 125, 125]
+							},
+							"action" : "particle",
+							"rotate" : false
+						}
+					],
+					"speed" : 0,
+					"piercing" : true,
+ 					"damageKind" : "nodamage"
+				}],
+				"storage" : "mend_loopProjectile"
+			},{	
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : [ "mend_finishProjectile", {
+  					"timeToLive" : 0,
+					"processing" : "?crop;0;0;1;1?setcolor=fff?replace;fff0=ffff?scalenearest=128?blendmult=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?blendscreen=/particles/sandcloud/1.png?saturation=-255?brightness=100?multiply=fffa?scalenearest=0.25",
+					"damageTeam" : { "type" : "ghostly" },
+					"actionOnReap" : [
+						{
+							"action" : "projectile",
+							"type" : "electriclance",
+							"angle" : -180,
+							"offset" : [-2.5, 0],
+							"config" : {
+								"power" : 0,
+								"animationCycle" : 0.24,
+ 								"damageKind" : "nodamage",
+								"damageTeam" : { "type" : "ghostly" },
+								"timeToLive" : 0.24,
+								"emitters" : [ ],
+  								"lightColor" : [140, 140, 140],
+								"processing" : "?scalenearest=1?saturation=-255?brightness=100",
+								"renderLayer" : "player+1"
+							}
+						},
+						{
+							"action" : "projectile",
+							"type" : "electriclance",
+							"angle" : 0,
+							"offset" : [2.5, 0],
+							"config" : {
+								"power" : 0,
+								"animationCycle" : 0.24,
+ 								"damageKind" : "nodamage",
+								"damageTeam" : { "type" : "ghostly" },
+								"timeToLive" : 0.24,
+								"emitters" : [ ],
+  								"lightColor" : [200, 200, 200],
+								"processing" : "?scalenearest=1?saturation=-255?brightness=100",
+								"renderLayer" : "player+1"
+							}
+						},
+						{
+							"action" : "sound",
+							"options" : [ "/sfx/gun/reload/grenade_reload_clip3.ogg" ]
+						},
+						{
+							"specification" : {
+								"fade" : 0.9,
+								"initialVelocity" : [0, 0],
+								"approach" : [0, 0],
+								"collidesLiquid" : false,
+								"layer" : "middle",
+								"destructionAction" : "shrink",
+								"fullbright" : true,
+								"variance" : {},
+								"type" : "ember",
+								"destructionTime" : 0.48,
+								"color" : [255, 255, 255, 0],
+								"size" : 1,
+								"finalVelocity" : [0, 0],
+								"timeToLive" : 0,
+								"light" : [200, 200, 200]
+							},
+							"action" : "particle",
+							"rotate" : false
+						}
+					],
+					"periodicActions" : [],
+					"speed" : 0,
+					"piercing" : true,
+ 					"damageKind" : "nodamage"
+				}],
+				"storage" : "mend_finishProjectile"
+			}
+		],
+		"uninit" : [
+			{	
+				"event" : "function",
+				"callback" : "status.clearPersistentEffects",
+				"args" : ["weaponEffect"]
+			}, "resetMovementParam", "despawnHook",{	
+				"event" : "function",
+				"callback" : "clearStorage",
+				"args" : ["projDir"]
+			},{	
+				"event" : "function",
+				"callback" : "clearStorage",
+				"args" : ["mend_loopProjectile"]
+			},{	
+				"event" : "function",
+				"callback" : "clearStorage",
+				"args" : ["mend_finishProjectile"]
+			}
+		],
+		"resetMovementParam" : [
+			{	
+				"event" : "function",
+				"callback" : "status.clearPersistentEffects",
+				"args" : ["diveGrit"]
+			},{	
+				"event" : "function",
+				"callback" : "movementControl.resetParameters",
+				"args" : []
+			},
+			{	
+				"event" : "function",
+				"callback" : "resetItemShieldPolys",
+				"args" : []
+			}
+		],
+		"fixPos" : [
+			{	
+				"event" : "function",
+				"callback" : "movementControl.translatePos",
+				"args" : [[0, 2]]
+			}
+		],
+		"lowAirFriction" : [
+			{	
+				"event" : "function",
+				"callback" : "status.setPersistentEffects",
+				"args" : [ "diveGrit", [{"stat" : "grit", "amount" : 1},{"stat" : "activeMovementAbilities", "amount" : 1}]]
+			},{	
+				"event" : "function",
+				"callback" : "movementControl.setParameters",
+				"args" : [{
+					"airFriction" : 0,
+					"airForce" : 0,
+					"gravityMultiplier" : 0.000001
+				}]
+			}
+		],
+		"flip" : [
+			{	
+				"event" : "function",
+				"callback" : "movementControl.setParameters",
+				"args" : [{
+				"collisionPoly" : [ [-2.0, -1.0], [-1.0, -2.0], [1.0, -2.0], [2.0, -1.0], [2.0, 1.0], [1.0, 2.0], [-1.0, 2.0], [-2.0, 1.0] ]
+				}]
+			}
+		],
+		
+		"dive" : [
+			{	
+				"event" : "function",
+				"callback" : "mcontroller.setVelocity",
+				"args" : [[0, -90]]
+			},"lowAirFriction"
+		],
+		"diveLeft" : [
+			{	
+				"event" : "function",
+				"callback" : "mcontroller.setVelocity",
+				"args" : [[-90, -90]]
+			},"lowAirFriction"
+		],
+		"diveRight" : [
+			{	
+				"event" : "function",
+				"callback" : "mcontroller.setVelocity",
+				"args" : [[90, -90]]
+			},"lowAirFriction"
+		],
+		
+		"diveHurtBox" : [
+			{
+				"event" : "damageArea",
+				"baseDamage" : 10,
+				"knockback" : 10,
+				"duration" : 3,
+				"timeout" : 0.25,
+				"damageScalingFunction" : "Weapon.basicDamage",
+				"directionalKnockback" : true,
+				"damageSourceKind" : "bow",
+				"hitbox" : {
+				"partName" : "hurtBox",
+				"polyName" : "damageArea"
 				}
-			],
-			"uninit" : [
-				{	
-					"event" : "function",
-					"callback" : "status.clearPersistentEffects",
-					"args" : ["weaponEffect"]
-				}, "resetMovementParam", "despawnHook",{	
-					"event" : "function",
-					"callback" : "setStorage",
-					"args" : ["projDir"]
-				}
-			],
-			"resetMovementParam" : [
-				{	
-					"event" : "function",
-					"callback" : "status.clearPersistentEffects",
-					"args" : ["diveGrit"]
-				},{	
-					"event" : "function",
-					"callback" : "movementControl.resetParameters",
-					"args" : []
+			}
+		],
+		"diveHitBox" : [
+			{
+				"event" : "function",
+				"callback" : "setItemShieldPolys",
+				"args" : ["hurtBox", "damageArea", 0.9]
+			}
+		],
+		
+		"spawnHookProjectile" : [
+			{
+				"note" : "should turn this into the throw attack",
+				"event" : "projectile",
+		
+				"spawnPos" : "ownerPosFaceDirection",
+				"spawnOffset" : [0, 0],
+
+				"type" : "grapplehook",
+				"inaccuracy" : 0,
+				"parameter" : {
+				"speed" : 460,
+				"piercing" : true,
+				"movementSettings" : {
+					"airFriction" : 20
 				},
-				{	
-					"event" : "function",
-					"callback" : "resetItemShieldPolys",
-					"args" : []
-				}
-			],
-			"fixPos" : [
-				{	
-					"event" : "function",
-					"callback" : "movementControl.translatePos",
-					"args" : [[0, 2]]
-				}
-			],
-			"lowAirFriction" : [
-				{	
-					"event" : "function",
-					"callback" : "status.setPersistentEffects",
-					"args" : [ "diveGrit", [{"stat" : "grit", "amount" : 1},{"stat" : "activeMovementAbilities", "amount" : 1}]]
-				},{	
-					"event" : "function",
-					"callback" : "movementControl.setParameters",
-					"args" : [{
-						"airFriction" : 0,
-						"airForce" : 0,
-						"gravityMultiplier" : 0.1
-					}]
-				}
-			],
-			"flip" : [
-				{	
-					"event" : "function",
-					"callback" : "movementControl.setParameters",
-					"args" : [{
-						"collisionPoly" : [ [-2.0, -1.0], [-1.0, -2.0], [1.0, -2.0], [2.0, -1.0], [2.0, 1.0], [1.0, 2.0], [-1.0, 2.0], [-2.0, 1.0] ]
-					}]
-				}
-			],
-			
-			"dive" : [
-				{	
-					"event" : "function",
-					"callback" : "mcontroller.setVelocity",
-					"args" : [[0, -90]]
-				},"lowAirFriction"
-			],
-			"diveLeft" : [
-				{	
-					"event" : "function",
-					"callback" : "mcontroller.setVelocity",
-					"args" : [[-90, -90]]
-				},"lowAirFriction"
-			],
-			"diveRight" : [
-				{	
-					"event" : "function",
-					"callback" : "mcontroller.setVelocity",
-					"args" : [[90, -90]]
-				},"lowAirFriction"
-			],
-			
-			"diveHurtBox" : [
-				{
-					"event" : "damageArea",
-					"baseDamage" : 10,
-					"knockback" : 10,
-					"duration" : 3,
-					"timeout" : 0.25,
-					"damageScalingFunction" : "Weapon.basicDamage",
-					"directionalKnockback" : true,
-					"damageSourceKind" : "bow",
-					"hitbox" : {
-						"partName" : "hurtBox",
-						"polyName" : "damageArea"
-					}
-				}
-			],
-			"diveHitBox" : [
-				{
-					"event" : "function",
-					"callback" : "setItemShieldPolys",
-					"args" : ["hurtBox", "damageArea", 0.9]
-				}
-			],
-			
-			"spawnHookProjectile" : [
-				{
-					"note" : "should turn this into the throw attack",
-					"event" : "projectile",
-			
-					"spawnPos" : "ownerPosFaceDirection",
-					"spawnOffset" : [0, 0],
-
-					"type" : "grapplehook",
-					"inaccuracy" : 0,
-					"parameter" : {
+				"periodicActions" : [
+					{
+						"time" : 0,
+						"repeat" : false,
+						"action" : "projectile",
+						"type" : "ironarrow",
+						"config" : {
+						"power" : 10,
 						"speed" : 460,
+						"timeToLive" : 0.1,
 						"piercing" : true,
-						"movementSettings" : {
-							"airFriction" : 20
-						},
-						"periodicActions" : [
-							{
-								"time" : 0,
-								"repeat" : false,
-								"action" : "projectile",
-								"type" : "ironarrow",
-								"config" : {
-									"power" : 10,
-									"speed" : 460,
-									"timeToLive" : 0.1,
-									"piercing" : true,
-									"knockback" : 0,
-									"statusEffects" : [{"effect" : "stun", "duration" : 1 }],
-									"damageKind" : "bow",
-									"damageType" : "damage",
-									"movementSettings" : {"gravityMultiplier" : 0, "collisionEnabled" : false, "airFriction" : 20},
-									"processing" : "?multiply=fff0"
-								}
-							}
-						],
-						"processing" : "storage:projDir"
-					},
-					"storage" : "grapple"
-				}
-			],
-			
-			"spawnHook" : [
-				{	
-					"event" : "function",
-					"callback" : "spawnFalseHitscanProjectile",
-					"args" : ["grapplehook", {"anchor" : "ownerPosFaceDirection", "offset" : [15, 0]}, false, false, {
-						"clientEntityMode" : "ClientPresenceMaster",
-						"speed" : 2,
-						"piercing" : true,
-						"movementSettings" : {
-							"airFriction" : 1
-						},
-						"periodicActions" : [
-							{
-								"time" : 0,
-								"repeat" : false,
-								"action" : "projectile",
-								"type" : "ironarrow",
-								"config" : {
-									"power" : 10,
-									"speed" : 2,
-									"timeToLive" : 0.1,
-									"piercing" : true,
-									"knockback" : 0,
-									"statusEffects" : [{"effect" : "techstun", "duration" : 1 }],
-									"damageKind" : "bow",
-									"damageType" : "damage",
-									"movementSettings" : {"gravityMultiplier" : 0, "collisionEnabled" : false},
-									"processing" : "?multiply=fff0"
-								}
-							}
-						],
-						"processing" : "storage:projDir"
-					}, 0, ["monster","npc","player"], true, ["Block", "Dynamic", "Slippery"]],
-					"storage" : "grapple"
-					
-				}
-			],
-			
-			"spawnHookUpward" : [
-				{
-					"event" : "projectile",
-			
-					"spawnPos" : "ownerPosFaceDirection",
-					"spawnOffset" : [0, 0],
-
-					"type" : "grapplehook",
-					"inaccuracy" : 0,
-					"parameter" : {
-						"clientEntityMode" : "ClientPresenceMaster",
-						"speed" : 600,
-						"piercing" : true,
-						"movementSettings" : {
-							"airFriction" : 3.7
-						},
-						"periodicActions" : [
-							{
-								"time" : 0,
-								"repeat" : false,
-								"action" : "projectile",
-								"type" : "ironarrow",
-								"config" : {
-									"power" : 10,
-									"speed" : 460,
-									"timeToLive" : 0.1,
-									"piercing" : true,
-									"knockback" : 0,
-									"statusEffects" : [{"effect" : "stun", "duration" : 1 }],
-									"damageKind" : "bow",
-									"damageType" : "damage",
-									"movementSettings" : {"gravityMultiplier" : 0, "collisionEnabled" : true, "airFriction" : 4.25},
-									"processing" : "?multiply=fff0"
-								}
-							}
-						],
-						"processing" : "storage:projDir"
-					},
-					"storage" : "grapple"
-				}
-			],
-			
-			"reelTowardHook" : [
-				{	
-					"event" : "function",
-					"callback" : "reelTowardEntity",
-					"args" : ["storage:grapple", 120, 250]
-				}
-			],
-			
-			"despawnHook" : [
-				{	
-					"event" : "function",
-					"callback" : "world.callScriptedEntity",
-					"args" : ["storage:grapple", "kill"]
-				},{	
-					"event" : "function",
-					"callback" : "setStorage",
-					"args" : ["grapple"]
-				},{	
-					"event" : "function",
-					"callback" : "setStorage",
-					"args" : ["grappleVelocity"]
-				}
-			],
-			
-			"swipe" : [
-				{
-					"event" : "damageArea",
-					"baseDamage" : 20,
-					"knockback" : 10,
-					"timeout" : 0.1,
-					"damageScalingFunction" : "Weapon.basicDamage",
-					"directionalKnockback" : true,
-					"hitbox" : {
-						"partName" : "hurtBox",
-						"polyName" : "damageArea"
+						"knockback" : 0,
+						"statusEffects" : [{"effect" : "stun", "duration" : 1 }],
+						"damageKind" : "bow",
+						"damageType" : "damage",
+						"movementSettings" : {"gravityMultiplier" : 0, "collisionEnabled" : false, "airFriction" : 20},
+						"processing" : "?multiply=fff0"
+						}
 					}
+				],
+				"processing" : "storage:projDir"
+				},
+				"storage" : "grapple"
+			}
+		],
+		
+		"spawnHook" : [
+			{	
+				"event" : "function",
+				"callback" : "spawnFalseHitscanProjectile",
+				"args" : ["grapplehook", {"anchor" : "ownerPosFaceDirection", "offset" : [15, 0]}, false, false, {
+				"clientEntityMode" : "ClientPresenceMaster",
+				"speed" : 2,
+				"piercing" : true,
+				"movementSettings" : {
+					"airFriction" : 3.7
+				},
+				"periodicActions" : [
+					{
+						"time" : 0,
+						"repeat" : false,
+						"action" : "projectile",
+						"type" : "ironarrow",
+						"config" : {
+						"power" : 10,
+						"speed" : 2,
+						"timeToLive" : 0.1,
+						"piercing" : true,
+						"knockback" : 0,
+						"statusEffects" : [{"effect" : "techstun", "duration" : 1 }],
+						"damageKind" : "bow",
+						"damageType" : "damage",
+						"movementSettings" : {"gravityMultiplier" : 0, "collisionEnabled" : false},
+						"processing" : "?multiply=fff0"
+						}
+					}
+				],
+				"processing" : "storage:projDir"
+				}, 0, ["monster","npc","player"], true, ["Block", "Dynamic", "Slippery"]],
+				"storage" : "grapple"
+				
+			}
+		],
+		
+		"spawnHookUpward" : [
+			{
+				"event" : "projectile",
+		
+				"spawnPos" : "ownerPosFaceDirection",
+				"spawnOffset" : [0, 0],
+
+				"type" : "grapplehook",
+				"inaccuracy" : 0,
+				"parameter" : {
+				"clientEntityMode" : "ClientPresenceMaster",
+				"speed" : 600,
+				"piercing" : true,
+				"movementSettings" : {
+					"airFriction" : 3.7
+				},
+				"periodicActions" : [
+					{
+						"time" : 0,
+						"repeat" : false,
+						"action" : "projectile",
+						"type" : "ironarrow",
+						"config" : {
+						"power" : 10,
+						"speed" : 460,
+						"timeToLive" : 0.1,
+						"piercing" : true,
+						"knockback" : 0,
+						"statusEffects" : [{"effect" : "stun", "duration" : 1 }],
+						"damageKind" : "bow",
+						"damageType" : "damage",
+						"movementSettings" : {"gravityMultiplier" : 0, "collisionEnabled" : true, "airFriction" : 4.25},
+						"processing" : "?multiply=fff0"
+						}
+					}
+				],
+				"processing" : "storage:projDir"
+				},
+				"storage" : "grapple"
+			}
+		],
+		
+		"reelTowardHook" : [
+			{	
+				"event" : "function",
+				"callback" : "reelTowardEntity",
+				"args" : ["storage:grapple", 120, 250]
+			}
+		],
+		
+		"hookLine" : [
+			{	
+				"event" : "function",
+				"callback" : "activeItem.setScriptedAnimationParameter",
+				"args" : ["ropeOffset", [-0.65, -0.65]]
+			},
+			{	
+				"event" : "function",
+				"callback" : "world.entityPosition",
+				"args" : ["storage:grapple" ],
+				"storage" : "grapplePosition"
+			},
+			{	
+				"event" : "function",
+				"callback" : "activeItem.setScriptedAnimationParameter",
+				"args" : ["p2", "storage:grapplePosition"]
+			}
+		],
+
+		"despawnHook" : [
+			{	
+				"event" : "function",
+				"callback" : "world.callScriptedEntity",
+				"args" : ["storage:grapple", "kill"]
+			},{	
+				"event" : "function",
+				"callback" : "clearStorage",
+				"args" : ["grapple"]
+			},{	
+				"event" : "function",
+				"callback" : "clearStorage",
+				"args" : ["grappleVelocity"]
+			},
+			{	
+				"event" : "function",
+				"callback" : "activeItem.setScriptedAnimationParameter",
+				"args" : ["p2", null]
+			}
+		],
+		
+		"swipe" : [
+			{
+				"event" : "damageArea",
+				"baseDamage" : 20,
+				"knockback" : 10,
+				"timeout" : 0.1,
+				"damageScalingFunction" : "Weapon.basicDamage",
+				"directionalKnockback" : true,
+				"hitbox" : {
+				"partName" : "hurtBox",
+				"polyName" : "damageArea"
 				}
-			]
+			}
+		],
+
+		"mendVisuals_cast" : [{
+				"event" : "projectile",
+			
+				"spawnPos" : "ownerPos",
+				"spawnOffset" : [0, 0],
+					
+				"type" : "grapplehook",
+				"inaccuracy" : 0,
+				"aimAngle" : 0,
+				"posRelativeToOwner" : true,
+				"baseDamage" : 20,
+				"parameter" : "storage:mend_loopProjectile",
+				"storage" : "effectProj_Mend"
+		}],
+		"mendVisuals_finish" : [{
+				"event" : "projectile",
+			
+				"spawnPos" : "ownerPos",
+				"spawnOffset" : [0, 0],
+					
+				"type" : "grapplehook",
+				"inaccuracy" : 0,
+				"aimAngle" : 0,
+				"posRelativeToOwner" : true,
+				"baseDamage" : 20,
+				"parameter" : "storage:mend_finishProjectile"
+		}],
+		"mendVisuals_clear" : [
+			{	
+				"event" : "function",
+				"callback" : "world.callScriptedEntity",
+				"args" : ["storage:effectProj_Mend", "kill"]
+			},{	
+				"event" : "function",
+				"callback" : "clearStorage",
+				"args" : ["effectProj_Mend"]
+			}
+		]
 	}
 }
