@@ -1,0 +1,13 @@
+{
+    "critChance" : 0.25,
+
+    "behaviorPaths" : {
+        "critRoll" : {}
+    },
+    "behaviorEvents" : {
+        "critCalculate" : [
+
+        ],
+        "critEvent" : []
+    }
+}

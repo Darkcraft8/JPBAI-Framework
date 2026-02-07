@@ -61,6 +61,11 @@ function calculus.greaterOrEqualTo(numA, numB)
     return numA >= numB
 end
 
+function calculus.modulus(numA, modulus)
+    if (not numA) or (not modulus) then return end
+    return (numA % modulus)
+end
+
 logic = {}
 
 function logic.equalTo(a, b)
@@ -79,8 +84,8 @@ function logic.equalAny(a, b)
     end
 end
 
-function logic.tableContent(table, path)
-    if not table then sb.logError("logic.table, %s | %s ins't a table", itemId, table) return nil end
+function logic.tableContent(table, path, defaultValue)
+    if not table then sb.logError("logic.tableContent, %s | %s ins't a table", itemId, table) return defaultValue end
     if not path then return table end
     local pathSegment = segmentPath(path)
     local currentResult = nil
@@ -90,22 +95,34 @@ function logic.tableContent(table, path)
             if table[string] then
                 currentResult = table[string]
             else
-                sb.logError("logic.table, %s | failed to find value with path : %s", itemId, path)
-                return nil
+                if not defaultValue then 
+                    sb.logError("logic.tableContent, %s | failed to find value with path on start : %s", itemId, path) 
+                else
+                    --sb.logError("logic.tableContent, %s | failed to find value with path on start : %s, using %s", itemId, path, defaultValue)
+                end
+                return defaultValue
             end
         else
             if currentResult[string] then
                 currentResult = currentResult[string]
             else
-                sb.logError("logic.table, %s | failed to find value with path : %s", itemId, path)
-                return nil
+                if not defaultValue then 
+                    sb.logError("logic.tableContent, %s | failed to find value with path in loop : %s", itemId, path) 
+                else
+                    --sb.logError("logic.tableContent, %s | failed to find value with path in loop : %s, using %s", itemId, path, defaultValue)
+                end
+                return defaultValue
             end
         end
     end
     if currentResult ~= nil then
-        return currentResult
+        return currentResult or defaultValue
     else
-        sb.logError("logic.table, %s | failed to find value with path : %s", itemId, path)
-        return nil
+        if not defaultValue then
+            sb.logError("logic.tableContent, %s | failed to find value with path : %s", itemId, path) 
+        else
+            --sb.logError("logic.tableContent, %s | failed to find value with path : %s, using %s", itemId, path, defaultValue)
+        end
+        return defaultValue
     end
 end

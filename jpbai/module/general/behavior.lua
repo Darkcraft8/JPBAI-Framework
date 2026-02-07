@@ -26,6 +26,7 @@ local behavTreeBuild = function(varName, varData)
         if isListOfResource then self[varName] = copy(_table) else self[varName] = varData end
     end
 end
+
 function initBehavior()
     behavTreeBuild("behaviors", config.getParameter("behaviors", {}))
     behavTreeBuild("behaviorEvents", config.getParameter("behaviorEvents", {})) -- event can be placed in this table to be directly referred to instead of copying in each behavior

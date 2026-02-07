@@ -154,10 +154,7 @@ function call(eventCfg) -- because whe can't directly do _ENV[funcGroup.Func]()
         callback = findCallback(tostring(eventCfg.callback))
         if callback then
             local lastEvent = copy(eventCfg)
-            local args = {}
-            for i, arg in pairs(eventCfg.args or {}) do
-                args[i] = checkStorage(arg)
-            end
+            local args = effectiveArguments(eventCfg.args or {})
             lastEvent.args = copy(args)
             if type(eventCfg.args) == "table" then
                 local result
@@ -246,12 +243,32 @@ function segmentPath(path)
     return pathSegment
 end
 
+function effectiveArguments(_args)
+    local args = {}
+    for i, arg in pairs(_args or {}) do
+        args[i] = checkStorage(arg)
+    end
+    return args
+end
+
 function checkStorage(path)
     if type(path) == "string" then
         if string.find(path, "storage:") == 1 then
             path = string.gsub(path, "storage:", "")
             --sb.logInfo("storage[%s] %s", path, storage[path])
-            if storage[path] then return storage[path] else return nil end
+            if storage[path] then 
+                if type(storage[path]) == "table" then
+                    local args = {}
+                    for i, arg in pairs(storage[path] or {}) do
+                        args[i] = checkStorage(arg)
+                    end
+                    return args
+                else
+                    return storage[path] 
+                end
+            else 
+                return nil 
+            end
         end
     elseif type(path) == "table" then
         if isEmpty(path) then return path end
@@ -280,12 +297,18 @@ end
 function clearStorage(name) 
     local _storage = {}
     if name then
-        for a, b in pairs(storage or {}) do 
-            if not (a == name) then
-                _storage[a] = b
+        if type(name) == "string" then
+            for a, b in pairs(storage or {}) do 
+                if not (a == name) then
+                    _storage[a] = b
+                end
             end
+            storage = _storage
+        elseif type(name) == "table" then
+            for _, a in pairs(name or {}) do 
+                clearStorage(a)
+            end 
         end
-        storage = _storage
     else
         storage = {}
     end

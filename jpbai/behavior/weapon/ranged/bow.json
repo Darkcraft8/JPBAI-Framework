@@ -1,0 +1,306 @@
+{
+    "animationCustom" : {
+
+    },
+    "stances" : {
+        "bow_idle" : {},
+        "bow_windup" : {},
+        "bow_windup2" : {},
+        "bow_fire" : {}
+    },
+    "behaviors" : {
+        "bow_idle" : {
+            "stance" : "bow_idle",
+            "possibleOutcome" : ["projFlipZlevelRight", "projFlipZlevelLeft", "bow_windup"],
+            "eventOnInit" : ["bow_fetchProjInfo", "bow_processProjInfo"],
+            "periodicEvent" : [{
+				"time" : 0,
+				"event" : ["bow_updateProjSprite"],
+				"repeat" : true
+			}]
+        },
+        "bow_windup" : {
+            "stance" : "bow_windup",
+            "possibleOutcome" : ["projFlipZlevelRight", "projFlipZlevelLeft", "bow_fire"],
+            "eventOnInit" : ["bow_resetTension"],
+            "periodicEvent" : [{
+				"time" : 0.1,
+				"event" : ["bow_increaseTension"],
+				"repeat" : true
+			},{
+				"time" : 0,
+				"event" : ["bow_updateProjSprite"],
+				"repeat" : true
+			}]
+        },
+        "bow_fire" : {
+            "stance" : "bow_fire",
+            "possibleOutcome" : ["projFlipZlevelRight", "projFlipZlevelLeft", "bow_idle"],
+            "eventOnInit" : ["bow_spawnBowProjectile"],
+            "periodicEvent" : [{
+				"time" : 0,
+				"event" : ["bow_updateProjSprite"],
+				"repeat" : true
+			}]
+        }
+    },
+    "behaviorPaths" : {
+        "bow_idle" : { 
+			"require" : { 
+				"stance" : "bow_idle"
+			}, 
+			"behavior" : "bow_idle" 
+		},
+        "bow_windup" : {"behavior" : "bow_windup","require" : {"time" : 0.05, "fireMode" : "primary","function" : [
+			{
+				"event" : "function",
+				"callback" : "statusEx.hasResources",
+				"args" : [{"resource":"energy", "amount":"storage:bow_energyCost"}]
+			}
+		]}},
+        "bow_fire" : {"behavior" : "bow_fire","require" : {"time" : 0.05, "fireMode" : "none"}}
+    },
+    "behaviorEvents" : {
+        "bow_clearStorage" : [
+            { 
+                "event" : "function", "callback" : "clearStorage",
+			    "args" : [["bow_tension", "bow_projType", "bow_projImage", "bow_fireOffset"]]
+            },
+            {
+				"event" : "function", "callback" : "clearStorage",
+				"args" : [["bow_inaccuracy", "bow_projConfig", "bow_projParam", "bow_projLightColor_d", "bow_projLightColor"]]
+			},
+            {
+				"event" : "function", "callback" : "clearStorage",
+				"args" : [["bow_effProjParam", "bow_projFrameCycle", "bow_projFrameCount", "bow_projectileFrame"]]
+			},
+            {
+				"event" : "function", "callback" : "clearStorage",
+				"args" : [["bow_projFrame", "bow_projFrameProg", "bow_dt", "bow_dtTemp", "bow_energyCost"]]
+			}
+        ],
+        "bow_fetchProjInfo" : [
+            {
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["fireOffset", [0, 0.25]],
+                "storage" : "bow_fireOffset"
+			},
+            {
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["inaccuracy", 0.025],
+                "storage" : "bow_inaccuracy"
+			},
+
+            {
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["bow_projType", "ironarrow"],
+                "storage" : "bow_projType"
+			},
+            {
+				"event" : "function",
+				"callback" : "root.projectileConfig",
+				"args" : ["storage:bow_projType"],
+                "storage" : "bow_projConfig"
+			},
+            {
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["bow_projParam", {}],
+                "storage" : "bow_projParam"
+			},
+
+			{
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["tensionGain", 10],
+                "storage" : "bow_tensionGain"
+			},
+			{
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["tensionMax", 120],
+                "storage" : "bow_tensionMax"
+			},
+			{
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["tensionMin", 0],
+                "storage" : "bow_tensionMin"
+			},
+
+			{
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["energyCost", 20],
+                "storage" : "bow_energyCost"
+			}
+        ],
+        "bow_processProjInfo" : [
+            {
+				"event" : "function",
+				"callback" : "logic.tableContent",
+				"args" : ["storage:bow_projConfig", "lightColor", [0, 0, 0]],
+                "storage" : "bow_projLightColor_d"
+			},
+            {
+				"event" : "function",
+				"callback" : "logic.tableContent",
+				"args" : ["storage:bow_projParam", "lightColor", "storage:bow_projLightColor_d"],
+                "storage" : "bow_projLightColor"
+			},
+
+            {
+				"event" : "function",
+				"callback" : "animator.setLightColor",
+				"args" : ["projLight", "storage:bow_projLightColor"]
+			},
+
+            {
+				"event" : "function",
+				"callback" : "logic.tableContent",
+				"args" : ["storage:bow_projConfig", "image"],
+                "storage" : "bow_projImage"
+			},
+            {
+				"event" : "function",
+				"callback" : "string.format",
+				"args" : ["/projectiles/guns/arrows/%s/%s", "storage:bow_projType", "storage:bow_projImage"],
+                "storage" : "bow_projImage"
+			},
+            {
+				"event" : "function",
+				"callback" : "animator.setGlobalTag",
+				"args" : ["projectileImage", "storage:bow_projImage"]
+			},
+
+            {
+				"event" : "function",
+				"callback" : "logic.tableContent",
+				"args" : ["storage:bow_projConfig", "processing", "?brightness=0"],
+                "storage" : "projDirectives"
+			},
+            {
+				"event" : "function",
+				"callback" : "logic.tableContent",
+				"args" : ["storage:bow_projParam", "processing", "storage:projDirectives"],
+                "storage" : "projDirectives"
+			},
+            {
+				"event" : "function",
+				"callback" : "animator.setGlobalTag",
+				"args" : ["projectileDirectives", "storage:projDirectives"]
+			},
+
+            {
+				"event" : "function",
+				"callback" : "logic.tableContent",
+				"args" : ["storage:bow_projConfig", "animationCycle"],
+                "storage" : "bow_projFrameCycle"
+			},
+            {
+				"event" : "function",
+				"callback" : "logic.tableContent",
+				"args" : ["storage:bow_projConfig", "frameNumber"],
+                "storage" : "bow_projFrameCount"
+			},
+            {
+				"event" : "function",
+				"callback" : "animator.setGlobalTag",
+				"args" : ["bow_projectileFrame", "0"]
+			},
+            {
+				"event" : "function",
+				"callback" : "setStorage",
+				"args" : ["bow_projFrame", 0]
+			},
+            {
+				"event" : "function",
+				"callback" : "setStorage",
+				"args" : ["bow_projFrameProg", 0]
+			}
+        ],
+        "bow_updateProjSprite" : [
+            {
+				"event" : "function",
+				"callback" : "animator.setGlobalTag",
+				"args" : ["bow_projectileFrame", "storage:bow_projFrame"]
+			},
+            "bow_updProjSpriteCycle"
+        ],
+        "bow_updProjSpriteCycle" : [
+            {
+				"event" : "function",
+				"callback" : "script.updateDt",
+				"args" : [],
+                "storage" : "bow_dtTemp"
+            },
+            {
+				"event" : "function",
+				"callback" : "calculus.mul",
+				"args" : ["storage:bow_dtTemp", "storage:bow_projFrameCycle"],
+                "storage" : "bow_dt"
+            },
+            {
+				"event" : "function",
+				"callback" : "calculus.add",
+				"args" : ["storage:bow_projFrameProg", "storage:bow_dt"],
+                "storage" : "bow_projFrameProg"
+            },
+            {
+				"event" : "function",
+				"callback" : "util.round",
+				"args" : ["storage:bow_projFrameProg", 0, "storage:bow_projFrameCount"],
+                "storage" : "bow_projFrame"
+            }
+        ],
+        "bow_resetTension" : [
+            {
+				"event" : "function",
+				"callback" : "setStorage",
+				"args" : ["bow_tension", "storage:bow_tensionMin"]
+			}
+        ],
+        "bow_increaseTension" : [
+            {
+				"event" : "function",
+				"callback" : "calculus.add",
+				"args" : ["storage:bow_tension", "storage:bow_tensionGain"],
+                "storage" : "bow_tension"
+            }
+        ],
+        "bow_spawnBowProjectile" : [
+            {
+				"event" : "function",
+				"callback" : "util.clamp",
+				"args" : ["storage:bow_tension", "storage:bow_tensionMin", "storage:bow_tensionMax"],
+                "storage" : "bow_tension"
+            },
+            {
+				"event" : "function",
+				"callback" : "util.mergeTable",
+				"args" : [{"speed" : "storage:bow_tension"}, "storage:bow_projParam"],
+                "storage" : "bow_effProjParam"
+			},
+
+			{
+				"event" : "function",
+				"callback" : "status.consumeResource",
+				"args" : ["energy", "storage:bow_energyCost"]
+			},
+			
+            {
+                "event" : "projectile",
+                "loop" : false,
+                "spawnPos" : "fireOffset",
+                "spawnOffset" : "storage:bow_fireOffset",
+
+                "type" : "storage:bow_projType",
+                "inaccuracy" : "storage:bow_inaccuracy",
+                "parameter" : "storage:bow_effProjParam"
+            }
+        ]
+    }
+}

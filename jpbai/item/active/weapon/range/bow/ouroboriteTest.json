@@ -1,0 +1,548 @@
+{
+    "itemDescriptor" : {
+		"name" : "parasol",
+		"count" : 1,
+		"parameters" : {
+			"shortdescription" : "Ouroborite Bow",
+			"description" : "",
+
+			"inventoryIcon" : [
+				{
+					"image" : "/assetmissing.png?crop;0;0;1;1?setcolor=fff?replace;fff0=fff?border=1;fff;000?scale=1.15;1.12?crop;1;1;3;3?replace;fbfbfb=0000;eaeaea=60000000;e4e4e4=00001b00;6a6a6a=60001b00?scale=95.5;26.5?crop=0;0;96;27?replace;07000000=010;07000100=010;07000200=010;07001800=010;07001900=010;07001a00=010;08000000=110;08000100=210;08000200=310;08000300=310;08000400=410;08000500=410;08000600=510;08000700=410;08000800=410;08000900=310;08000a00=310;08000b00=210;08000c00=210;08000d00=210;08000e00=210;08000f00=210;08001000=310;08001100=310;08001200=410;08001300=410;08001400=510;08001500=410;08001600=410;08001700=310;08001800=310;08001900=210;08001a00=110;09000100=110;09000200=010;09000300=610;09000400=710;09000500=010;09000600=010;09001400=010;09001500=010;09001600=610;09001700=610;09001800=110;09001900=110;0a000300=110;0a000400=110;0a000500=710;0a000600=110;0a000700=010;0a000800=010;0a000900=010;0a000a00=010;0a000b00=210;0a000c00=310;0a000d00=210;0a000e00=310;0a000f00=210;0a001000=010;0a001100=010;0a001200=010;0a001300=010;0a001400=710;0a001500=610;0a001600=110;0a001700=110;0b000500=110;0b000600=010;0b000700=710;0b000800=610;0b000900=610;0b000a00=610;0b000b00=310;0b000c00=410;0b000d00=310;0b000e00=410;0b000f00=310;0b001000=710;0b001100=610;0b001200=610;0b001300=610;0b001400=110;0b001500=110;0c000700=110;0c000800=110;0c000900=110;0c000a00=110;0c000b00=410;0c000c00=510;0c000d00=410;0c000e00=510;0c000f00=410;0c001000=110;0c001100=110;0c001200=110;0c001300=110;16000600=510;16000700=410;16000800=410;16000900=310;16000a00=310;16000b00=210;16000c00=210;16000d00=210;16000e00=210;16000f00=210;16001000=310;16001100=310;16001200=410;16001300=410;16001400=510;17000000=010;17000100=010;17000200=010;17000300=310;17000400=410;17000500=410;17001500=410;17001600=410;17001700=310;17001800=010;17001900=010;17001a00=010;18000000=110;18000100=210;18000200=310;18000300=010;18000400=010;18001600=010;18001700=010;18001800=310;18001900=210;18001a00=110;19000100=110;19000200=010;19000300=610;19000400=710;19000500=010;19000600=010;19001400=010;19001500=010;19001600=610;19001700=610;19001800=110;19001900=110;1a000300=110;1a000400=110;1a000500=710;1a000600=110;1a000700=010;1a000800=010;1a000900=010;1a000a00=010;1a000b00=210;1a000c00=310;1a000d00=210;1a000e00=310;1a000f00=210;1a001000=010;1a001100=010;1a001200=010;1a001300=010;1a001400=710;1a001500=610;1a001600=110;1a001700=110;1b000500=110;1b000600=010;1b000700=710;1b000800=810;1b000900=810;1b000a00=610;1b000b00=310;1b000c00=410;1b000d00=310;1b000e00=410;1b000f00=310;1b001000=710;1b001100=810;1b001200=810;1b001300=610;1b001400=110;1b001500=110;1c000700=110;1c000800=110;1c000900=110;1c000a00=110;1c000b00=410;1c000c00=510;1c000d00=410;1c000e00=510;1c000f00=410;1c001000=110;1c001100=110;1c001200=110;1c001300=110;24000900=310;24000a00=310;24000b00=210;24000c00=210;24000d00=210;24000e00=210;24000f00=210;24001000=310;24001100=310;25000600=510;25000700=410;25000800=410;25001200=410;25001300=410;25001400=510;26000000=010;26000100=010;26000200=010;26000300=310;26000400=410;26000500=410;26001500=410;26001600=410;26001700=310;26001800=010;26001900=010;26001a00=010;27000000=110;27000100=210;27000200=310;27000300=010;27000400=010;27001600=010;27001700=010;27001800=310;27001900=210;27001a00=110;28000100=110;28000200=010;28000300=610;28000400=710;28000500=010;28000600=010;28001400=010;28001500=010;28001600=610;28001700=610;28001800=110;28001900=110;29000300=110;29000400=110;29000500=810;29000600=110;29000700=010;29000800=010;29001200=010;29001300=010;29001400=710;29001500=810;29001600=110;29001700=110;2a000500=110;2a000600=010;2a000700=710;2a000800=810;2a000900=010;2a000a00=010;2a000b00=210;2a000c00=310;2a000d00=210;2a000e00=310;2a000f00=210;2a001000=010;2a001100=010;2a001200=810;2a001300=610;2a001400=110;2a001500=110;2b000700=110;2b000800=110;2b000900=810;2b000a00=610;2b000b00=310;2b000c00=410;2b000d00=310;2b000e00=410;2b000f00=310;2b001000=710;2b001100=810;2b001200=110;2b001300=110;2c000900=110;2c000a00=110;2c000b00=410;2c000c00=510;2c000d00=410;2c000e00=510;2c000f00=410;2c001000=110;2c001100=110;30000a00=310;30000b00=310;30000c00=210;30000d00=210;30000e00=210;30000f00=310;30001000=310;31000700=510;31000800=410;31000900=410;31001100=410;31001200=410;31001300=510;32000500=410;32000600=410;32001400=410;32001500=410;33000100=010;33000200=010;33000300=310;33000400=310;33001600=310;33001700=310;33001800=010;33001900=010;34000100=110;34000200=210;34000300=010;34001700=010;34001800=210;34001900=110;35000100=110;35000200=610;35000300=010;35001700=010;35001800=710;35001900=110;36000200=010;36000300=810;36000400=010;36001600=010;36001700=810;36001800=110;37000300=110;37000400=810;37000500=010;37001500=010;37001600=810;37001700=110;38000400=110;38000500=810;38000600=010;38001400=010;38001500=810;38001600=110;39000500=110;39000600=110;39000700=010;39000800=010;39001200=010;39001300=010;39001400=710;39001500=110;3a000600=010;3a000700=810;3a000800=810;3a000900=010;3a000a00=010;3a000b00=210;3a000c00=310;3a000d00=210;3a000e00=310;3a000f00=210;3a001000=010;3a001100=010;3a001200=810;3a001300=810;3a001400=110;3b000700=110;3b000800=110;3b000900=810;3b000a00=610;3b000b00=310;3b000c00=410;3b000d00=310;3b000e00=410;3b000f00=310;3b001000=710;3b001100=810;3b001200=110;3b001300=110;3c000900=110;3c000a00=110;3c000b00=410;3c000c00=510;3c000d00=410;3c000e00=510;3c000f00=410;3c001000=110;3c001100=110;4a000700=010;4a000800=010;4a000900=010;4a000a00=010;4a000b00=210;4a000c00=310;4a000d00=210;4a000e00=310;4a000f00=210;4a001000=010;4a001100=010;4a001200=010;4a001300=010;4b000300=010;4b000400=010;4b000500=010;4b000600=010;4b000700=710;4b000800=610;4b000900=610;4b000a00=610;4b000b00=310;4b000c00=410;4b000d00=310;4b000e00=410;4b000f00=310;4b001000=710;4b001100=610;4b001200=610;4b001300=610;4b001400=010;4b001500=010;4b001600=010;4b001700=010;4c000000=010;4c000100=010;4c000200=010;4c000300=610;4c000400=710;4c000500=710;4c000600=110;4c000700=110;4c000800=110;4c000900=110;4c000a00=110;4c000b00=410;4c000c00=510;4c000d00=410;4c000e00=510;4c000f00=410;4c001000=110;4c001100=110;4c001200=110;4c001300=110;4c001400=710;4c001500=610;4c001600=610;4c001700=610;4c001800=010;4c001900=010;4c001a00=010;4d000000=110;4d000100=210;4d000200=310;4d000300=310;4d000400=110;4d000500=110;4d000600=010;4d001400=110;4d001500=110;4d001600=110;4d001700=310;4d001800=310;4d001900=210;4d001a00=110;4e000100=110;4e000200=010;4e000400=410;4e000500=410;4e000600=510;4e000700=410;4e000800=410;4e001200=410;4e001300=410;4e001400=510;4e001500=410;4e001600=410;4e001800=110;4e001900=110;4f000900=310;4f000a00=310;4f000b00=210;4f000c00=210;4f000d00=210;4f000e00=210;4f000f00=210;4f001000=310;4f001100=310;59000000=010;59000100=010;59000200=010;59000300=010;59000400=010;59000500=010;59000600=010;59001400=010;59001500=010;59001600=010;59001700=010;59001800=010;59001900=010;59001a00=010;5a000000=110;5a000100=210;5a000200=310;5a000300=310;5a000400=710;5a000500=710;5a000600=110;5a000700=010;5a000800=010;5a000900=010;5a000a00=010;5a000b00=210;5a000c00=310;5a000d00=210;5a000e00=310;5a000f00=210;5a001000=010;5a001100=010;5a001200=010;5a001300=010;5a001400=710;5a001500=610;5a001600=610;5a001700=310;5a001800=310;5a001900=210;5a001a00=110;5b000100=110;5b000200=010;5b000300=110;5b000400=410;5b000500=410;5b000600=510;5b000700=410;5b000800=410;5b000900=310;5b000a00=310;5b000b00=210;5b000c00=210;5b000d00=210;5b000e00=210;5b000f00=210;5b001000=310;5b001100=310;5b001200=410;5b001300=410;5b001400=510;5b001500=410;5b001600=410;5b001700=110;5b001800=110;5b001900=110;5c000700=110;5c000800=110;5c000900=110;5c000a00=110;5c000b00=410;5c000c00=510;5c000d00=410;5c000e00=510;5c000f00=410;5c001000=110;5c001100=110;5c001200=110;5c001300=110?replace;010=1d1813;110=312a1d;210=321f00;310=472e0a;410=5c3f15;510=73551a;610=70614a;710=3f3525;810=fea100?crop;0;0;16;27",
+					"scale" : 1,
+					"note"  : "Weapon"
+				}
+			],
+			"animation" : {
+				"globalTagDefaults" : {
+					"paletteSwaps" : "",
+					"globalDirectives" : "",
+					"paperNote" : "/objects/human/prisonpaper3/prisonpaper3.png:black?flipx?scalenearest=0.5",
+					"itemSprite" : "/assetmissing.png?crop;0;0;1;1?setcolor=fff?replace;fff0=fff?border=1;fff;000?scale=1.15;1.12?crop;1;1;3;3?replace;fbfbfb=0000;eaeaea=60000000;e4e4e4=00001b00;6a6a6a=60001b00?scale=95.5;26.5?crop=0;0;96;27?replace;07000000=010;07000100=010;07000200=010;07001800=010;07001900=010;07001a00=010;08000000=110;08000100=210;08000200=310;08000300=010;08000400=010;08001600=010;08001700=010;08001800=310;08001900=210;08001a00=110;09000100=110;09000200=010;09000300=410;09000400=510;09000500=010;09000600=010;09001400=010;09001500=010;09001600=410;09001700=410;09001800=110;09001900=110;0a000300=110;0a000400=110;0a000500=510;0a000600=110;0a000700=010;0a000800=010;0a000900=010;0a000a00=010;0a000b00=210;0a000c00=310;0a000d00=210;0a000e00=310;0a000f00=210;0a001000=010;0a001100=010;0a001200=010;0a001300=010;0a001400=510;0a001500=410;0a001600=110;0a001700=110;0b000500=110;0b000600=010;0b000700=510;0b000800=410;0b000900=410;0b000a00=410;0b000b00=310;0b000c00=610;0b000d00=310;0b000e00=610;0b000f00=310;0b001000=510;0b001100=410;0b001200=410;0b001300=410;0b001400=110;0b001500=110;0c000700=110;0c000800=110;0c000900=110;0c000a00=110;0c000b00=610;0c000c00=710;0c000d00=610;0c000e00=710;0c000f00=610;0c001000=110;0c001100=110;0c001200=110;0c001300=110;17000000=010;17000100=010;17000200=010;17001800=010;17001900=010;17001a00=010;18000000=110;18000100=210;18000200=310;18000300=010;18000400=010;18001600=010;18001700=010;18001800=310;18001900=210;18001a00=110;19000100=110;19000200=010;19000300=410;19000400=510;19000500=010;19000600=010;19001400=010;19001500=010;19001600=410;19001700=410;19001800=110;19001900=110;1a000300=110;1a000400=110;1a000500=510;1a000600=110;1a000700=010;1a000800=010;1a000900=010;1a000a00=010;1a000b00=210;1a000c00=310;1a000d00=210;1a000e00=310;1a000f00=210;1a001000=010;1a001100=010;1a001200=010;1a001300=010;1a001400=510;1a001500=410;1a001600=110;1a001700=110;1b000500=110;1b000600=010;1b000700=510;1b000800=810;1b000900=810;1b000a00=410;1b000b00=310;1b000c00=610;1b000d00=310;1b000e00=610;1b000f00=310;1b001000=510;1b001100=810;1b001200=810;1b001300=410;1b001400=110;1b001500=110;1c000700=110;1c000800=110;1c000900=110;1c000a00=110;1c000b00=610;1c000c00=710;1c000d00=610;1c000e00=710;1c000f00=610;1c001000=110;1c001100=110;1c001200=110;1c001300=110;26000000=010;26000100=010;26000200=010;26001800=010;26001900=010;26001a00=010;27000000=110;27000100=210;27000200=310;27000300=010;27000400=010;27001600=010;27001700=010;27001800=310;27001900=210;27001a00=110;28000100=110;28000200=010;28000300=410;28000400=510;28000500=010;28000600=010;28001400=010;28001500=010;28001600=410;28001700=410;28001800=110;28001900=110;29000300=110;29000400=110;29000500=810;29000600=110;29000700=010;29000800=010;29001200=010;29001300=010;29001400=510;29001500=810;29001600=110;29001700=110;2a000500=110;2a000600=010;2a000700=510;2a000800=810;2a000900=010;2a000a00=010;2a000b00=210;2a000c00=310;2a000d00=210;2a000e00=310;2a000f00=210;2a001000=010;2a001100=010;2a001200=810;2a001300=410;2a001400=110;2a001500=110;2b000700=110;2b000800=110;2b000900=810;2b000a00=410;2b000b00=310;2b000c00=610;2b000d00=310;2b000e00=610;2b000f00=310;2b001000=510;2b001100=810;2b001200=110;2b001300=110;2c000900=110;2c000a00=110;2c000b00=610;2c000c00=710;2c000d00=610;2c000e00=710;2c000f00=610;2c001000=110;2c001100=110;33000100=010;33000200=010;33000300=310;33001700=310;33001800=010;33001900=010;34000100=110;34000200=210;34000300=010;34001700=010;34001800=210;34001900=110;35000100=110;35000200=410;35000300=010;35001700=010;35001800=510;35001900=110;36000200=010;36000300=810;36000400=010;36001600=010;36001700=810;36001800=110;37000300=110;37000400=810;37000500=010;37001500=010;37001600=810;37001700=110;38000400=110;38000500=810;38000600=010;38001400=010;38001500=810;38001600=110;39000500=110;39000600=110;39000700=010;39000800=010;39001200=010;39001300=010;39001400=510;39001500=110;3a000600=010;3a000700=810;3a000800=810;3a000900=010;3a000a00=010;3a000b00=210;3a000c00=310;3a000d00=210;3a000e00=310;3a000f00=210;3a001000=010;3a001100=010;3a001200=810;3a001300=810;3a001400=110;3b000700=110;3b000800=110;3b000900=810;3b000a00=410;3b000b00=310;3b000c00=610;3b000d00=310;3b000e00=610;3b000f00=310;3b001000=510;3b001100=810;3b001200=110;3b001300=110;3c000900=110;3c000a00=110;3c000b00=610;3c000c00=710;3c000d00=610;3c000e00=710;3c000f00=610;3c001000=110;3c001100=110;4a000700=010;4a000800=010;4a000900=010;4a000a00=010;4a000b00=210;4a000c00=310;4a000d00=210;4a000e00=310;4a000f00=210;4a001000=010;4a001100=010;4a001200=010;4a001300=010;4b000300=010;4b000400=010;4b000500=010;4b000600=010;4b000700=510;4b000800=410;4b000900=410;4b000a00=410;4b000b00=310;4b000c00=610;4b000d00=310;4b000e00=610;4b000f00=310;4b001000=510;4b001100=410;4b001200=410;4b001300=410;4b001400=010;4b001500=010;4b001600=010;4b001700=010;4c000000=010;4c000100=010;4c000200=010;4c000300=410;4c000400=510;4c000500=510;4c000600=110;4c000700=110;4c000800=110;4c000900=110;4c000a00=110;4c000b00=610;4c000c00=710;4c000d00=610;4c000e00=710;4c000f00=610;4c001000=110;4c001100=110;4c001200=110;4c001300=110;4c001400=510;4c001500=410;4c001600=410;4c001700=410;4c001800=010;4c001900=010;4c001a00=010;4d000000=110;4d000100=210;4d000200=310;4d000300=110;4d000400=110;4d000500=110;4d000600=010;4d001400=110;4d001500=110;4d001600=110;4d001700=110;4d001800=310;4d001900=210;4d001a00=110;4e000100=110;4e000200=010;4e001800=110;4e001900=110;59000000=010;59000100=010;59000200=010;59000300=010;59000400=010;59000500=010;59000600=010;59001400=010;59001500=010;59001600=010;59001700=010;59001800=010;59001900=010;59001a00=010;5a000000=110;5a000100=210;5a000200=310;5a000300=410;5a000400=510;5a000500=510;5a000600=110;5a000700=010;5a000800=010;5a000900=010;5a000a00=010;5a000b00=210;5a000c00=310;5a000d00=210;5a000e00=310;5a000f00=210;5a001000=010;5a001100=010;5a001200=010;5a001300=010;5a001400=510;5a001500=410;5a001600=410;5a001700=410;5a001800=310;5a001900=210;5a001a00=110;5b000100=110;5b000200=010;5b000300=110;5b000400=110;5b000500=110;5b000600=010;5b000700=510;5b000800=410;5b000900=410;5b000a00=410;5b000b00=310;5b000c00=610;5b000d00=310;5b000e00=610;5b000f00=310;5b001000=510;5b001100=410;5b001200=410;5b001300=410;5b001400=110;5b001500=110;5b001600=110;5b001700=110;5b001800=110;5b001900=110;5c000700=110;5c000800=110;5c000900=110;5c000a00=110;5c000b00=610;5c000c00=710;5c000d00=610;5c000e00=710;5c000f00=610;5c001000=110;5c001100=110;5c001200=110;5c001300=110?replace;010=1d1813;110=312a1d;210=321f00;310=472e0a;410=70614a;510=3f3525;610=5c3f15;710=73551a;810=fea100",
+					"bowString" : "/assetmissing.png?crop;0;0;1;1?setcolor=fff?replace;fff0=fff?border=1;fff;000?scale=1.15;1.12?crop;1;1;3;3?replace;fbfbfb=0000;eaeaea=60000000;e4e4e4=00001b00;6a6a6a=60001b00?scale=95.5;26.5?crop=0;0;96;27?replace;08000100=010;08000200=110;08000300=110;08000400=210;08000500=210;08000600=310;08000700=210;08000800=210;08000900=110;08000a00=110;08000b00=010;08000c00=010;08000d00=010;08000e00=010;08000f00=010;08001000=110;08001100=110;08001200=210;08001300=210;08001400=310;08001500=210;08001600=210;08001700=110;08001800=110;08001900=010;16000600=310;16000700=210;16000800=210;16000900=110;16000a00=110;16000b00=010;16000c00=010;16000d00=010;16000e00=010;16000f00=010;16001000=110;16001100=110;16001200=210;16001300=210;16001400=310;17000300=110;17000400=210;17000500=210;17001500=210;17001600=210;17001700=110;18000100=010;18000200=110;18001800=110;18001900=010;24000900=110;24000a00=110;24000b00=010;24000c00=010;24000d00=010;24000e00=010;24000f00=010;24001000=110;24001100=110;25000600=310;25000700=210;25000800=210;25001200=210;25001300=210;25001400=310;26000300=110;26000400=210;26000500=210;26001500=210;26001600=210;26001700=110;27000100=010;27000200=110;27001800=110;27001900=010;30000a00=110;30000b00=110;30000c00=010;30000d00=010;30000e00=010;30000f00=110;30001000=110;31000700=310;31000800=210;31000900=210;31001100=210;31001200=210;31001300=310;32000500=210;32000600=210;32001400=210;32001500=210;33000300=110;33000400=110;33001600=110;33001700=110;34000200=010;34001800=010;4d000100=010;4d000200=110;4d000300=110;4d001700=110;4d001800=110;4d001900=010;4e000400=210;4e000500=210;4e000600=310;4e000700=210;4e000800=210;4e001200=210;4e001300=210;4e001400=310;4e001500=210;4e001600=210;4f000900=110;4f000a00=110;4f000b00=010;4f000c00=010;4f000d00=010;4f000e00=010;4f000f00=010;4f001000=110;4f001100=110;5a000100=010;5a000200=110;5a000300=110;5a001700=110;5a001800=110;5a001900=010;5b000400=210;5b000500=210;5b000600=310;5b000700=210;5b000800=210;5b000900=110;5b000a00=110;5b000b00=010;5b000c00=010;5b000d00=010;5b000e00=010;5b000f00=010;5b001000=110;5b001100=110;5b001200=210;5b001300=210;5b001400=310;5b001500=210;5b001600=210?replace;010=321f00;110=472e0a;210=5c3f15;310=73551a",
+                    
+                    "bF_idle" : "?crop;0;0;16;27",
+                    "bF_windup1" : "?crop;16;0;32;27",
+                    "bF_windup2" : "?crop;32;0;48;27",
+                    "bF_ready" : "?crop;48;0;64;27",
+                    "bF_cooldown1" : "?crop;64;0;80;27",
+                    "bF_cooldown2" : "?crop;80;0;96;27",
+                    
+                    "projectileImage" : "",
+                    "projectileDirectives" : "",
+					"projectileFrame" : "1"
+				},
+
+				"animatedParts" : {
+					"stateTypes" : {
+						"weapon" : {
+							"default" : "paperNote",
+							"states" : {
+								"paperNote" : {},
+
+								"idle"  : {},
+								"windup"  : {
+                                    "frames" : 2,
+                                    "cycle" : 0.5,
+                                    "mode" : "transition",
+                                    "transition" : "ready",
+                                    "properties" : {}
+                                },
+								"ready"  : {},
+								"cooldown"  : {
+                                    "frames" : 3,
+                                    "cycle" : 0.25,
+                                    "mode" : "transition",
+                                    "transition" : "idle",
+                                    "properties" : {}
+                                },
+								"hide"  : {}
+							}
+						},
+						"weaponFlip" : {
+							"priority" : 2,
+							"default" : "paperNote",
+							"states" : {
+								"paperNote" : {},
+
+								"idle"  : {},
+								"windup"  : {
+                                    "frames" : 2,
+                                    "cycle" : 0.5,
+                                    "mode" : "transition",
+                                    "transition" : "ready",
+                                    "properties" : {}
+                                },
+								"ready"  : {},
+								"cooldown"  : {
+                                    "frames" : 3,
+                                    "cycle" : 0.25,
+                                    "mode" : "transition",
+                                    "transition" : "idle",
+                                    "properties" : {}
+                                },
+								"hide"  : {}
+							}
+						},
+						"projectile" : {
+							"default" : "hide",
+							"states" : {
+								"hide" : {
+                                    "properties" : {
+									    "lightsOff" : ["projLight"]
+                                    }
+                                },
+								"idle"  : {
+                                    "properties" : {
+									    "lightsOn" : ["projLight"]
+                                    }
+                                },
+								"flip"  : {
+                                    "properties" : {
+									    "lightsOn" : ["projLight"]
+                                    }
+                                }
+							}
+						}
+					},
+
+					"parts" : {
+						"weapon" : {
+							"properties" : {
+								"zLevel" : 0,
+								"centered" : true,
+								"offset" : [0, -0.25],
+								"transformationGroups" : ["weapon"],
+								"rotationCenter" : [0, 0]
+							},
+							
+							"partStates" : {
+								"weapon" : {
+									"paperNote" : {
+										"properties" : {
+											"image" : "<paperNote>"
+										}
+									},
+									"idle" : {
+										"properties" : {
+											"image" : "<itemSprite><bF_idle><globalDirectives>"
+										}
+									},
+                                    "windup" : {
+                                        "frameProperties" : {
+                                            "image" : ["<itemSprite><bF_windup1><globalDirectives>", "<itemSprite><bF_windup2><globalDirectives>"]
+                                        }
+                                    },
+                                    "ready" : {
+										"properties" : {
+											"image" : "<itemSprite><bF_ready><globalDirectives>"
+										}
+									},
+                                    "cooldown" : {
+                                        "frameProperties" : {
+                                            "image" : ["<itemSprite><bF_idle><globalDirectives>", "<itemSprite><bF_cooldown1><globalDirectives>", "<itemSprite><bF_cooldown2><globalDirectives>"]
+                                        }
+                                    },
+									"hide" : {
+										"properties" : {}
+									}
+								}
+							}
+						},
+						"bowString" : {
+							"properties" : {
+								"zLevel" : 1,
+								"centered" : true,
+								"offset" : [0, -0.25],
+								"transformationGroups" : ["weapon"],
+								"rotationCenter" : [0, 0]
+							},
+							
+							"partStates" : {
+								"weapon" : {
+									"paperNote" : {
+										"properties" : {
+											"image" : "<paperNote>"
+										}
+									},
+									"idle" : {
+										"properties" : {
+											"image" : "<bowString><bF_idle><globalDirectives>"
+										}
+									},
+                                    "windup" : {
+                                        "frameProperties" : {
+                                            "image" : ["<bowString><bF_windup1><globalDirectives>", "<bowString><bF_windup2><globalDirectives>"]
+                                        }
+                                    },
+                                    "ready" : {
+										"properties" : {
+											"image" : "<bowString><bF_ready><globalDirectives>"
+										}
+									},
+                                    "cooldown" : {
+                                        "frameProperties" : {
+                                            "image" : ["<bowString><bF_idle><globalDirectives>", "<bowString><bF_cooldown1><globalDirectives>", "<bowString><bF_cooldown2><globalDirectives>"]
+                                        }
+                                    },
+									"hide" : {
+										"properties" : {}
+									}
+								},
+								"weaponFlip" : {
+									"idle" : {
+										"properties" : {
+											"zLevel" : -2,
+											"image" : "<bowString><bF_idle><globalDirectives>"
+										}
+									},
+                                    "windup" : {
+										"properties" : {
+											"zLevel" : -2
+										},
+                                        "frameProperties" : {
+                                            "image" : ["<bowString><bF_windup1><globalDirectives>", "<bowString><bF_windup2><globalDirectives>"]
+                                        }
+                                    },
+                                    "ready" : {
+										"properties" : {
+											"zLevel" : -2,
+											"image" : "<bowString><bF_ready><globalDirectives>"
+										}
+									},
+                                    "cooldown" : {
+										"properties" : {
+											"zLevel" : -2
+										},
+                                        "frameProperties" : {
+                                            "image" : ["<bowString><bF_idle><globalDirectives>", "<bowString><bF_cooldown1><globalDirectives>", "<bowString><bF_cooldown2><globalDirectives>"]
+                                        }
+                                    }
+								}
+							}
+						},
+						"projectile" : {
+							"properties" : {
+								"centered" : true,
+								"offset" : [0, -0.25],
+								"transformationGroups" : ["projectile"],
+								"rotationCenter" : [0, 0]
+							},
+							
+							"partStates" : {
+								"projectile" : {
+									"idle" : {
+										"properties" : {
+											"zLevel" : -1,
+											"image" : "<projectileImage>:<projectileFrame><projectileDirectives>"
+										}
+									},
+									"flip" : {
+										"properties" : {
+											"zLevel" : 2,
+											"image" : "<projectileImage>:<projectileFrame><projectileDirectives>"
+										}
+									},
+									"hide" : {
+										"properties" : {}
+									}
+								}
+							}
+						}
+					}
+				},
+
+				"transformationGroups" : {
+					"weapon" : {},
+					"projectile" : {}
+				},
+
+				"particleEmitters" : {},
+                "lights" : {
+                    "projLight" : {
+                        "active" : true,
+                        "position" : [0, 0],
+                        "color" : [0, 0, 0],
+                        "transformationGroups" : ["projectile"]
+                    }
+                },
+				"sounds" : {
+					"draw" : {
+						"rangeMultiplier" : 1,
+						"pitchMultiplier" : 1,
+						"volume" : 1,
+						"pool" : ["/sfx/gun/bow_draw1.ogg", "/sfx/gun/bow_draw2.ogg", "/sfx/gun/bow_draw3.ogg"]
+					},
+					"fire" : {
+						"rangeMultiplier" : 1,
+						"pitchMultiplier" : 1,
+						"volume" : 1,
+						"pool" : ["/sfx/gun/bow_loose.ogg"]
+					}
+				}
+			},
+			
+			"animationScripts" : ["/items/active/effects/renderrope.lua"],
+			"scripts" : ["/items/active/stationtransponder/stationtransponder.lua"],
+			"replacementScripts" : ["/jpbai/JPBAI.lua", "/jpbai/module/specialised/weapon.lua", "/jpbai/module/specialised/instrument.lua", "/jpbai/module/specialised/grapplinghook.lua"],
+			"stances" : {
+				"bow_idle" : {
+					"allowFlip" : true,
+					"resetAim" : true,
+					"armRotation" : -45,
+					"transformations" : {
+						"weapon" : {
+							"translate" : [-0.75, 0.5],
+							"rotate" : 0,
+							"rotationCenter" : [0, 0]
+						},
+						"projectile" : {
+							"inherit" : "weapon",
+							"translate" : [0.875, 0],
+							"rotate" : 0,
+							"rotationCenter" : [0, 0]
+						}
+					},
+					"frontArmFrame" : "rotation",
+					"animationStates" : {
+						"weapon" : "idle",
+						"projectile" : "hide"
+					},
+					"allowRotate" : false,
+					"twoHanded" : false
+				},
+				"bow_windup" : {
+					"allowFlip" : true,
+					"armRotation" : 0,
+					"transformations" : {
+						"weapon" : {
+							"translate" : [-0.3125, 0.5],
+							"rotate" : 0,
+							"rotationCenter" : [0, 0]
+						},
+						"projectile" : {
+							"inherit" : "weapon",
+							"translate" : [0.625, 0],
+							"rotate" : 0,
+							"rotationCenter" : [0, 0]
+						}
+					},
+					"frontArmFrame" : "swim.5",
+					"animationStates" : {
+						"weapon" : "windup",
+						"projectile" : "idle"
+					},
+					"allowRotate" : true,
+					"twoHanded" : true,
+					"playSounds" : ["draw"],
+
+					"duration" : 0.25,
+					"transition" : "bow_windup2"
+				},
+				"bow_windup2" : {
+					"allowFlip" : true,
+					"armRotation" : 0,
+					"transformations" : {
+						"weapon" : {
+							"translate" : [-0.3125, 0.5],
+							"rotate" : 0,
+							"rotationCenter" : [0, 0]
+						},
+						"projectile" : {
+							"inherit" : "weapon",
+							"translate" : [0.375, 0],
+							"rotate" : 0,
+							"rotationCenter" : [0, 0]
+						}
+					},
+					"frontArmFrame" : "swimIdle.1",
+					"animationStates" : {}, 
+					"allowRotate" : true,
+					"twoHanded" : true,
+
+					"duration" : 0.25,
+					"transition" : "bow_ready"
+				},
+				"bow_ready" : {
+					"allowFlip" : true,
+					"armRotation" : 0,
+					"transformations" : {
+						"weapon" : {
+							"translate" : [-0.3125, 0.5],
+							"rotate" : 0,
+							"rotationCenter" : [0, 0]
+						},
+						"projectile" : {
+							"inherit" : "weapon",
+							"translate" : [-0.125, 0],
+							"rotate" : 0,
+							"rotationCenter" : [0, 0]
+						}
+					},
+					"frontArmFrame" : "swim.1",
+					"animationStates" : {
+						"weapon" : "ready"
+					},
+					"allowRotate" : true,
+					"twoHanded" : true
+				},
+				"bow_fire" : {
+					"allowFlip" : false,
+					"armRotation" : 0,
+					"transformations" : {
+						"weapon" : {
+							"translate" : [-0.3125, 0.5],
+							"rotate" : 0,
+							"rotationCenter" : [0, 0]
+						},
+						"projectile" : {
+							"inherit" : "weapon",
+							"translate" : [0, 0],
+							"rotate" : 0,
+							"rotationCenter" : [0, 0]
+						}
+					},
+					"animationStates" : {
+						"weapon" : "cooldown",
+						"projectile" : "hide"
+					},
+					"allowRotate" : false,
+					"twoHanded" : true,
+					"playSounds" : ["fire"],
+
+					"duration" : 0.25,
+					"transition" : "bow_idle"
+				}
+			},
+			"twoHanded" : true,
+			"initBehavior" : "init",
+			"initFunction" : [],
+			"uninitFunction" : [],
+			"uninitEvent" : ["uninit"],
+
+			"baseStances" : [
+                "/jpbai/behavior/weapon/ranged/bow.jpbaiBehaviorCfg:stances"
+			],
+			"behaviors" : ["/jpbai/behavior/weapon/ranged/bow.jpbaiBehaviorCfg:behaviors", {
+                "init" : {
+                    "stance" : "bow_idle",
+                    "possibleOutcome" : ["bow_idle"],
+                    "eventOnInit" : [{
+						"event" : "function",
+						"callback" : "entity.damageTeam",
+						"args" : [],
+						"storage" : "damageTeam"
+					}]
+                }
+            }],
+			"behaviorPaths" : ["/jpbai/behavior/weapon/ranged/bow.jpbaiBehaviorCfg:behaviorPaths",
+				{
+					"projFlipZlevelRight" : {
+						"event" : [
+							{
+								"event" : "function",
+								"callback" : "animationEx.setAnimationState",
+								"args" : ["projectile", "flip", false, "idle"]
+							},
+							{
+								"event" : "function",
+								"callback" : "animator.setAnimationState",
+								"args" : ["weaponFlip", "hide"]
+							}
+						],
+						"require" : {
+							"function" : [
+								{
+									"callback" : "mcontroller.facingDirection",
+									"inverse" : false,
+									"args" : [],
+									"storage" : "faceDir"
+								},
+								{
+									"callback" : "calculus.greaterThan",
+									"inverse" : false,
+									"args" : ["storage:faceDir", 0]
+								}
+							]
+						}
+					},
+					"projFlipZlevelLeft" : {
+						"event" : [
+							{
+								"event" : "function",
+								"callback" : "animationEx.setAnimationState",
+								"args" : ["projectile", "idle", false, "flip"]
+							},
+							{
+								"event" : "function",
+								"callback" : "animator.animationState",
+								"args" : ["weapon"],
+								"storage" : "weapAnimState"
+							},
+							{
+								"event" : "function",
+								"callback" : "animator.setAnimationState",
+								"args" : ["weaponFlip", "storage:weapAnimState"]
+							}
+							
+						],
+						"require" : {
+							"function" : [
+								{
+									"callback" : "mcontroller.facingDirection",
+									"inverse" : false,
+									"args" : [],
+									"storage" : "faceDir"
+								},
+								{
+									"callback" : "calculus.lowerThan",
+									"inverse" : false,
+									"args" : ["storage:faceDir", 0]
+								}
+							]
+						}
+					}
+				}
+			],
+			"behaviorEvents" : ["/jpbai/behavior/weapon/ranged/bow.jpbaiBehaviorCfg:behaviorEvents", {
+                "uninit" : ["bow_clearStorage",
+					{
+						"event" : "function", "callback" : "clearStorage",
+						"args" : ["faceDir", "weapAnimState"]
+					}
+				],
+				"projectileFlip" : [
+					{
+						"event" : "function",
+						"callback" : "animationEx.setAnimationState",
+						"args" : ["projectile", "idle", false, "flip"]
+					}
+				]
+            }],
+			
+			"createdBy" : "Darkcraft8",
+			"tooltipKind" : "fishingrod",
+			"tooltipFields" : { 
+				"objectImage" : "/assetmissing.png",
+				"reelNameLabel" : "",
+				"lureNameLabel" : "Iron Arrow",
+				"reelIconImage" : "/assetmissing.png", 
+				"lureIconImage" : [
+					{
+						"image" : "/projectiles/guns/arrows/ironarrow/icon.png",
+						"position" : [8, 8],
+						"note" : "Proj Icon"
+					}
+				], 
+				"subTitle" : "^shadow,lightgray;Bow ^shadow,gray;(JPBAI)^reset;", 
+				"rarityLabel" : "Test Implementation of a Bow that show it used projectile.\n\n\n\n\n\n\n^gray,shadow;By^#fa0,shadow; Darkcraft8^reset;"
+			},
+			
+			"bow_projType" : "ironarrow",
+            "bow_projParam" : {},
+
+			"interactAction" : "ScriptPane",
+			"interactData" : {"gui":{"background":{"zlevel":0,"type":"background","fileHeader":"/interface/scripted/papernote/header.png","fileBody":"/interface/scripted/papernote/body.png","fileFooter":""},"close":{"type":"button","base":"/interface/x.png","hover":"/interface/xhover.png","pressed":"/interface/xpress.png","pressedOffset":[0,0],"position":[185,241]},"scrollArea":{"type":"scrollArea","rect":[5,18,198,230],"children":{"lblNoteText":{"type":"label","zlevel":1,"position":[17,230],"hAnchor":"left","vAnchor":"top","color":"#4c4b3e","fontSize":7,"value" : "Some Items could require a client sided mod called \"JPBAI Framework\",\nIt concept is basicaly creating behavior in json format that the active items use...\n\nIt was created to lower the amount of script that had to be coded and also allow to create a greater variety of item with almost only one script.\nKnow that no having the mod will not crash your character if you pickup a properly made vanilla compatible item due to a small script change made to station transponder lua.\n\nYou can access the mod at\n^blue;https://github.com/Darkcraft8/JPBAI-Framework/tree/developement^reset;","wrapWidth":180}}}}}
+		}
+	}
+}

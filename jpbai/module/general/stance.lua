@@ -217,6 +217,7 @@ function updateAim(allowRotate, allowFlip, aimSpeed, initAtAimAngle)
   --aimSpeed = 0.5
   local aimAngle, aimDirection = activeItem.aimAngleAndDirection(self.stance.aimVerticalOffset or 0, activeItem.ownerAimPosition())
   local rotation = math.abs(mcontroller.rotation())
+  
   if allowRotate then
     if aimSpeed then
         if not initAtAimAngle then
@@ -244,6 +245,7 @@ function updateAim(allowRotate, allowFlip, aimSpeed, initAtAimAngle)
     self.aimDirection = aimDirection
   end
   activeItem.setFacingDirection((self.aimDirection or 0))
+  
 end
 
 function updateStance(dt) -- added updateAim in so that rotation and flip get updated

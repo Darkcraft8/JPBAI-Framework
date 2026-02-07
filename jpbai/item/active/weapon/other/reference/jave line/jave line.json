@@ -203,7 +203,7 @@
 					"resetAim" : true,
 					"resetUser" : true,
 					
-					"armRotation" : -70,		
+					"armRotation" : -70,
 					"transformations" : {
 						"weapon" : {
 							"translate" : [-0.2, 1.5],
@@ -1483,32 +1483,32 @@
 				"type" : "grapplehook",
 				"inaccuracy" : 0,
 				"parameter" : {
-				"speed" : 460,
-				"piercing" : true,
-				"movementSettings" : {
-					"airFriction" : 20
-				},
-				"periodicActions" : [
-					{
-						"time" : 0,
-						"repeat" : false,
-						"action" : "projectile",
-						"type" : "ironarrow",
-						"config" : {
-						"power" : 10,
-						"speed" : 460,
-						"timeToLive" : 0.1,
-						"piercing" : true,
-						"knockback" : 0,
-						"statusEffects" : [{"effect" : "stun", "duration" : 1 }],
-						"damageKind" : "bow",
-						"damageType" : "damage",
-						"movementSettings" : {"gravityMultiplier" : 0, "collisionEnabled" : false, "airFriction" : 20},
-						"processing" : "?multiply=fff0"
+					"speed" : 460,
+					"piercing" : true,
+					"movementSettings" : {
+						"airFriction" : 20
+					},
+					"periodicActions" : [
+						{
+							"time" : 0,
+							"repeat" : false,
+							"action" : "projectile",
+							"type" : "ironarrow",
+							"config" : {
+							"power" : 10,
+							"speed" : 460,
+							"timeToLive" : 0.1,
+							"piercing" : true,
+							"knockback" : 0,
+							"statusEffects" : [{"effect" : "stun", "duration" : 1 }],
+							"damageKind" : "bow",
+							"damageType" : "damage",
+							"movementSettings" : {"gravityMultiplier" : 0, "collisionEnabled" : false, "airFriction" : 20},
+							"processing" : "?multiply=fff0"
+							}
 						}
-					}
-				],
-				"processing" : "storage:projDir"
+					],
+					"processing" : "storage:projDir"
 				},
 				"storage" : "grapple"
 			}
