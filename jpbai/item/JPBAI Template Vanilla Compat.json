@@ -113,18 +113,18 @@
 		"uninitEvent" : [
 		],
 		
-		"behaviors" : {
+		"behaviors" : [{
 			"init" : {
 				"stance" : "init",
 				"possibleOutcome" : [],
 				"eventOnInit" : ["init"]
 			}
-		}, 
-		"behaviorPaths" : {
-		},
-		"behaviorEvents" : {
+		}], 
+		"behaviorPaths" : [{
+		}],
+		"behaviorEvents" : [{
 			"init" : []
-		},
+		}],
 		
 		"createdBy" : "<Your UserName Here>",
 		

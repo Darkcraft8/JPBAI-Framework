@@ -191,6 +191,7 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
         if self.stance.user.rotate then mcontroller.rotate(util.toRadians(self.stance.user.rotate)) end
         if self.stance.user.angle then mcontroller.setRotation(util.toRadians(self.stance.user.angle)) end
         if self.stance.user.invertFacingDirection then mcontroller.controlFace(-1 * mcontroller.facingDirection()) end
+        if self.stance.user.directionalAngle then mcontroller.setRotation(mcontroller.facingDirection() * util.toRadians(self.stance.user.directionalAngle)) end
         if self.stance.user.primaryDirective then status.setPrimaryDirectives(self.stance.user.primaryDirective) end
 	elseif self.stance.resetUser then 
 		mcontroller.setRotation(0)
@@ -286,6 +287,7 @@ function updateStance(dt) -- added updateAim in so that rotation and flip get up
                     end
                 end
             end
+            if self.stance.invertDirection then activeItem.setFacingDirection(-1 * (self.aimDirection or 0)) else activeItem.setFacingDirection((self.aimDirection or 0)) end
             if self.stance.user then
 				if self.stance.user.primaryDirective then status.setPrimaryDirectives(self.stance.user.primaryDirective) end
                 if self.stance.user.velocity then 
@@ -294,8 +296,8 @@ function updateStance(dt) -- added updateAim in so that rotation and flip get up
                         mcontroller.setRotation(util.toRadians(self.stancePlayerRotation) * mcontroller.facingDirection())
                     end
                 end
+                if self.stance.user.directionalAngle then mcontroller.setRotation(mcontroller.facingDirection() * util.toRadians(self.stance.user.directionalAngle)) end
             end
-            if self.stance.invertDirection then activeItem.setFacingDirection(-1 * (self.aimDirection or 0)) else activeItem.setFacingDirection((self.aimDirection or 0)) end
         end
 
         for lightName, _ in pairs(self.lightFlash or {}) do

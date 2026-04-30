@@ -1,4 +1,8 @@
 {
+	"bow_projType" : "ironarrow",
+    "bow_projParam" : {},
+	"bow_tensionDamageMul" : 0.05,
+
     "animationCustom" : {
 
     },
@@ -10,58 +14,251 @@
     },
     "behaviors" : {
         "bow_idle" : {
-            "stance" : "bow_idle",
-            "possibleOutcome" : ["projFlipZlevelRight", "projFlipZlevelLeft", "bow_windup"],
-            "eventOnInit" : ["bow_fetchProjInfo", "bow_processProjInfo"],
-            "periodicEvent" : [{
+			"stance" : "bow_idle",
+			"possibleOutcome" : ["projFlipZlevelRight", "projFlipZlevelLeft", "bow_requireMunition", "bow_windup"],
+			"eventOnInit" : ["bow_fetchProjInfo", "bow_processProjInfo", "bow_resetTension"],
+			"periodicEvent" : [{
 				"time" : 0,
 				"event" : ["bow_updateProjSprite"],
 				"repeat" : true
 			}]
-        },
-        "bow_windup" : {
-            "stance" : "bow_windup",
-            "possibleOutcome" : ["projFlipZlevelRight", "projFlipZlevelLeft", "bow_fire"],
-            "eventOnInit" : ["bow_resetTension"],
-            "periodicEvent" : [{
-				"time" : 0.1,
-				"event" : ["bow_increaseTension"],
+		},
+		"bow_windup" : {
+			"stance" : "bow_windup",
+			"possibleOutcome" : ["projFlipZlevelRight", "projFlipZlevelLeft", "bow_addTension", "bow_cancelFire", "bow_fire"],
+			"eventOnInit" : ["bow_resetTension"],
+			"periodicEvent" : [{
+				"time" : 0,
+				"event" : ["bow_updateProjSprite", 
+					{	
+						"event" : "function",
+						"callback" : "status.setResourcePercentage",
+						"args" : [ "energyRegenBlock", 1]
+					}
+				],
 				"repeat" : true
-			},{
+			}]
+		},
+		"bow_fire" : {
+			"stance" : "bow_fire",
+			"possibleOutcome" : ["projFlipZlevelRight", "projFlipZlevelLeft", "bow_consumeMunition", "bow_idle"],
+			"eventOnInit" : ["bow_spawnBowProjectile"],
+			"periodicEvent" : [{
 				"time" : 0,
 				"event" : ["bow_updateProjSprite"],
 				"repeat" : true
 			}]
-        },
-        "bow_fire" : {
-            "stance" : "bow_fire",
-            "possibleOutcome" : ["projFlipZlevelRight", "projFlipZlevelLeft", "bow_idle"],
-            "eventOnInit" : ["bow_spawnBowProjectile"],
-            "periodicEvent" : [{
-				"time" : 0,
-				"event" : ["bow_updateProjSprite"],
-				"repeat" : true
-			}]
-        }
+		}
     },
     "behaviorPaths" : {
+		"projFlipZlevelRight" : {
+			"event" : [
+				{
+					"event" : "function",
+					"callback" : "animationEx.setAnimationState",
+					"args" : ["projectile", "flip", false, "idle"]
+				},
+				{
+					"event" : "function",
+					"callback" : "animator.setAnimationState",
+					"args" : ["weaponFlip", "hide"]
+				}
+			],
+			"require" : {
+				"function" : [
+					{
+						"callback" : "mcontroller.facingDirection",
+						"inverse" : false,
+						"args" : [],
+						"storage" : "faceDir"
+					},
+					{
+						"callback" : "calculus.greaterThan",
+						"inverse" : false,
+						"args" : ["storage:faceDir", 0]
+					}
+				]
+			}
+		},
+		"projFlipZlevelLeft" : {
+			"event" : [
+				{
+					"event" : "function",
+					"callback" : "animationEx.setAnimationState",
+					"args" : ["projectile", "idle", false, "flip"]
+				},
+				{
+					"event" : "function",
+					"callback" : "animator.animationState",
+					"args" : ["weapon"],
+					"storage" : "weapAnimState"
+				},
+				{
+					"event" : "function",
+					"callback" : "animator.setAnimationState",
+					"args" : ["weaponFlip", "storage:weapAnimState"]
+				}			
+			],
+			"require" : {
+				"function" : [
+					{
+						"callback" : "mcontroller.facingDirection",
+						"inverse" : false,
+						"args" : [],
+						"storage" : "faceDir"
+					},
+					{
+						"callback" : "calculus.lowerThan",
+						"inverse" : false,
+						"args" : ["storage:faceDir", 0]
+					}
+				]
+			}
+		},
         "bow_idle" : { 
 			"require" : { 
 				"stance" : "bow_idle"
 			}, 
 			"behavior" : "bow_idle" 
 		},
-        "bow_windup" : {"behavior" : "bow_windup","require" : {"time" : 0.05, "fireMode" : "primary","function" : [
-			{
-				"event" : "function",
-				"callback" : "statusEx.hasResources",
-				"args" : [{"resource":"energy", "amount":"storage:bow_energyCost"}]
+        "bow_windup" : {
+			"event" : [
+				{
+					"event" : "function",
+					"callback" : "setBehavior",
+					"args" : ["bow_windup"]
+				}
+			],
+			"require" : {
+				"time" : {
+					"name" : "bow_windup",
+                    "amount" : 0.05
+				}, 
+				"fireMode" : "primary",
+				"function" : [
+					{
+						"event" : "function",
+						"callback" : "statusEx.hasResources",
+						"args" : [[{"resource":"energy", "amount":"storage:bow_energyCost"}]]
+					},{
+						"event" : "function",
+						"callback" : "statusEx.resourcesLocked",
+						"inverse" : false,
+						"args" : [[{"resource":"energy"}]]
+					},
+					{
+						"event" : "function",
+						"callback" : "checkStorage",
+						"inverse" : true,
+						"args" : ["storage:bow_munition"]
+					}
+				]
 			}
-		]}},
-        "bow_fire" : {"behavior" : "bow_fire","require" : {"time" : 0.05, "fireMode" : "none"}}
+		},
+		"bow_requireMunition" : {
+			"event" : [
+				{
+					"event" : "function",
+					"callback" : "setBehavior",
+					"args" : ["bow_windup"]
+				}
+			],
+			"require" : {
+				"time" : {
+					"name" : "bow_windup",
+                    "amount" : 0.05
+				}, 
+				"fireMode" : "primary",
+				"function" : [
+					{
+						"event" : "function",
+						"callback" : "statusEx.hasResources",
+						"args" : [[{"resource":"energy", "amount":"storage:bow_energyCost"}]]
+					},{
+						"event" : "function",
+						"callback" : "statusEx.resourcesLocked",
+						"inverse" : false,
+						"args" : [[{"resource":"energy"}]]
+					},
+					{
+						"event" : "function",
+						"callback" : "checkStorage",
+						"inverse" : false,
+						"args" : ["storage:bow_munition"]
+					},
+					"event:bow_hasMunition",
+					{
+						"event" : "function",
+						"callback" : "checkStorage",
+						"inverse" : false,
+						"args" : ["storage:bow_hasMunition"]
+					}
+				]
+			}
+		},
+		"bow_consumeMunition" : {
+			"event" : [
+				{
+					"event" : "function",
+					"callback" : "setBehavior",
+					"args" : ["bow_idle"]
+				},
+				"bow_consumeMunition"
+			],
+			"require" : {
+				"time" : {
+					"name" : "bow_fire",
+                    "amount" : 0.05
+				}, 
+				"fireMode" : "none",
+				"function" : [
+					{
+						"event" : "function",
+						"callback" : "checkStorage",
+						"inverse" : false,
+						"args" : ["storage:bow_munition"]
+					}
+				]
+			}
+		},
+        "bow_addTension" : {
+			"event" : [
+				"bow_increaseTension",
+				{
+					"event" : "function",
+					"callback" : "status.overConsumeResource",
+					"args" : ["energy", "storage:bow_energyCost"]
+				}
+			],
+			"cooldown" : {
+				"cooldownName" : "bow_addTension",
+                "time" : 0.1
+			},
+			"require" : {
+				"fireMode" : "primary",
+				"function" : [
+					"event:bow_tensionProgress",
+					{
+						"event" : "function",
+						"callback" : "statusEx.resourcesLocked",
+						"inverse" : false,
+						"args" : [[{"resource":"energy"}]]
+					},
+					{
+						"event" : "function",
+						"callback" : "calculus.lowerThan",
+						"inverse" : false,
+						"args" : ["storage:bow_tensionProgress", 1]
+					}
+				]
+			}
+		},
+        "bow_fire" : {"behavior" : "bow_fire","require" : {"time" : 0.05, "fireMode" : "none"}},
+        "bow_cancelFire" : {"behavior" : "bow_idle","require" : {"time" : 0.05, "fireMode" : "alt"}}
     },
     "behaviorEvents" : {
         "bow_clearStorage" : [
+			"bow_resetTension",
             { 
                 "event" : "function", "callback" : "clearStorage",
 			    "args" : [["bow_tension", "bow_projType", "bow_projImage", "bow_fireOffset"]]
@@ -76,7 +273,7 @@
 			},
             {
 				"event" : "function", "callback" : "clearStorage",
-				"args" : [["bow_projFrame", "bow_projFrameProg", "bow_dt", "bow_dtTemp", "bow_energyCost"]]
+				"args" : [["bow_projFrame", "bow_projFrameProg", "bow_dt", "bow_dtTemp", "bow_energyCost", "bow_munition", "bow_hasMunition"]]
 			}
         ],
         "bow_fetchProjInfo" : [
@@ -115,7 +312,7 @@
 			{
 				"event" : "function",
 				"callback" : "config.getParameter",
-				"args" : ["tensionGain", 10],
+				"args" : ["tensionGain", 5],
                 "storage" : "bow_tensionGain"
 			},
 			{
@@ -134,8 +331,21 @@
 			{
 				"event" : "function",
 				"callback" : "config.getParameter",
-				"args" : ["energyCost", 20],
+				"args" : ["energyCost", 1],
                 "storage" : "bow_energyCost"
+			},
+			{
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["tensionDamageMul", 0.05],
+                "storage" : "bow_tensionDamageMul"
+			},
+
+			{
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["usedMunition", false],
+                "storage" : "bow_munition"
 			}
         ],
         "bow_processProjInfo" : [
@@ -256,12 +466,24 @@
                 "storage" : "bow_projFrame"
             }
         ],
+
         "bow_resetTension" : [
             {
 				"event" : "function",
 				"callback" : "setStorage",
 				"args" : ["bow_tension", "storage:bow_tensionMin"]
-			}
+			},
+			"bow_tensionProgress",
+			{
+				"event" : "function",
+				"callback" : "status.clearPersistentEffects",
+				"args" : ["bow_tensionBar"]
+            },
+			{
+				"event" : "function",
+				"callback" : "status.setResourcePercentage",
+				"args" : ["shieldStamina", 0]
+            }
         ],
         "bow_increaseTension" : [
             {
@@ -269,26 +491,83 @@
 				"callback" : "calculus.add",
 				"args" : ["storage:bow_tension", "storage:bow_tensionGain"],
                 "storage" : "bow_tension"
-            }
-        ],
-        "bow_spawnBowProjectile" : [
+            },
             {
 				"event" : "function",
 				"callback" : "util.clamp",
 				"args" : ["storage:bow_tension", "storage:bow_tensionMin", "storage:bow_tensionMax"],
                 "storage" : "bow_tension"
+            }
+        ],
+		"bow_tensionProgress" : [
+			{
+				"event" : "function",
+				"callback" : "calculus.sub",
+				"args" : ["storage:bow_tensionMax", "storage:bow_tensionMin"],
+                "storage" : "bow_tensionProgress"
             },
+			{
+				"event" : "function",
+				"callback" : "calculus.div",
+				"args" : ["storage:bow_tension", "storage:bow_tensionProgress"],
+                "storage" : "bow_tensionProgress"
+            },
+
+			{
+				"event" : "function",
+				"callback" : "status.setPersistentEffects",
+				"args" : ["bow_tensionBar", [{"stat" : "shieldHealth", "amount" : "storage:bow_tensionMax"}]]
+            },
+			{
+				"event" : "function",
+				"callback" : "status.setResourcePercentage",
+				"args" : ["shieldStamina", "storage:bow_tensionProgress"]
+            },
+			{
+				"event" : "function",
+				"callback" : "status.setResourcePercentage",
+				"args" : ["shieldStaminaRegenBlock", 1]
+            }
+		],
+
+        "bow_spawnBowProjectile" : [
+			{
+				"event" : "function",
+				"callback" : "calculus.mul",
+				"args" : ["storage:bow_tension", "storage:bow_tensionDamageMul"],
+                "storage" : "bow_tensionTemp"
+            },
+
+			{
+				"event" : "function",
+				"callback" : "logic.tableContent",
+				"args" : ["storage:bow_projConfig", "power", 0],
+                "storage" : "bow_projPower_d"
+			},
+            {
+				"event" : "function",
+				"callback" : "logic.tableContent",
+				"args" : ["storage:bow_projParam", "power", "storage:bow_projPower_d"],
+                "storage" : "bow_projPower"
+			},
+			{
+				"event" : "function",
+				"callback" : "calculus.mul",
+				"args" : ["storage:bow_projPower", 0.075],
+                "storage" : "bow_projPower"
+            },
+			{
+				"event" : "function",
+				"callback" : "calculus.add",
+				"args" : ["storage:bow_tensionTemp", "storage:bow_projPower"],
+                "storage" : "bow_projPower"
+            },
+
             {
 				"event" : "function",
 				"callback" : "util.mergeTable",
 				"args" : [{"speed" : "storage:bow_tension"}, "storage:bow_projParam"],
                 "storage" : "bow_effProjParam"
-			},
-
-			{
-				"event" : "function",
-				"callback" : "status.consumeResource",
-				"args" : ["energy", "storage:bow_energyCost"]
 			},
 			
             {
@@ -297,10 +576,31 @@
                 "spawnPos" : "fireOffset",
                 "spawnOffset" : "storage:bow_fireOffset",
 
+				"baseDamage" : "storage:bow_projPower",
                 "type" : "storage:bow_projType",
                 "inaccuracy" : "storage:bow_inaccuracy",
                 "parameter" : "storage:bow_effProjParam"
+            },
+			
+			{ 
+                "event" : "function", "callback" : "clearStorage",
+			    "args" : [["bow_effProjParam", "bow_tensionTemp", "bow_projPower", "bow_projPower_d"]]
             }
-        ]
+        ],
+
+		"bow_hasMunition" : [
+			{ 
+                "event" : "function", "callback" : "player.hasItem",
+			    "args" : ["storage:bow_munition", true],
+				"storage" : "bow_hasMunition"
+            }
+		],
+		"bow_consumeMunition" : [
+			{ 
+                "event" : "function", "callback" : "player.consumeItem",
+			    "args" : ["storage:bow_munition", false, true]
+            }
+		]
     }
 }
+

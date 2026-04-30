@@ -6,9 +6,9 @@ require "/scripts/status.lua"
 -- a bunch of list for frequently called func
 initFunc = {
     "activeItemCfg",
+    "movementControl.init",
     "initStances",
     "initBehavior",
-    "movementControl.init",
     "configInit"
 }
 updateFunc = { -- just so that incase a script has a update function it can be added
@@ -28,6 +28,7 @@ require "/jpbai/module/general/status.lua"
 require "/jpbai/module/general/behavior.lua"
 require "/jpbai/module/general/behaviorEX.lua"
 require "/jpbai/module/general/movement.lua"
+require "/jpbai/module/general/world.lua"
 
 debugMode = false
 local playerInteractTimer = 0
@@ -65,11 +66,11 @@ function update(dt, fireMode, isShiftHeld, currentMove)
     --behaviorEvents(config.getParameter("updateEvent", {}))
     for _, func in ipairs(updateFunc) do 
         if type(func) == "function" then
-            func(dt, fireMode, isShiftHeld, currentMove)
+            pcall(func, dt, fireMode, isShiftHeld, currentMove)
         else
             local callback = findCallback(func)
             if callback then
-                callback(dt, fireMode, isShiftHeld, currentMove)
+                pcall(callback, dt, fireMode, isShiftHeld, currentMove)
             end
         end
     end
@@ -182,7 +183,19 @@ function call(eventCfg) -- because whe can't directly do _ENV[funcGroup.Func]()
             else
                 --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), eventCfg.args)
                 sb.setLogMap("[JPBAI] Item "..itemId.."last processed event", sb.printJson(lastEvent))
-                return callback(args)
+                result = table.pack(callback(args))
+                if eventCfg.storage then
+                    if type(eventCfg.storage) == "table" then
+                        for i, a in pairs(eventCfg.storage or {}) do
+                            setStorage(a or i, result[i])
+                        end
+                    else
+                        if result[1] ~= nil then
+                            setStorage(eventCfg.storage, table.unpack(result))
+                        end
+                    end
+                end
+                return table.unpack(result)
             end
         else
             sb.logError("[JPBAI Framework] Function %s Couldn't be found", eventCfg.callback)

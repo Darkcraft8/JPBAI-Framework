@@ -25,14 +25,20 @@ end
 calculus = {}
 
 function calculus.add(numA, numB)
+    if not (numA or numB) then return (numA or numB) end
     return numA + numB
 end
 
 function calculus.sub(numA, numB)
+    if not (numA or numB) then 
+        if numB then return -numB end
+        return (numA or numB) 
+    end
     return numA - numB
 end
 
 function calculus.mul(num, mul)
+    if not num then return 0 end
     return num * mul
 end
 
@@ -65,6 +71,14 @@ function calculus.modulus(numA, modulus)
     if (not numA) or (not modulus) then return end
     return (numA % modulus)
 end
+
+function calculus.between(numA, min, max, bool)
+    if (numA <= max) and (numA >= min) then if bool then return true else return numA end end
+    if (numA > max) then if bool then return false else return max end end
+    if (numA < min) then if bool then return false else return min end end
+    return false
+end
+
 
 logic = {}
 
@@ -126,3 +140,13 @@ function logic.tableContent(table, path, defaultValue)
         return defaultValue
     end
 end
+
+function logic.either(a, b)
+    if a == nil then return b end
+    return a
+end
+
+function logic.both(a, b)
+    return (a and b)
+end
+

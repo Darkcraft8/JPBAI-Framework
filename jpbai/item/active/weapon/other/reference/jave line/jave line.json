@@ -1152,11 +1152,14 @@
 		}
 	},
 	"behaviorEvents" : {
-		"init" : [{	
+		"init" : [
+			{
+				
 				"event" : "function",
 				"callback" : "status.setPersistentEffects",
 				"args" : [ "weaponEffect", [{"stat" : "energyRegenBlockTime", "amount" : 99999999999}]]
-			},{	
+			},
+			{	
 				"event" : "function",
 				"callback" : "status.setResourcePercentage",
 				"args" : [ "energyRegenBlock", 1]

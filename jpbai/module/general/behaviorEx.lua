@@ -91,8 +91,8 @@ function behavior_hitbox(event) -- todo
         damageRepeatTimeout = event.timeout or 0.1
     }
     if not self.damageSources then self.damageSources = {} end
-    if not self.damageSources[behaviorName] then self.damageSources[behaviorName] = {} end
-    table.insert(self.damageSources[behaviorName], damageSource)
+    if not self.damageSources[event.hitboxName or behaviorName] then self.damageSources[event.hitboxName or behaviorName] = {} end
+    table.insert(self.damageSources[event.hitboxName or behaviorName], damageSource)
 end
 
 function behavior_monster(event) -- function to spawn monster based on weapon level or scaling function
@@ -124,6 +124,7 @@ end
 function behavior_projectile(event)
     local projectileCfg = event.parameter or {}
     local pos = spawnPosition(event)
+    if (type(pos) ~= "table") then return false end
     if event.scalingFunction or Weapon then -- Scale based on weapon stat or scaling function
         local callback = call({callback = event.scalingFunction or "Weapon.basicDamage", args = event})
         projectileCfg.power = projectileCfg.power or callback
@@ -268,8 +269,18 @@ function behaviorEx.damageAreaUpdate(dt)
     activeItem.setItemDamageSources(jarray(effectiveSources or {}))
 end
 
-function behaviorEx.resetDamageArea()
-    self.damageSources = {}
+function behaviorEx.resetDamageArea(hitboxName)
+    if hitboxName then
+        local temp = {}
+        for n, d in pairs(self.damageSources or {}) do 
+            if n ~= hitboxName then 
+                self.damageSources[n] = d
+            end
+        end
+        self.damageSources = temp
+    else
+        self.damageSources = {}    
+    end
     activeItem.setItemDamageSources(jarray(self.damageSources or {}))
 end
 -----------------------------------------------------------------------------------
@@ -291,8 +302,18 @@ function spawnPosition(cfg)
         return vec2.add(ownerPos, posOffset or {0,0})
     elseif originPos == "fireOffset" then
         return vec2.add(mcontroller.position(), vec2.rotate(activeItem.handPosition(posOffset or {0, 0}), rotation))
+    elseif originPos == "aimOffset" then
+        local crounching = mcontroller.crouching()
+        local extraOffset = {0,0}
+        if crounching then extraOffset = {0,-1} end
+        local aimDir = vec2.angle(world.distance(mcontroller.position(), activeItem.ownerAimPosition()))
+        local offset = vec2.rotate(vec2.mul(posOffset or {0, 0}, -1), aimDir)
+        offset = vec2.add(offset, extraOffset)
+        return vec2.add(mcontroller.position(), vec2.rotate(offset, rotation))
     elseif originPos == "cursor" then
         return vec2.add(activeItem.ownerAimPosition(), posOffset or {0,0})
+    else
+        return posOffset
     end
 end
 

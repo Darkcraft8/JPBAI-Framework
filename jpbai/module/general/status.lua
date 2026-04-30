@@ -1,6 +1,6 @@
 -- Function's to interact with player resources|status
 statusEx = statusEx or {}
-function statusEx.hasResources(resourceList) -- return if the resources in the table are available
+function statusEx.hasResources(resourceList) -- return if the resources in the table have the required amount available
     if not resourceList then return end
     for i, cfg in ipairs(resourceList) do
         if type(cfg) == "table" then
@@ -12,6 +12,30 @@ function statusEx.hasResources(resourceList) -- return if the resources in the t
             end
         elseif type(cfg) == "string" then
             if not status.resourcePositive(cfg) then return false end
+        end
+    end
+    return true
+end
+
+function statusEx.resourcesLocked(resourceList)
+    if not resourceList then return end
+    for i, cfg in ipairs(resourceList) do
+        if type(cfg) == "table" then
+            if status.resourceLocked(cfg.resource) then return false end
+        elseif type(cfg) == "string" then
+            if status.resourceLocked(cfg) then return false end
+        end
+    end
+    return true
+end
+
+function statusEx.setResourcesLocked(resourceList)
+    if not resourceList then return end
+    for i, cfg in ipairs(resourceList) do
+        if type(cfg) == "table" then
+            status.setResourceLocked(cfg.resource)
+        elseif type(cfg) == "string" then
+            status.setResourceLocked(cfg)
         end
     end
     return true
@@ -61,3 +85,4 @@ end
 function statusEx.statusProperty(property, require)
     return status.statusProperty(property) == require
 end
+

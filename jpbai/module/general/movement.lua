@@ -23,13 +23,16 @@ function movementControl.update(dt)
     end
 end
 
-function movementControl.translateAboveGround(distance)
+function movementControl.translateAboveGround(distance, collisionKind)
     if not distance then return end
     local userPos = world.entityPosition(activeItem.ownerEntityId())
-    local groundPos = world.lineTileCollisionPoint(userPos, {userPos[1], distance})
-    if groundPos.position then
-        local effectiveYPos = userPos[2] + (groundPos.position[2] - distance)
-        mcontroller.setYPosition(effectiveYPos)
+    local groundPos = world.lineTileCollisionPoint(userPos, {userPos[1], userPos[2] - distance}, collisionKind or {"Dynamic", "Block", "Slippery"}) or {}
+    
+    if groundPos[1] then
+        local dist = world.distance(groundPos[1], {userPos[1], userPos[2] - distance})
+        sb.logInfo("%s, %s", distance, (distance - dist[2]))
+        local effectiveYPos = userPos[2] + (distance - dist[2])--userPos[2] + (dist[2])
+        mcontroller.setYPosition(math.min(effectiveYPos, world.size()[2]))
     end
 end
 
@@ -45,6 +48,12 @@ function movementControl.addAimedVelocity(vel, verticalOffset)
     local aimAngle = activeItem.aimAngle(verticalOffset or 0, activeItem.ownerAimPosition())
     local newVec = vec2.add(mcontroller.velocity(), vec2.rotate(vel, aimAngle))
     mcontroller.setVelocity(newVec)
+end
+
+function movementControl.approachVelocityAlongAim(velFloat, verticalOffset, controlForce, increaseOnly)
+    if not velFloat then return end
+    local aimAngle = activeItem.aimAngle(verticalOffset or 0, activeItem.ownerAimPosition())
+    mcontroller.controlApproachVelocityAlongAngle(aimAngle, velFloat, controlForce or 200, increaseOnly or false)
 end
 
 function movementControl.aimTranslation(vec, verticalOffset, checkForObstacle, offset, maxCorrection)
