@@ -7,30 +7,39 @@ local oldUpdateStance = updateStance
 local oldInitStances = initStances
 function initStances()
     oldInitStances()
+    local baseStances = config.getParameter("baseStances", {}) -- in case you make a bunch of base stances for inheritance and don't want to copy them everywhere
+    if type(baseStances) == "table" then
+        for _, string in pairs(baseStances) do
+            self.stances = sb.jsonMerge(root.assetJson(string), self.stances or {})
+        end
+    elseif type(baseStances) == "string" then 
+        self.stances = sb.jsonMerge(root.assetJson(baseStances), self.stances or {})
+    end
+    local stances = {}
+    local function inherit(stanceData)
+        local result = copy(stanceData)
+        if stanceData.inherit then
+            result = sb.jsonMerge(inherit(self.stances[stanceData.inherit] or {}), result)
+        end
+        return result
+    end
+    for stanceName, stanceData in pairs(self.stances) do 
+        stances[stanceName] = inherit(self.stances[stanceName])
+    end
+    self.stances = stances
     table.insert(updateFunc, "updateStance")
 end
-local function inherit(stanceName, json)
-    if self.stances[stanceName]["inherit"] then
-        local parent = inherit(self.stances[stanceName]["inherit"], self.stances[stanceName])
-        local result = sb.jsonMerge(copy(self.stances[self.stances[stanceName]["inherit"]]), copy(json) )
-        return result
-    else
-        if self.stances[stanceName] then
-            return sb.jsonMerge(copy(self.stances[stanceName]), copy(json))  
-        else
-            return json
-        end
-    end
+
+function aimDirection()
+    return self.aimDirection > 0
 end
+
 function setStance(stanceName) -- replace and expend on the old version in stances.lua
+    if not self.stances then return end
     self.stanceName = stanceName
     status.setPrimaryDirectives("")
     if self.stances[stanceName] then
-        if self.stances[stanceName]["inherit"] then
-            self.stance = inherit(self.stances[stanceName]["inherit"], self.stances[stanceName]) -- sb.jsonMerge(copy(self.stances[self.stances[stanceName]["inherit"]]), self.stances[stanceName])  
-        else
-            self.stance = copy(self.stances[stanceName])
-        end
+        self.stance = copy(self.stances[stanceName])
     else
         sb.logError("[JPBAI Framework] [setStance] stance %s couldn't be found", stanceName)
     end
@@ -66,62 +75,64 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
         self.lightFlashDuration[lightName] = 10
         if type(value) == "number" then self.lightFlashDuration[lightName] = value end
     end
+    for tagName, value in pairs(self.stance.globalTags or {}) do
+		animator.setGlobalTag(tagName, value)
+        --animator.setLightActive(lightName, true)
+
+        --self.lightFlash[lightName] = getLightColor(lightName)
+        --self.lightFlashprogress[lightName] = 0
+        --self.lightFlashDuration[lightName] = 10
+        --if type(value) == "number" then self.lightFlashDuration[lightName] = value end
+    end
     
-    if self.player then
-        if self.player.rotate then self.stancePlayerRotation = copy(self.player.rotate) mcontroller.setRotation(util.toRadians(self.stancePlayerRotation) * mcontroller.facingDirection()) end
-        if self.player.primaryDirective then status.setPrimaryDirectives(self.player.primaryDirective) end
-    else
-        if self.stancePlayerRotation then self.stancePlayerRotation = 0 mcontroller.setRotation(0) end -- reset player rotation because it can mess with collision
-    end
     -- Convert Weapon.lua weapon rotation and offset to proper Transformation for weapon group, merge if a transformation for weapon group already exist
+		if self.stance.weaponRotation or self.stance.weaponOffset then
+			if debugMode then
+				sb.logInfo("[JPBAI Framework] Found Weapon.lua specific weapon transform in stance %s", self.stanceName)
+				if self.stance.weaponRotation and not self.stance.weaponOffset then
+					sb.logInfo("[JPBAI Framework] Found weaponRotation : %s", self.stance.weaponRotation)
+				elseif not self.stance.weaponRotation and self.stance.weaponOffset then
+					sb.logInfo("[JPBAI Framework] Found weaponOffset : %s", self.stance.weaponOffset)
+				else
+					sb.logInfo("[JPBAI Framework] Found weaponRotation : %s and weaponOffset : %s", self.stance.weaponRotation, self.stance.weaponOffset)
+				end
+			end
+			if not self.stance.transformations then self.stance.transformations = jarray() end
+			if not self.stance.transformations.weapon then self.stance.transformations.weapon = jarray() end
 
-    if self.stance.weaponRotation or self.stance.weaponOffset then
-        if config.getParameter("debug") then
-            sb.logInfo("[JPBAI Framework] Found Weapon.lua specific weapon transform in stance %s", self.stanceName)
-            if self.stance.weaponRotation and not self.stance.weaponOffset then
-                sb.logInfo("[JPBAI Framework] Found weaponRotation : %s", self.stance.weaponRotation)
-            elseif not self.stance.weaponRotation and self.stance.weaponOffset then
-                sb.logInfo("[JPBAI Framework] Found weaponOffset : %s", self.stance.weaponOffset)
-            else
-                sb.logInfo("[JPBAI Framework] Found weaponRotation : %s and weaponOffset : %s", self.stance.weaponRotation, self.stance.weaponOffset)
-            end
-        end
-        if not self.stance.transformations then self.stance.transformations = jarray() end
-        if not self.stance.transformations.weapon then self.stance.transformations.weapon = jarray() end
+			if self.stance.weaponRotation then
+				if self.stance.transformations.weapon.rotate ~= nil then
+					self.stance.transformations.weapon.rotate = self.stance.transformations.weapon.rotate + self.stance.weaponRotation
+				else
+					self.stance.transformations.weapon.rotate = self.stance.weaponRotation
+				end
+			end
+			if self.stance.weaponOffset then
+				if self.stance.transformations.weapon.translate ~= nil then 
+					self.stance.transformations.weapon.translate = vec2.add(self.stance.transformations.weapon.translate, self.stance.weaponOffset) 
+				else 
+					self.stance.transformations.weapon.translate = self.stance.weaponOffset
+				end 
+			end
+		end
+		if self.stance.weaponAngularVelocity then
+			if debugMode then
+				sb.logInfo("[JPBAI Framework] Found Weapon.lua specific velocity for weapon transform in stance %s", self.stanceName)
+				sb.logInfo("[JPBAI Framework] Found weaponAngularVelocity : %s", self.stance.weaponAngularVelocity)
+			end
+			if not self.stance.transformations then self.stance.transformations = jarray() end
+			if not self.stance.transformations.weapon then self.stance.transformations.weapon = jarray() end
+			if not self.stance.transformations.weapon.velocity then self.stance.transformations.weapon.velocity = jarray() end
 
-        if self.stance.weaponRotation then
-            if self.stance.transformations.weapon.rotate ~= nil then
-                self.stance.transformations.weapon.rotate = self.stance.transformations.weapon.rotate + self.stance.weaponRotation
-            else
-                self.stance.transformations.weapon.rotate = self.stance.weaponRotation
-            end
-        end
-        if self.stance.weaponOffset then
-            if self.stance.transformations.weapon.translate ~= nil then 
-                self.stance.transformations.weapon.translate = vec2.add(self.stance.transformations.weapon.translate, self.stance.weaponOffset) 
-            else 
-                self.stance.transformations.weapon.translate = self.stance.weaponOffset
-            end 
-        end
-    end
-
-    if self.stance.weaponAngularVelocity then
-        if config.getParameter("debug") then
-            sb.logInfo("[JPBAI Framework] Found Weapon.lua specific velocity for weapon transform in stance %s", self.stanceName)
-            sb.logInfo("[JPBAI Framework] Found weaponAngularVelocity : %s", self.stance.weaponAngularVelocity)
-        end
-        if not self.stance.transformations then self.stance.transformations = jarray() end
-        if not self.stance.transformations.weapon then self.stance.transformations.weapon = jarray() end
-        if not self.stance.transformations.weapon.velocity then self.stance.transformations.weapon.velocity = jarray() end
-
-        if self.stance.weaponAngularVelocity and self.stance.weaponAngularVelocity ~= 0 then 
-            if self.stance.transformations.weapon.velocity.rotate then 
-                self.stance.transformations.weapon.velocity.rotate = self.stance.transformations.weapon.velocity.rotate + self.stance.weaponAngularVelocity 
-            else 
-                self.stance.transformations.weapon.velocity.rotate = self.stance.weaponAngularVelocity 
-            end 
-        end
-    end
+			if self.stance.weaponAngularVelocity and self.stance.weaponAngularVelocity ~= 0 then 
+				if self.stance.transformations.weapon.velocity.rotate then 
+					self.stance.transformations.weapon.velocity.rotate = self.stance.transformations.weapon.velocity.rotate + self.stance.weaponAngularVelocity 
+				else 
+					self.stance.transformations.weapon.velocity.rotate = self.stance.weaponAngularVelocity 
+				end 
+			end
+		end
+		
     for group, transform in pairs(self.stance.transformations or {}) do
         animator.resetTransformationGroup(group)
         local rotationCenter = transform.rotationCenter or {0, 0}
@@ -136,7 +147,7 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
                 if inheritedValue.rotationCenter then rotationCenter = vec2.add(inheritedValue.rotationCenter or {0, 0}, rotationCenter or {0, 0}) end
             end
         end
-        
+
         if translate then animator.translateTransformationGroup(group, translate) end
         if rotate then animator.rotateTransformationGroup(group, util.toRadians(rotate), rotationCenter) end
         if scale then animator.scaleTransformationGroup(group, scale) end
@@ -157,26 +168,85 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
     
     if self.stance.resetAim then
         self.aimAngle = 0
-    elseif self.stance.aimAngle then
-        self.aimAngle = self.stance.aimAngle
+    end
+	if self.stance.aimAngle then
+        self.aimAngle = math.rad(self.stance.aimAngle)
     end
 
     if self.stance.frontArmFrame ~= nil then activeItem.setFrontArmFrame(self.stance.frontArmFrame) end
     if self.stance.backArmFrame ~= nil then activeItem.setBackArmFrame(self.stance.backArmFrame) end
     if self.stance.holdingItem ~= nil then activeItem.setHoldingItem(self.stance.holdingItem) end
     if self.stance.twoHanded ~= nil then activeItem.setTwoHandedGrip(self.stance.twoHanded) end
-
-    updateAim(self.stance.allowRotate, self.stance.allowFlip)
+    
+    updateAim(self.stance.allowRotate, self.stance.allowFlip, nil, true)
+    if self.stance.aimDirection then
+        self.aimDirection = self.stance.aimDirection
+    end
     if self.stance.invertDirection then
         activeItem.setFacingDirection(-1 * (self.aimDirection or 0))
     end
 
     if self.stance.user then
-        if self.stance.user.rotate then mcontroller.rotate(util.toRadians(self.stance.user.rotate)) end
-        if self.stance.user.angle then mcontroller.setRotation(self.stance.user.angle) end
         if self.stance.user.resetAngle then mcontroller.setRotation(0) end
+        if self.stance.user.rotate then mcontroller.rotate(util.toRadians(self.stance.user.rotate)) end
+        if self.stance.user.angle then mcontroller.setRotation(util.toRadians(self.stance.user.angle)) end
         if self.stance.user.invertFacingDirection then mcontroller.controlFace(-1 * mcontroller.facingDirection()) end
+        if self.stance.user.directionalAngle then mcontroller.setRotation(mcontroller.facingDirection() * util.toRadians(self.stance.user.directionalAngle)) end
+        if self.stance.user.primaryDirective then status.setPrimaryDirectives(self.stance.user.primaryDirective) end
+	elseif self.stance.resetUser then 
+		mcontroller.setRotation(0)
+		mcontroller.controlFace(mcontroller.facingDirection())
+        status.setPrimaryDirectives("")
     end
+
+    if self.stance.handGrip == "wrap" then
+        activeItem.setOutsideOfHand(isFrontHand())
+    elseif self.stance.handGrip == "embed" then
+        activeItem.setOutsideOfHand(not isFrontHand())
+    elseif self.stance.handGrip == "outside" then
+        activeItem.setOutsideOfHand(true)
+    elseif self.stance.handGrip == "inside" then
+        activeItem.setOutsideOfHand(false)
+    end
+    self.stancePlayerRotation = 0
+end
+
+function updateAim(allowRotate, allowFlip, aimSpeed, initAtAimAngle)
+  allowRotate = allowRotate or self.stance.allowRotate
+  allowFlip = allowFlip or self.stance.allowFlip
+  aimSpeed = aimSpeed or self.stance.aimSpeed
+  --aimSpeed = 0.5
+  local aimAngle, aimDirection = activeItem.aimAngleAndDirection(self.stance.aimVerticalOffset or 0, activeItem.ownerAimPosition())
+  local rotation = math.abs(mcontroller.rotation())
+  
+  if allowRotate then
+    if aimSpeed then
+        if not initAtAimAngle then
+            local distance = ((aimAngle - self.aimAngle) * (aimSpeed * script.updateDt())) 
+            sb.setLogMap("0| Behav Stance : updateAim", "aimSpeed %s, prevAimAngle = %s, curaimAngle = %s, distance %s", aimSpeed, self.aimAngle, aimAngle, distance)
+            self.aimAngle = self.aimAngle + distance
+        else
+            self.aimAngle = aimAngle
+        end
+    else
+        self.aimAngle = aimAngle
+    end
+
+  end
+  aimAngle = self.aimAngle + util.toRadians(self.armRotation)
+
+  if allowRotate then  
+    self.armAngle = aimAngle - rotation -- we remove the player rotation so that the arms aim toward the correct position
+  else
+    self.armAngle = aimAngle
+  end
+  activeItem.setArmAngle(self.armAngle)
+
+  if allowFlip then
+    self.aimDirection = aimDirection
+  end
+  activeItem.setFacingDirection((self.aimDirection or 0))
+  
 end
 
 function updateStance(dt) -- added updateAim in so that rotation and flip get updated
@@ -191,40 +261,43 @@ function updateStance(dt) -- added updateAim in so that rotation and flip get up
             end
         else
             if self.stance.armAngularVelocity ~= nil then self.armRotation = self.armRotation + self.stance.armAngularVelocity end
-            if sb.printJson(self.stance.transformations or {}) ~= "{}" then end
             for group, transform in pairs(self.stance.transformations or {}) do
-                local velocity = copy(transform.velocity)
-                local translate, rotate, scale, rotationCenter
-                if velocity then
-                    translate, rotate, scale, rotationCenter = copy(velocity.translate), copy(velocity.rotate), copy(velocity.scale), copy(transform.rotationCenter) or {0, 0}
-                end
-
-                if transform.inherit then
-                    local inheritedValue = self.stance.transformations[transform.inherit]
-                    if inheritedValue.velocity then
-                        if not velocity then velocity = jarray() end
-                        --sb.logInfo("inheritedValue.velocity %s", inheritedValue.velocity)
-                        if inheritedValue.velocity.translate then translate = vec2.add(inheritedValue.velocity.translate or {0, 0}, translate or {0, 0}) end
-                        if inheritedValue.velocity.rotate then rotate = (inheritedValue.velocity.rotate or 0) + (rotate or 0) end
-                        if inheritedValue.velocity.scale then scale = (inheritedValue.velocity.scale or 0) + (scale or 0) end
+                if (transform.inherit or transform.velocity) then 
+                    local velocity = copy(transform.velocity)
+                    local translate, rotate, scale, rotationCenter
+                    if velocity then
+                        translate, rotate, scale, rotationCenter = copy(velocity.translate), copy(velocity.rotate), copy(velocity.scale), copy(transform.rotationCenter) or {0, 0}
                     end
-                end
-                if translate or rotate or scale then
-                    --sb.logInfo("%s, %s, %s, %s", translate, rotate, scale, rotationCenter)
-                    if translate then animator.translateTransformationGroup(group, vec2.mul(translate, dt)) end
-                    if velocity.rotate then animator.rotateTransformationGroup(group, util.toRadians((velocity.rotate * dt)), rotationCenter) end
-                    if scale then animator.scaleTransformationGroup(group, scale * dt) end
-                end
-            end
-            if self.player then
-                if self.player.velocity then 
-                    if self.player.velocity.rotate then
-                        self.stancePlayerRotation = self.stancePlayerRotation + (self.player.velocity.rotate * dt)
-                        mcontroller.setRotation(util.toRadians(self.stancePlayerRotation) * mcontroller.facingDirection())
+
+                    if transform.inherit then
+                        local inheritedValue = self.stance.transformations[transform.inherit]
+                        if inheritedValue.velocity then
+                            if not velocity then velocity = jarray() end
+                            --sb.logInfo("inheritedValue.velocity %s", inheritedValue.velocity)
+                            if inheritedValue.velocity.translate then translate = vec2.add(inheritedValue.velocity.translate or {0, 0}, translate or {0, 0}) end
+                            if inheritedValue.velocity.rotate then rotate = (inheritedValue.velocity.rotate or 0) + (rotate or 0) end
+                            if inheritedValue.velocity.scale then scale = (inheritedValue.velocity.scale or 0) + (scale or 0) end
+                        end
+                    end
+                    if translate or rotate or scale then
+                        --sb.logInfo("%s, %s, %s, %s", translate, rotate, scale, rotationCenter)
+                        if translate then animator.translateTransformationGroup(group, vec2.mul(translate, dt)) end
+                        if velocity.rotate then animator.rotateTransformationGroup(group, util.toRadians((velocity.rotate * dt)), rotationCenter) end
+                        if scale then animator.scaleTransformationGroup(group, scale * dt) end
                     end
                 end
             end
             if self.stance.invertDirection then activeItem.setFacingDirection(-1 * (self.aimDirection or 0)) else activeItem.setFacingDirection((self.aimDirection or 0)) end
+            if self.stance.user then
+				if self.stance.user.primaryDirective then status.setPrimaryDirectives(self.stance.user.primaryDirective) end
+                if self.stance.user.velocity then 
+                    if self.stance.user.velocity.rotate then
+                        self.stancePlayerRotation = (self.stancePlayerRotation or 0) + (self.stance.user.velocity.rotate * dt)
+                        mcontroller.setRotation(util.toRadians(self.stancePlayerRotation) * mcontroller.facingDirection())
+                    end
+                end
+                if self.stance.user.directionalAngle then mcontroller.setRotation(mcontroller.facingDirection() * util.toRadians(self.stance.user.directionalAngle)) end
+            end
         end
 
         for lightName, _ in pairs(self.lightFlash or {}) do
@@ -280,11 +353,19 @@ function lerpStance(dt)
                     scale = (inheritedValue.scale or 0) + (scale or 1)
                     rotationCenter = vec2.add(inheritedValue.rotationCenter or {0, 0}, rotationCenter or {0, 0})
                 end
+                local toTranslate, toRotate, toScale, toRotationCenter = copy(toTranform.translate), copy(toTranform.rotate), copy(toTranform.scale), copy(toTranform.rotationCenter)
+                if toTranform.inherit then
+                    local inheritedValue = to.transformations[transform.inherit]
+                    toTranslate = vec2.add(inheritedValue.translate or {0, 0}, toTranslate or {0, 0})
+                    toRotate = (inheritedValue.rotate or 0) + (toRotate or 0)
+                    toScale = (inheritedValue.scale or 0) + (toScale or 1)
+                    toRotationCenter = vec2.add(inheritedValue.rotationCenter or {0, 0}, toRotationCenter or {0, 0})
+                end
 
-                local translate = vec2.lerp(progress, translate or {0, 0}, toTranform.translate or {0, 0})
-                local rotate = interp.linear(progress, rotate or 0, toTranform.rotate or 0)
-                local rotationCenter = vec2.lerp(progress, rotationCenter or {0, 0}, toTranform.rotationCenter or {0, 0})
-                local scale = interp.linear(progress, scale or 1 , toTranform.scale or 1)
+                local translate = vec2.lerp(progress, translate or {0, 0}, toTranslate or {0, 0})
+                local rotate = interp.linear(progress, rotate or 0, toRotate or 0)
+                local rotationCenter = vec2.lerp(progress, rotationCenter or {0, 0}, toRotationCenter or {0, 0})
+                local scale = interp.linear(progress, scale or 1 , toScale or 1)
 
                 if translate then animator.translateTransformationGroup(group, translate) end
                 if rotate then animator.rotateTransformationGroup(group, util.toRadians(rotate), rotationCenter) end
@@ -313,7 +394,9 @@ function lerpStance(dt)
         end
         
         local aimAngle = activeItem.aimAngleAndDirection(self.fireOffset[2], activeItem.ownerAimPosition())
+        local rotation = math.abs(mcontroller.rotation())
         armAngle = 0
+        
         armProgress = util.toRadians(interp.linear(progress, from.armRotation or 0, to.armRotation or 0) )
         aimProgress = interp.linear(progress, fromAimAngle, aimAngle or 0)
         
@@ -324,6 +407,12 @@ function lerpStance(dt)
         else
             armAngle = armProgress
         end
+        sb.setLogMap("1| Behav Stance : Lerp", "Rotation = %s, armAngle = %s, %s", rotation, armAngle, armAngle - rotation)
+        if (from.allowRotate or to.allowRotate) then
+            armAngle = armAngle - rotation
+        end
+        
+
         activeItem.setArmAngle(armAngle)
         if progress > 0.5 then 
             if to.frontArmFrame ~= nil then activeItem.setFrontArmFrame(to.frontArmFrame) end
@@ -346,8 +435,12 @@ function lerpStance(dt)
 
         progress = math.min(1.0, progress + (dt / from.duration))
     end)
+    local rotation = math.abs(mcontroller.rotation())
     self.armRotation = to.armRotation or 0
-    if tostring.resetAim then
+    if to.allowRotate then
+        self.armRotation = self.armRotation + rotation
+    end
+    if to.resetAim then
         self.aimAngle = 0
     elseif to.aimAngle then
         self.aimAngle = to.aimAngle
@@ -373,3 +466,7 @@ end
 -- "allowFlip"
 -- "transitionFunction"
 -- "transition" can be added to a stance to change stances... don't remember seeing it used in vanilla
+
+function isFrontHand()
+  return (activeItem.hand() == "primary") == (self.aimDirection < 0)
+end

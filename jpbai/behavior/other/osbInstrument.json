@@ -1,0 +1,369 @@
+{
+    "This Behavior Sample Require" : ["openStarbound"],
+    "animationCustom" : {
+        "sounds" : {
+            "low1" : {
+                "rangeMultiplier" : 1,
+                "pitchMultiplier" : 0.75,
+                "volume" : 1,
+                "pool" : ["/sfx/instruments/harp/a2.ogg"]
+            },
+            "low2" : {
+                "rangeMultiplier" : 1,
+                "pitchMultiplier" : 1,
+                "volume" : 1,
+                "pool" : ["/sfx/instruments/harp/a2.ogg"]
+            },
+            "low3" : {
+                "rangeMultiplier" : 1,
+                "pitchMultiplier" : 0.75,
+                "volume" : 1,
+                "pool" : ["/sfx/instruments/harp/a3.ogg"]
+            },
+            
+            "med1" : {
+                "rangeMultiplier" : 1,
+                "pitchMultiplier" : 1,
+                "volume" : 1,
+                "pool" : ["/sfx/instruments/harp/a3.ogg"]
+            },
+            "med2" : {
+                "rangeMultiplier" : 1,
+                "pitchMultiplier" : 0.75,
+                "volume" : 1,
+                "pool" : ["/sfx/instruments/harp/a4.ogg"]
+            },
+            "med3" : {
+                "rangeMultiplier" : 1,
+                "pitchMultiplier" : 1,
+                "volume" : 1,
+                "pool" : ["/sfx/instruments/harp/a4.ogg"]
+            },
+            
+            "high1" : {
+                "rangeMultiplier" : 1,
+                "pitchMultiplier" : 0.75,
+                "volume" : 1,
+                "pool" : ["/sfx/instruments/harp/a5.ogg"]
+            },
+            "high2" : {
+                "rangeMultiplier" : 1,
+                "pitchMultiplier" : 1.0,
+                "volume" : 1,
+                "pool" : ["/sfx/instruments/harp/a5.ogg"]
+            },
+            "high3" : {
+                "rangeMultiplier" : 1,
+                "pitchMultiplier" : 0.75,
+                "volume" : 1,
+                "pool" : ["/sfx/instruments/harp/a6.ogg"]
+            }
+        }
+    },
+    "stances" : {
+        "play.1" : {
+            "duration" : 0.1,
+            "transition" : "play.2",
+            "frontArmFrame" : "swim.3",
+            "allowFlip" : false,
+            "allowRotate" : false,
+            "armRotation" : 0,
+            "twoHanded" : true,
+            "transformations" : {
+                "weapon" : {
+                    "rotationCenter" : [0, 0],
+                    "translate" : [-0.3, 0.35],
+                    "rotate" : 10
+                }
+            },
+            "backArmFrame" : "rotation"
+        },
+        "play.2" : {
+            "duration" : 0.15,
+            "transition" : "idle",
+            "frontArmFrame" : "swim.4",
+            "allowFlip" : false,
+            "allowRotate" : false,
+            "armRotation" : 0,
+            "twoHanded" : true,
+            "transformations" : {
+                "weapon" : {
+                    "rotationCenter" : [0, 0],
+                    "translate" : [-0.3, 0.35],
+                    "rotate" : 10
+                }
+            },
+            "burstParticleEmitter" : [],
+            "backArmFrame" : "rotation"
+        }
+    },
+    "behaviorEvents" : {
+        "low1" : [
+            {
+                "event" : "function", "args" : ["low1"],
+                "callback" : "instrument.pressNote"
+            }, 
+            {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+            }
+        ],
+        "low2" : [
+            {
+                "event" : "function", "args" : ["low2"],
+                "callback" : "instrument.pressNote"
+            }, 
+            {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+            }
+        ],
+        "low3" : [
+            {
+                "event" : "function", "args" : ["low3"],
+                "callback" : "instrument.pressNote"
+            }, 
+            {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+            }
+        ],
+
+        "med1" : [
+            {
+                "event" : "function", "args" : ["med1"],
+                "callback" : "instrument.pressNote"
+            }, 
+            {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+            }
+        ],
+        "med2" : [
+            {
+                "event" : "function", "args" : ["med2"],
+                "callback" : "instrument.pressNote"
+            }, 
+            {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+            }
+        ],
+        "med3" : [
+            {
+                "event" : "function", "args" : ["med3"],
+                "callback" : "instrument.pressNote"
+            }, 
+            {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+            }
+        ],
+
+        "high1" : [
+            {
+                "event" : "function", "args" : ["high1"],
+                "callback" : "instrument.pressNote"
+            }, 
+            {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+            }
+        ],
+        "high2" : [
+            {
+                "event" : "function", "args" : ["high2"],
+                "callback" : "instrument.pressNote"
+            }, 
+            {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+            }
+        ],
+        "high3" : [
+            {
+                "event" : "function", "args" : ["high3"],
+                "callback" : "instrument.pressNote"
+            }, 
+            {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+            }
+        ]
+    },
+    "behaviorPaths" : {
+        "playL1" : {
+            "event" : [
+                "low1",
+                {
+                    "event" : "function", "args" : ["play.1"],
+                    "callback" : "setStance"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 1"] } ] }
+        },
+        "releaseL1" : {
+            "event" : [
+                {
+                "event" : "function", "args" : ["low1", 3],
+                "callback" : "instrument.releaseNote"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 1"] } ] }
+        },
+        "playL2" : {
+            "event" : [
+                "low2", 
+                {
+                    "event" : "function", "args" : ["play.1"],
+                    "callback" : "setStance"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 2"] } ] }
+        },
+        "releaseL2" : {
+            "event" : [
+                {
+                "event" : "function", "args" : ["low2", 3],
+                "callback" : "instrument.releaseNote"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 2"] } ] }
+        },
+        "playL3" : {
+            "event" : [
+                "low3", 
+                {
+                    "event" : "function", "args" : ["play.1"],
+                    "callback" : "setStance"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 3"] } ] }
+        },
+        "releaseL3" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["low3", 3],
+                    "callback" : "instrument.releaseNote"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 3"] } ] }
+        },
+        
+        "playM1" : {
+            "event" : [
+                "med1", 
+                {
+                    "event" : "function", "args" : ["play.1"],
+                    "callback" : "setStance"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 4"] } ] }
+        },
+        "releaseM1" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["med1", 3],
+                    "callback" : "instrument.releaseNote"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 4"] } ] }
+        },
+        "playM2" : {
+            "event" : [
+                "med2", 
+                {
+                    "event" : "function", "args" : ["play.1"],
+                    "callback" : "setStance"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 5"] } ] }
+        },
+        "releaseM2" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["med2", 3],
+                    "callback" : "instrument.releaseNote"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 5"] } ] }
+        },
+        "playM3" : {
+            "event" : [
+                "med3", 
+                {
+                    "event" : "function", "args" : ["play.1"],
+                    "callback" : "setStance"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 6"] } ] }
+        },
+        "releaseM3" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["med3", 3],
+                    "callback" : "instrument.releaseNote"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 6"] } ] }
+        },
+        
+        "playH1" : {
+            "event" : [
+                "high1", 
+                {
+                    "event" : "function", "args" : ["play.1"],
+                    "callback" : "setStance"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 7"] } ] }
+        },
+        "releaseH1" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["high1", 3],
+                    "callback" : "instrument.releaseNote"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 7"] } ] }
+        },
+        "playH2" : {
+            "event" : [
+                "high2", 
+                {
+                    "event" : "function", "args" : ["play.1"],
+                    "callback" : "setStance"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 8"] } ] }
+        },
+        "releaseH2" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["high2", 3],
+                    "callback" : "instrument.releaseNote"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 8"] } ] }
+        },
+        "playH3" : {
+            "event" : [
+                "high3", 
+                {
+                    "event" : "function", "args" : ["play.1"],
+                    "callback" : "setStance"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 9"] } ] }
+        },
+        "releaseH3" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["high3", 3],
+                    "callback" : "instrument.releaseNote"
+                }
+            ],
+            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 9"] } ] }
+        }
+    }
+}

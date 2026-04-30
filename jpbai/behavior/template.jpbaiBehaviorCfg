@@ -82,5 +82,5 @@
     "defaultOverride" : {
     },
     
-    "behaviorName" : "d8Weap_Ballistic_gunFire"
+    "behaviorName" : "template"
 }

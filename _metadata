@@ -1,13 +1,15 @@
 {
   "author" : "Darkcraft8",
-  "description" : "Json Powered Behavioral Active Item Framework",
+  "description" : "Json Powered Behavioral Active Item Framework or Behavioral Item\n\nIs a mod that add a component/modular framework for item(s),\ntaking inspiration from the game monster state-machine i originaly developed this framework for D8:Weaponry.\nAfter sometime i reallised that it could be more usefull if i expended it capability to the point where you almost only need the base modules.\n\nI also added vanilla compatible item(s) in the mod files to showcase it capability :\n\n- Jave-Line (A weapon inspired/based on the base moveset of Hornet in Hollowknight : Silksong)\n- Japanese Saber and Sheath (WIP, Currently working on finishing Jave-Line)",
   "friendlyName" : "D8 : JPBAI Framework",
-  "require" : ["d8_sharedFiles"],
-  "link" : "https://github.com/Darkcraft8/D8_Weaponry/tree/lastest_release",
+  "link" : "steam://url/CommunityFilePage/3451380749",
   "name" : "D8JPBAI",
   "priority" : 0,
+  "require" : [],
+  "scripts" : {
+    "postLoad" : ["/jpbai/item/buildscript/JPBAI/behaviorList_postload.lua"]
+  },
+  "steamContentId" : "3451380749",
   "tags" : "Miscellaneous|Weapons|Mechanics",
-  "version" : "V1.0.0",
-
-  "scripts": {"postLoad": ["/jpbai/item/buildscript/JPBAI/behaviorList_postload.lua"]}
+  "version" : "V1.0.0.9"
 }

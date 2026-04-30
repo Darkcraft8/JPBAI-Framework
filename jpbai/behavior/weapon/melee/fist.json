@@ -1,0 +1,109 @@
+{
+    "animationCustom" : {},
+    "stances" : {
+        "fist_leftHook" : {},
+        "fist_rightHook" : {},
+        "fist_uppercut" : {}
+    },
+    "behaviors" : {
+        "fist_idle" : {
+            "stance" : "bow_idle",
+            "possibleOutcome" : [],
+            "eventOnInit" : []
+        },
+        "bow_windup" : {
+            "stance" : "bow_windup",
+            "possibleOutcome" : ["projFlipZlevelRight", "projFlipZlevelLeft", "bow_fire"],
+            "eventOnInit" : ["resetTension"],
+            "periodicEvent" : [{
+				"time" : 0.1,
+				"event" : ["increaseTension"],
+				"repeat" : true
+			},{
+				"time" : 0,
+				"event" : ["updateProjSprite"],
+				"repeat" : true
+			}]
+        },
+        "bow_fire" : {
+            "stance" : "bow_fire",
+            "possibleOutcome" : ["projFlipZlevelRight", "projFlipZlevelLeft", "bow_idle"],
+            "eventOnInit" : ["spawnBowProjectile"],
+            "periodicEvent" : [{
+				"time" : 0,
+				"event" : ["updateProjSprite"],
+				"repeat" : true
+			}]
+        }
+    },
+    "behaviorPaths" : {
+        "bow_idle" : { 
+			"require" : { 
+				"stance" : "bow_idle"
+			}, 
+			"behavior" : "bow_idle" 
+		},
+        "bow_windup" : {"behavior" : "bow_windup","require" : {"time" : 0.05, "fireMode" : "primary"}},
+        "bow_fire" : {"behavior" : "bow_fire","require" : {"time" : 0.05, "fireMode" : "none"}}
+    },
+    "behaviorEvents" : {
+        "clearStorage" : [
+            { 
+                "event" : "function", "callback" : "clearStorage",
+			    "args" : [["tension"]]
+            }
+        ],
+        "loadNeededParam" : [
+            {
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["fireOffset", [0, 0.25]],
+                "storage" : "fireOffset"
+			},
+            {
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["inaccuracy", 0.025],
+                "storage" : "inaccuracy"
+			},
+
+            {
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["bow_projType", "ironarrow"],
+                "storage" : "projType"
+			},
+            {
+				"event" : "function",
+				"callback" : "root.projectileConfig",
+				"args" : ["storage:projType"],
+                "storage" : "projConfig"
+			},
+            {
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["bow_projParam", {}],
+                "storage" : "projParam"
+			},
+
+			{
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["tensionGain", 10],
+                "storage" : "tensionGain"
+			},
+			{
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["tensionMax", 120],
+                "storage" : "tensionMax"
+			},
+			{
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["tensionMin", 0],
+                "storage" : "tensionMin"
+			}
+        ]
+    }
+}

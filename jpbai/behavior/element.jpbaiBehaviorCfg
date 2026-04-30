@@ -43,7 +43,7 @@
 			}
         ]
     },
-    "behaviorName" : "broadswordCombo",
+    "behaviorName" : "element",
     "defaultOverride" : {
         "element" : "physical"
     }

@@ -9,48 +9,51 @@ function animationEx.init() -- keep in memory the 'effective' animation config o
     self.animationCfg = util.mergeTable(animationFile, itemCfg)
 end
 
-function animationEx.randGlobalTag(args)
-    local tagName, varNum = args.tagName, args.varNum
+function animationEx.randGlobalTag(tagName, varNum)
+    if not tagName then return end
     animator.setGlobalTag(tagName, math.random(1, varNum or 1))
 end
 
-function animationEx.randPartTag(args)
-    local partType, tagName, varNum = args.partType, args.tagName, args.varNum
+function animationEx.randPartTag(partType, tagName, varNum)
+    if not partType or not tagName then return end
     animator.setPartTag(partType, tagName, math.random(1, varNum or 1))
 end
 
-function animationEx.setGlobalTag(args)
-    local tagName, varNum = args.tagName, args.varNum
+function animationEx.setGlobalTag(tagName, varNum)
+    if not tagName or not varNum then return end
     animator.setGlobalTag(tagName, varNum)
 end
 
-function animationEx.setPartTag(args)
-    local partType, tagName, varNum = args.partType, args.tagName, args.varNum
+function animationEx.setPartTag(partType, tagName, varNum)
+    if not partType or not tagName or not varNum then return end
     animator.setPartTag(partType, tagName, varNum)
 end
 
-function animationEx.pitchShift(args) -- pitch the shift a bit to make sound not repetitif
-    local range = args.range or 50
-    local pitch = getSoundPitch(args.soundName)
+function animationEx.pitchShift(soundName, range) -- pitch the shift a bit to make sound not repetitif
+    if not soundName then return end
+    local range = range or 50
+    local pitch = getSoundPitch(soundName)
     --sb.logInfo("ogPitch %s", pitch)
     local modif = ( (math.random(0, range) - (range/2)) / (100 + range) )
     pitch = pitch + modif
     --sb.logInfo("modifier %s", modif)
     --sb.logInfo("newPitch %s", pitch)
-    animator.setSoundPitch(args.soundName, pitch)
+    animator.setSoundPitch(soundName, pitch)
 end
 -- 
 
-function animationEx.setAnimationState(args)
-    local requiredState, newState, stateType, startNew = args.requiredState, args.newState, args.stateType, args.startNew
-    if requiredState then
-        if hasAnimationState(stateType, requiredState) and hasAnimationState(stateType, newState) then
+function animationEx.setAnimationState(stateType, newState, startNew, requiredState)
+    --sb.logInfo("%s, %s, %s, %s", stateType, newState, startNew, requiredState)
+    if (requiredState ~= nil and requiredState ~= "null") then
+        local hasRequiredStateResult, hasAnimationStateResult = hasAnimationState(stateType, requiredState), hasAnimationState(stateType, newState)
+        if hasRequiredStateResult and hasAnimationStateResult then
             if animator.animationState(stateType) == requiredState then
                 animator.setAnimationState(stateType, newState, startNew)
             end
         end
     else
-        if hasAnimationState(stateType, newState) then
+        local hasAnimationStateResult = hasAnimationState(stateType, newState)
+        if hasAnimationStateResult then
             animator.setAnimationState(stateType, newState, startNew)
         end
     end

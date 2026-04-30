@@ -1,0 +1,28 @@
+{
+    "critChance" : 0.1,
+
+    "behaviorPaths" : {
+        "critRoll" : {}
+    },
+    "behaviorEvents" : {
+        "critInit" : [
+            {
+				"event" : "function",
+				"callback" : "config.getParameter",
+				"args" : ["critChance", 0.1],
+                "storage" : "critChance"
+			}
+        ],
+        "critUnInit" : [
+            {
+				"event" : "function",
+				"callback" : "clearStorage",
+				"args" : [["critChance"]]
+			}
+        ],
+        "critCalculate" : [
+
+        ],
+        "critEvent" : []
+    }
+}

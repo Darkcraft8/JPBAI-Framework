@@ -3,7 +3,7 @@ require "/scripts/vec2.lua"
 require "/scripts/versioningutils.lua" -- it here for it replacePatternInData function
 
 require "/jpbai/item/buildscript/JPBAI/behavior.lua"
-require "/shared/darkcraft8/util/json.lua"
+--require "/shared/darkcraft8/util/json.lua"
 
 function build(directory, config, parameters, level, seed)
     local configParameter = function(keyName, defaultValue)
@@ -29,13 +29,15 @@ function build(directory, config, parameters, level, seed)
 
     local elementalType = configParameter("elementalType", "physical")
     replacePatternInData(config, nil, "<elementalType>", elementalType)
+
     local tooltipList = root.assetJson("/jpbai/item/buildscript/JPBAI/tooltip/tooltipList.config")
     if tooltipList[configParameter("tooltipKind", "base")] then
         config.tooltipFields = config.tooltipFields or {}
         -- Yup this mean you can add func to build tooltip simply by adding it name and path to the toolTipList
         local tooltipLib = tooltipList[configParameter("tooltipKind", "base")]
-        require(tooltipLib)
-        if _ENV.tooltip then tooltip(config, parameters) end
+        local success = pcall(require, tooltipLib)
+        sb.logInfo("success %s, %s", success, _ENV["tooltip"])
+        if _ENV["tooltip"] then _ENV["tooltip"](config, parameters, configParameter) end
     end
 
     config.price = (config.price or 0) * root.evalFunction("itemLevelPriceMultiplier", configParameter("level", 1))
@@ -43,7 +45,8 @@ function build(directory, config, parameters, level, seed)
     if tooltipFields then
         parameters.tooltipFields = tooltipFields
     else
-        parameters.tooltipFields = {_nil = nil} --for some reason the script doesn't like jarray() and cause a std exception... this work though
+        parameters.tooltipFields = nil
+        --parameters.tooltipFields = {_nil = nil} --for some reason the script doesn't like jarray() and cause a std exception... this work though
     end
     
     return config, parameters

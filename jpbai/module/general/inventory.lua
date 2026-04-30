@@ -32,7 +32,7 @@ function inventory.hasItemWithParameter(args)--unfinished
   if args.parameters then
     local searchType = args.item or false
     local query = args.parameters or {}
-    if self.findItemWithParam(query, args.greater) then return true end -- alway return nil because it unfinished
+    if self.findItemWithParam(searchType, query, args.greater) then return true end -- alway return nil because it unfinished
   end
   return false
 end

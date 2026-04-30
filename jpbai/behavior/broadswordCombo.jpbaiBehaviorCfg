@@ -493,9 +493,9 @@
 			{
 				"event" : "function",
 				"callback" : "animationEx.pitchShift",
-				"args" : {
-					"soundName" : "fire"
-				}
+				"args" : [
+					"fire"
+				]
 			},
 			{
 				"event" : "damageArea",
@@ -509,9 +509,9 @@
 			{
 				"event" : "function",
 				"callback" : "animationEx.pitchShift",
-				"args" : {
-					"soundName" : "fire2"
-				}
+				"args" : [
+					"fire2"
+				]
 			},
 			{
 				"event" : "damageArea",
@@ -525,9 +525,9 @@
 			{
 				"event" : "function",
 				"callback" : "animationEx.pitchShift",
-				"args" : {
-					"soundName" : "fire3"
-				}
+				"args" : [
+					"fire3"
+				]
 			},
 			{
 				"event" : "damageArea",

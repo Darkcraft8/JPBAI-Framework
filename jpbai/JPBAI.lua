@@ -1,31 +1,42 @@
-require "/scripts/util.lua"
-require "/scripts/vec2.lua"
+require "/scripts/poly.lua"
 require "/scripts/status.lua"
 -- Json Powered Behavioral Active Item >:D
 -- or JPBAI for short
--- a bunch of list for frequent func type
+-- Can also be called behavioral items
+-- a bunch of list for frequently called func
 initFunc = {
     "activeItemCfg",
+    "movementControl.init",
     "initStances",
     "initBehavior",
     "configInit"
 }
-updateFunc = {}  -- just so that incase a script has a update function it can be added
+updateFunc = { -- just so that incase a script has a update function it can be added
+    "movementControl.update"
+}
 uninitFunc = {
     "uninitBehavior",
-    "uninitStance"
+    "uninitStance",
+    "movementControl.uninit"
 }
 
+require "/jpbai/module/general/logic.lua"
 require "/jpbai/module/general/stance.lua"
 require "/jpbai/module/general/animation.lua"
 require "/jpbai/module/general/inventory.lua"
 require "/jpbai/module/general/status.lua"
 require "/jpbai/module/general/behavior.lua"
 require "/jpbai/module/general/behaviorEX.lua"
+require "/jpbai/module/general/movement.lua"
+require "/jpbai/module/general/world.lua"
 
+debugMode = false
 local playerInteractTimer = 0
 function init()
+    debugMode = config.getParameter("debug", false)
     JPBAIConfig = root.assetJson("/jpbai/JPBAI.config")
+    storage = config.getParameter("scriptStorage", {})
+    itemId = item.name()..":"..item.friendlyName().."-"..activeItem.hand()
     for _, func in ipairs(initFunc) do
         if type(func) == "function" then
             func()
@@ -39,18 +50,28 @@ function init()
             func()
         else
             local callback = findCallback(func, true)
-            callback()
+            if callback then
+                callback()
+            end
         end
     end
+    
+    for _, scriptPath in ipairs(config.getParameter("pRequire", {})) do 
+        pRequire(scriptPath)
+    end
+    overrideTech(true)
 end
 
 function update(dt, fireMode, isShiftHeld, currentMove)
+    --behaviorEvents(config.getParameter("updateEvent", {}))
     for _, func in ipairs(updateFunc) do 
         if type(func) == "function" then
-            func(dt, fireMode, isShiftHeld, currentMove)
+            pcall(func, dt, fireMode, isShiftHeld, currentMove)
         else
             local callback = findCallback(func)
-            callback(dt, fireMode, isShiftHeld, currentMove)
+            if callback then
+                pcall(callback, dt, fireMode, isShiftHeld, currentMove)
+            end
         end
     end
     if playerInteractTimer > 0 then playerInteractTimer = playerInteractTimer - dt end
@@ -70,8 +91,16 @@ function uninit()
             func()
         else
             local callback = findCallback(func, true)
-            callback()
+            if callback then
+                callback()
+            end
         end
+    end
+    behaviorEvents(config.getParameter("uninitEvent", {}))
+    overrideTech(false)
+    if type(storage) ~= "nil" then
+        --sb.logInfo("storage == [ %s ]", storage)
+        activeItem.setInstanceValue("scriptStorage", storage)
     end
 end
 
@@ -113,50 +142,81 @@ function configInit()
     --sb.logInfo("Config Override Initialisation Done\nconfig.rootParameter | Vanilla getParameter\nconfig.getParameter  | getParameter from a list that can get updated using setParameter")
 end
 
-function segmentPath(path)
-    local pathSegment = {}
-    if string.find(path, "[.]") then
-    while string.find(path, "[.]") do
-        local dotNumber = string.find(path, "[.]")
-        if dotNumber then
-        table.insert(pathSegment, string.sub(path, 1, dotNumber - 1))
-        path = string.sub(path, dotNumber + 1, string.len(path))
-        end
-    end
-    end
-    table.insert(pathSegment, path)
-    return pathSegment
-end
-
 function call(eventCfg) -- because whe can't directly do _ENV[funcGroup.Func]()
+    --sb.logInfo("eventCfg %s", eventCfg)
     if type(eventCfg) == "string" then
         callback = findCallback(tostring(eventCfg))
-    if callback then return callback() else sb.logError("[JPBAI Framework] Function %s Couldn't be found", eventCfg) end
+        if callback then
+            return callback()
+        else
+            sb.logError("[JPBAI Framework] Function %s Couldn't be found", eventCfg)
+        end
     else
         callback = findCallback(tostring(eventCfg.callback))
-        if callback then return callback(eventCfg.args) else sb.logError("[JPBAI Framework] Function %s Couldn't be found", eventCfg.callback) end
+        if callback then
+            local lastEvent = copy(eventCfg)
+            local args = effectiveArguments(eventCfg.args or {})
+            lastEvent.args = copy(args)
+            if type(eventCfg.args) == "table" then
+                local result
+                if eventCfg.args[1] then
+                    --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), sb.printJson(args))
+                    sb.setLogMap("[JPBAI] Item "..itemId.."last processed event", sb.printJson(lastEvent))
+                    result = table.pack(callback(table.unpack(args)))
+                else
+                    --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), eventCfg.args)
+                    sb.setLogMap("[JPBAI] Item "..itemId.."last processed event", sb.printJson(lastEvent))
+                    result = table.pack(callback(args))
+                end
+                if eventCfg.storage then
+                    if type(eventCfg.storage) == "table" then
+                        for i, a in pairs(eventCfg.storage or {}) do
+                            setStorage(a or i, result[i])
+                        end
+                    else
+                        if result[1] ~= nil then
+                            setStorage(eventCfg.storage, table.unpack(result))
+                        end
+                    end
+                end
+                return table.unpack(result)
+            else
+                --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), eventCfg.args)
+                sb.setLogMap("[JPBAI] Item "..itemId.."last processed event", sb.printJson(lastEvent))
+                result = table.pack(callback(args))
+                if eventCfg.storage then
+                    if type(eventCfg.storage) == "table" then
+                        for i, a in pairs(eventCfg.storage or {}) do
+                            setStorage(a or i, result[i])
+                        end
+                    else
+                        if result[1] ~= nil then
+                            setStorage(eventCfg.storage, table.unpack(result))
+                        end
+                    end
+                end
+                return table.unpack(result)
+            end
+        else
+            sb.logError("[JPBAI Framework] Function %s Couldn't be found", eventCfg.callback)
+        end
     end
 end
 
+-- callback functions
+
 function findCallback(functionPath, bypassBlacklist, bypassBridge)
-    if JPBAIConfig.bridgeFunc[functionPath] and not bypassBridge then
-        functionPath = JPBAIConfig.bridgeFunc[functionPath]
-    end -- swap function with their bridge variant 
-    
+    -- Stop the function returning nil and logging the attempt in the logs
+    if JPBAIConfig.funcAllowedlist[functionPath] == false and not bypassBlacklist then sb.logWarn('[JPBAI] Item %s:%s, behavior "%s", tried to call blacklisted function %s!', item.name(), item.friendlyName(), behaviorName, functionPath) return end
+	if type(functionPath) ~= "string" then sb.logWarn('[JPBAI] Item %s:%s, behavior "%s", function %s ins\'t string!', item.name(), item.friendlyName(), behaviorName, functionPath) return  end
+	
+    if JPBAIConfig.override[functionPath] and not bypassBridge then
+        functionPath = JPBAIConfig.override[functionPath]
+    end -- swap function with the given variant... primarily for safety consern or compatibility
+
     local findCallback = function(path)
-        local pathSegment = {}
-        if string.find(path, "[.:]") then
-          while string.find(path, "[.:]") do
-            local dotNumber = string.find(path, "[.:]")
-            if dotNumber then
-              table.insert(pathSegment, string.sub(path, 1, dotNumber - 1))
-              path = string.sub(path, dotNumber + 1, string.len(path))
-            end
-          end
-        end
-        table.insert(pathSegment, path)
         local currentResult = nil
-        for _, string in ipairs(pathSegment) do
+        for _, string in ipairs(segmentPath(path)) do
           if not currentResult then 
             currentResult = _ENV[string]
           else
@@ -174,10 +234,148 @@ function findCallback(functionPath, bypassBlacklist, bypassBridge)
     return callback
 end
 
-function playerInteractBridge(args)
-    local _type, pane = args.type, args.pane
-    if not _type or not pane then return end
+function playerInteractBridge(interactionType, paneCfg, sourceEntityId)
+    if not interactionType or not paneCfg then return end
 
-    if type(pane) == "string" then pane = root.assetJson(pane) end
-    if pane.dismissable ~= false and playerInteractTimer <= 0 then player.interact(_type, pane) playerInteractTimer = 0.5 end -- to prevent bad actor from giving pane that can't be dismissed
+    --if type(paneCfg) == "string" then paneCfg = root.assetJson(paneCfg) end -- was used to make sure that pane where dismissable...
+    if playerInteractTimer <= 0 then player.interact(interactionType, paneCfg) playerInteractTimer = 0.5 end -- just so that it doesn't open a insane amount of pane
+end
+
+function segmentPath(path)
+    local pathSegment = {}
+    if string.find(path, "[.:]") then
+      while string.find(path, "[.:]") do
+        local dotNumber = string.find(path, "[.:]")
+        if dotNumber then
+          table.insert(pathSegment, string.sub(path, 1, dotNumber - 1))
+          path = string.sub(path, dotNumber + 1, string.len(path))
+        end
+      end
+    end
+    table.insert(pathSegment, path)
+    return pathSegment
+end
+
+function effectiveArguments(_args)
+    local args = {}
+    for i, arg in pairs(_args or {}) do
+        args[i] = checkStorage(arg)
+    end
+    return args
+end
+
+function checkStorage(path)
+    if type(path) == "string" then
+        if string.find(path, "storage:") == 1 then
+            path = string.gsub(path, "storage:", "")
+            --sb.logInfo("storage[%s] %s", path, storage[path])
+            if storage[path] then 
+                if type(storage[path]) == "table" then
+                    local args = {}
+                    for i, arg in pairs(storage[path] or {}) do
+                        args[i] = checkStorage(arg)
+                    end
+                    return args
+                else
+                    return storage[path] 
+                end
+            else 
+                return nil 
+            end
+        end
+    elseif type(path) == "table" then
+        if isEmpty(path) then return path end
+        local _path = {}
+        local isArray = true
+        
+        for a, b in ipairs(path or {}) do
+            isArray = false
+            table.insert(_path, checkStorage(b))
+        end
+        for a, b in pairs(path or {}) do
+            if (not isArray) then break end
+            _path[a] = checkStorage(b)
+        end
+        return _path
+    end
+
+    return path
+end
+
+function setStorage(name, value)
+    storage[name] = value
+    --sb.logInfo("storage[%s] = %s", name, value)
+end
+
+function clearStorage(name) 
+    local _storage = {}
+    if name then
+        if type(name) == "string" then
+            for a, b in pairs(storage or {}) do 
+                if not (a == name) then
+                    _storage[a] = b
+                end
+            end
+            storage = _storage
+        elseif type(name) == "table" then
+            for _, a in pairs(name or {}) do 
+                clearStorage(a)
+            end 
+        end
+    else
+        storage = {}
+    end
+end
+
+function insertInStorageTable(name, value)
+    if type(storage[name]) ~= "table" then storage[name] = {} end
+    table.insert(storage[name], value)
+end
+-- tech interaction
+local playerTech = {}
+function overrideTech(bool)
+    if config.getParameter("overrideTech") then
+        if not item.twoHanded() or not player then return end
+        if bool then
+            playerTech = {
+                head = player.equippedTech("head"),
+                body = player.equippedTech("body"),
+                legs = player.equippedTech("legs")
+            }
+            for slot, techName in pairs(playerTech) do 
+                player.unequipTech(techName)
+            end
+            for slot, techName in pairs(config.getParameter("overrideTech") or {}) do 
+                player.equipTech(techName)
+            end
+        else
+            for slot, techName in pairs(config.getParameter("overrideTech") or {}) do 
+                player.unequipTech(techName)
+            end
+            for slot, techName in pairs(playerTech) do 
+                player.equipTech(techName)
+            end
+        end
+    end
+end
+
+function pRequire(scriptPath)
+    if not scriptPath then return end
+    if pcall(require, scriptPath) then
+        require(scriptPath)
+    else
+        sb.logError("Couldn't Load Script %s, file doesn't exist", scriptPath)
+    end
+end
+
+function worldentityExists(entityId)
+    if not entityId then return false end
+    return world.entityExists(entityId)
+end
+
+function worldCallScriptedEntity(entityId, ...)
+    if not entityId then return false end
+    if world.entityExists(entityId) then
+        return world.callScriptedEntity(entityId, ...)
+    end
 end
