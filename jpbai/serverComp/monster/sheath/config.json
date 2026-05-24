@@ -1,0 +1,139 @@
+{
+    "base" : "cinderfly",
+    "parameters" : {
+        "parentId" : null,
+
+        "persistent" : false,
+        "capturable" : false,
+        "relocetable" : false,
+        "clientEntityMode" : "ClientPresenceMaster",
+        "damageTeamType" : "ghostly",
+        "renderLayer" : "Player-4",
+        
+        "movementSettings" : {
+            "collisionPoly" : [ [-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5] ],
+
+            "gravityMultiplier" : 0.85,
+            "bounceFactor" : 0.95,
+            "stopOnFirstBounce" : false,
+            "stickyCollision" : false,
+            "maxMovementPerStep" : 0.4,
+            "ignorePlatformCollision" : true,
+            "groundFriction" : 0.5,
+            "airFriction" : 1.5,
+            "liquidFriction" : 1,
+            "speedLimit" : null,
+            "maximumCorrection" : 0.75,
+
+            "collisionEnabled" : false,
+            "gravityEnabled" : false
+        },
+        "scripts" : ["/jpbai/serverComp/monster/sheath/script.lua"],
+        "statusSettings" : {
+            "primaryScriptSources" : ["/jpbai/serverComp/monster/sheath/primScript.lua"]
+        },
+        "shortdescription" : "Sheath",
+        "knockoutTime" : 0,
+
+        "animationCustom" : {
+            "globalTagDefaults" : {
+                "text_lit" : "/assetmissing.png",
+                "text_fb" : "/assetmissing.png?crop;0;0;1;1?setcolor=fff?replace;fff0=fff?border=1;fff;000?scale=1.15;1.12?crop;1;1;3;3?replace;fbfbfb=0000;eaeaea=07000000;e4e4e4=00001800;6a6a6a=07001800?scale=6.5;23.5?crop=0;0;7;24?replace;00000700=ffb073;00001400=010;00001500=010;00001600=110;00001700=010;01000000=210;01000100=73551a;01000200=5c3f15;01000300=321f00;01000400=5c3f15;01000500=73551a;01000600=5c3f15;01000700=eb9f49;01000800=505050;01000900=110;01000a00=010;01000b00=010;01000c00=010;01000d00=010;01000e00=110;01000f00=110;01001000=010;01001100=010;01001200=010;01001300=010;01001400=110;01001500=110;01001600=010;02000000=210;02000100=210;02000200=210;02000300=321f00;02000400=210;02000500=210;02000600=210;02000700=eb9f49;02000800=505050;02000900=6f6f6f;02000a00=110;02000b00=110;02000c00=110;02000d00=110;02000e00=6f6f6f;02000f00=6f6f6f;02001000=110;02001100=110;02001200=110;02001300=110;03000700=ffb073;04001400=410;04001500=310;04001600=310;04001700=310;05000800=510;05000900=310;05000a00=310;05000b00=310;05000c00=410;05000d00=a17f4c;05000e00=a17f4c;05000f00=a17f4c;05001000=410;05001100=310;05001200=310;05001300=310;05001400=510;05001500=410;05001600=410;05001700=410;06000800=510;06000900=410;06000a00=410;06000b00=410;06000c00=510;06000d00=310;06000e00=310;06000f00=310;06001000=510;06001100=410;06001200=410;06001300=410?replace;010=c7c7c7;110=9b9b9b;210=472e0a;310=6b563a;410=59452a;510=37280e?crop;4;0;7;24"
+            },
+            "animatedParts" : {
+                "stateTypes" : {
+                    "hide" : {
+                        "priority" : 100,
+                        "default" : "no",
+                        "states" : {
+                            "no" : {},
+                            "yes" : {}
+                        }
+                    }
+                },
+
+                "parts" : {
+                    "body" : {
+                        "properties" : {
+							"transformationGroups" : ["base"],
+                            "fullbright" : false
+                        },
+                        "partStates" : {
+                            "hide" : {
+                                "no" : {
+                                    "properties" : {
+                                        "image" : "<text_lit>"
+                                    }
+                                },
+                                "yes" : {
+                                    "properties" : {
+                                        "image" : "/assetmissing.png"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "body_fb" : {
+                        "properties" : {
+							"transformationGroups" : ["base"],
+                            "zlevel" : 1,
+                            "fullbright" : true
+                        },
+                        "partStates" : {
+                            "hide" : {
+                                "no" : {
+                                    "properties" : {
+                                        "image" : "<text_fb>"
+                                    }
+                                },
+                                "yes" : {
+                                    "properties" : {
+                                        "image" : "/assetmissing.png"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            "transformationGroups" : {
+                "base" : {}
+            },
+
+            "particleEmitters" : {
+                "trail" : {
+                    "active" : false,
+                    "emissionRate" : 60.0,
+                    "particles" : []
+                }
+            },
+
+            "effects" : {
+                "blink" : {
+                "type" : "flash",
+                "time" : 0,
+                "directives" : "fade=ffffff;0.5"
+                }
+            },
+
+            "sounds" : {
+                "collide" : {
+                    "rangeMultiplier" : 0.85,
+                    "pitchMultiplier" : 1,
+                    "volume" : 0.8,
+                    "pool" : [ "/sfx/melee/sword_parry.ogg" ]
+                },
+                "chargeBack" : {
+                    "rangeMultiplier" : 1.25,
+                    "pitchMultiplier" : 1.25,
+                    "volume" : 1,
+                    "pool" : [ "/sfx/melee/sword_parry.ogg" ]
+                },
+
+                "turnHostile" : [ ],
+                "deathPuff" : [ "/sfx/humanoid/shadowvillager_chatter1.ogg", "/sfx/humanoid/shadowvillager_chatter2.ogg", "/sfx/humanoid/shadowvillager_chatter3.ogg" ]
+            }
+        }
+    }
+}

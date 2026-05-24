@@ -582,8 +582,60 @@
 		"idle" : {"behavior" : "idle","require" : {"stance" : "idle"}}
 	},
 	"behaviorEvents_blade" : {
-		"init" : [],
-		"uninit" : []
+		"init" : ["addSheath"],
+		"uninit" : ["removeSheath"],
+		"addSheath" : [
+			{
+				"event" : "function",
+				"callback" : "root.assetJson",
+				"args" : ["/jpbai/serverComp/monster/sheath/config.json:base"],
+				"storage" : "monsterType"
+			},
+			{
+				"event" : "function",
+				"callback" : "root.assetJson",
+				"args" : ["/jpbai/serverComp/monster/sheath/config.json:parameters"],
+				"storage" : "monsterCfg"
+			},
+			{
+				"event" : "monster",
+				"parameter" : "storage:monsterCfg",
+				"type" : "storage:monsterType",
+
+				"spawnPos" : "ownerPos",
+				"spawnOffset" : [0, 0],
+
+				"trackMonster" : "monsterId"
+			},
+
+			{
+				"event" : "function",
+				"callback" : "world.callScriptedEntity",
+				"args" : ["storage:monsterId", "rotate", "base", -90]
+			},
+			{
+				"event" : "function",
+				"callback" : "world.callScriptedEntity",
+				"args" : ["storage:monsterId", "translate", "base", [-0.25, -1]]
+			},
+			{
+				"event" : "function",
+				"callback" : "world.callScriptedEntity",
+				"args" : ["storage:monsterId", "setTag", "text_lit", "/assetmissing.png?crop;0;0;1;1?setcolor=fff?replace;fff0=fff?border=1;fff;000?scale=1.15;1.12?crop;1;1;3;3?replace;fbfbfb=0000;eaeaea=0b000000;e4e4e4=00002900;6a6a6a=0b002900?scale=10.5;40.5?crop=0;0;11;41?replace;00002500=010;00002600=010;00002700=010;00002800=310;01002200=010;01002300=010;01002400=010;01002500=110;01002600=110;01002700=410;01002800=310;02001e00=010;02001f00=010;02002000=010;02002100=010;02002200=110;02002300=110;02002400=110;02002500=110;02002600=410;02002700=310;03000f00=010;03001000=010;03001100=010;03001200=010;03001300=010;03001400=010;03001500=210;03001600=010;03001700=010;03001800=510;03001900=9b9b9b;03001a00=510;03001b00=010;03001c00=010;03001d00=010;03001e00=110;03001f00=110;03002000=110;03002100=110;03002200=110;03002300=410;03002400=410;03002500=010;03002600=310;04000f00=010;04001000=110;04001100=110;04001200=110;04001300=110;04001400=110;04001500=510;04001600=110;04001700=110;04001800=110;04001900=110;04001a00=110;04001b00=110;04001c00=110;04001d00=110;04001e00=410;04001f00=410;04002000=410;04002100=410;04002200=010;04002300=310;04002400=310;05000f00=010;05001000=410;05001100=410;05001200=410;05001300=410;05001400=110;05001500=c7c7c7;05001600=110;05001700=110;05001800=110;05001900=110;05001a00=110;05001b00=410;05001c00=410;05001d00=410;05001e00=310;05001f00=310;05002000=310;05002100=310;06000f00=010;06001000=310;06001100=310;06001200=310;06001300=310;06001400=010;06001500=9b9b9b;06001600=010;06001700=010;06001800=010;06001900=010;06001a00=010;06001b00=310;06001c00=310;06001d00=310;07000f00=110;07001100=410;07001600=010;07001700=310;07001800=310;07001900=010;08001000=410;08001100=310;08001600=210;08001700=510;08001800=9b9b9b;08001900=210;09001500=210;09001600=510;09001700=510;09001800=210;0a001500=210;0a001600=210;0a001700=210?replace;010=262424;110=474140;210=505050;310=736662;410=9e897e;510=6f6f6f"]
+			}
+		],
+		"removeSheath" : [
+			{
+				"event" : "function",
+				"callback" : "world.callScriptedEntity",
+				"args" : ["storage:monsterId", "shouldDie", true]
+			},
+			{
+				"event" : "function",
+				"callback" : "clearStorage",
+				"args" : [["monsterCfg", "monsterType", "monsterId"]]
+			}
+		]
 	},
 	"behaviors_sheath" : {
 		"init" : {

@@ -98,272 +98,642 @@
         }
     },
     "behaviorEvents" : {
-        "low1" : [
+        "stopAllSound" : [
             {
-                "event" : "function", "args" : ["low1"],
-                "callback" : "instrument.pressNote"
-            }, 
+                "event" : "function",
+                "args" : ["low1", 0.25],
+                "callback" : "instrument.releaseNote"
+            }, {
+                "event" : "function",
+                "args" : ["low2", 0.25],
+                "callback" : "instrument.releaseNote"
+            }, {
+                "event" : "function",
+                "args" : ["low3", 0.25],
+                "callback" : "instrument.releaseNote"
+            },
+            
             {
-                "event" : "function", "args" : ["musicNote"],
-                "callback" : "animator.burstParticleEmitter"
-            }
-        ],
-        "low2" : [
+                "event" : "function",
+                "args" : ["med1", 0.25],
+                "callback" : "instrument.releaseNote"
+            },
             {
-                "event" : "function", "args" : ["low2"],
-                "callback" : "instrument.pressNote"
-            }, 
+                "event" : "function",
+                "args" : ["med2", 0.25],
+                "callback" : "instrument.releaseNote"
+            },
             {
-                "event" : "function", "args" : ["musicNote"],
-                "callback" : "animator.burstParticleEmitter"
-            }
-        ],
-        "low3" : [
+                "event" : "function",
+                "args" : ["med3", 0.25],
+                "callback" : "instrument.releaseNote"
+            },
+            
             {
-                "event" : "function", "args" : ["low3"],
-                "callback" : "instrument.pressNote"
-            }, 
+                "event" : "function",
+                "args" : ["high1", 0.25],
+                "callback" : "instrument.releaseNote"
+            },
             {
-                "event" : "function", "args" : ["musicNote"],
-                "callback" : "animator.burstParticleEmitter"
-            }
-        ],
-
-        "med1" : [
+                "event" : "function",
+                "args" : ["high2", 0.25],
+                "callback" : "instrument.releaseNote"
+            },
             {
-                "event" : "function", "args" : ["med1"],
-                "callback" : "instrument.pressNote"
-            }, 
-            {
-                "event" : "function", "args" : ["musicNote"],
-                "callback" : "animator.burstParticleEmitter"
-            }
-        ],
-        "med2" : [
-            {
-                "event" : "function", "args" : ["med2"],
-                "callback" : "instrument.pressNote"
-            }, 
-            {
-                "event" : "function", "args" : ["musicNote"],
-                "callback" : "animator.burstParticleEmitter"
-            }
-        ],
-        "med3" : [
-            {
-                "event" : "function", "args" : ["med3"],
-                "callback" : "instrument.pressNote"
-            }, 
-            {
-                "event" : "function", "args" : ["musicNote"],
-                "callback" : "animator.burstParticleEmitter"
-            }
-        ],
-
-        "high1" : [
-            {
-                "event" : "function", "args" : ["high1"],
-                "callback" : "instrument.pressNote"
-            }, 
-            {
-                "event" : "function", "args" : ["musicNote"],
-                "callback" : "animator.burstParticleEmitter"
-            }
-        ],
-        "high2" : [
-            {
-                "event" : "function", "args" : ["high2"],
-                "callback" : "instrument.pressNote"
-            }, 
-            {
-                "event" : "function", "args" : ["musicNote"],
-                "callback" : "animator.burstParticleEmitter"
-            }
-        ],
-        "high3" : [
-            {
-                "event" : "function", "args" : ["high3"],
-                "callback" : "instrument.pressNote"
-            }, 
-            {
-                "event" : "function", "args" : ["musicNote"],
-                "callback" : "animator.burstParticleEmitter"
+                "event" : "function",
+                "args" : ["high3", 0.25],
+                "callback" : "instrument.releaseNote"
             }
         ]
     },
-    "behaviorPaths" : {
+    "behaviorPathsLong" : {
         "playL1" : {
             "event" : [
-                "low1",
                 {
-                    "event" : "function", "args" : ["play.1"],
-                    "callback" : "setStance"
-                }
+                "event" : "function",
+                "args" : ["low1"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function",
+                "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function",
+                "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing1", true],"callback" : "setStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 1"] } ] }
+            "require" : {
+                "function" : [
+                    {
+                        "callback" : "input.key",
+                        "args" : ["Keypad 1"]
+                    },{"args" : ["storage:playing1"],"event" : "function","callback" : "checkStorage","inverse" : true}
+                ]
+            }
         },
         "releaseL1" : {
             "event" : [
                 {
-                "event" : "function", "args" : ["low1", 3],
-                "callback" : "instrument.releaseNote"
-                }
+                    "event" : "function",
+                    "args" : ["low1", 0.25],
+                    "callback" : "instrument.releaseNote"
+                },
+                {"event" : "function","args" : ["playing1"],"callback" : "clearStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 1"] } ] }
+            "require" : {
+                "function" : [
+                    {
+                        "callback" : "input.key",
+                        "inverse" : true,
+                        "args" : ["Keypad 1"]
+                    },{"args" : ["storage:playing1"],"event" : "function","callback" : "checkStorage","inverse" : false}
+                ]
+            }
         },
         "playL2" : {
             "event" : [
-                "low2", 
                 {
-                    "event" : "function", "args" : ["play.1"],
-                    "callback" : "setStance"
-                }
+                "event" : "function",
+                "args" : ["low2"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function",
+                "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function",
+                "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing2", true],"callback" : "setStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 2"] } ] }
+            "require" : {
+                "function" : [
+                    {
+                        "callback" : "input.key",
+                        "args" : ["Keypad 2"]
+                    },{"args" : ["storage:playing2"],"event" : "function","callback" : "checkStorage","inverse" : true}
+                ]
+            }
         },
         "releaseL2" : {
             "event" : [
                 {
-                "event" : "function", "args" : ["low2", 3],
+                "event" : "function",
+                "args" : ["low2", 0.25],
                 "callback" : "instrument.releaseNote"
-                }
+                },
+                {"event" : "function","args" : ["playing2"],"callback" : "clearStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 2"] } ] }
+            "require" : {
+                "function" : [
+                    {
+                        "callback" : "input.key",
+                        "inverse" : true,
+                        "args" : ["Keypad 2"]
+                    },{"args" : ["storage:playing2"],"event" : "function","callback" : "checkStorage"}
+                ]
+            }
         },
         "playL3" : {
             "event" : [
-                "low3", 
                 {
-                    "event" : "function", "args" : ["play.1"],
-                    "callback" : "setStance"
-                }
+                "event" : "function", "args" : ["low3"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing3", true],"callback" : "setStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 3"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 3"] },{"args" : ["storage:playing3"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
+        },
+        "releaseL3" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["low3", 0.25],
+                    "callback" : "instrument.releaseNote"
+                },
+                {"event" : "function","args" : ["playing3"],"callback" : "clearStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 3"] },{"args" : ["storage:playing3"],"event" : "function","callback" : "checkStorage"} ] }
+        },
+        
+        "playM1" : {
+            "event" : [
+                {
+                "event" : "function", "args" : ["med1"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing4", true],"callback" : "setStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 4"] },{"args" : ["storage:playing4"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
+        },
+        "releaseM1" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["med1", 0.25],
+                    "callback" : "instrument.releaseNote"
+                },
+                {"event" : "function","args" : ["playing4"],"callback" : "clearStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 4"] },{"args" : ["storage:playing4"],"event" : "function","callback" : "checkStorage"} ] }
+        },
+        "playM2" : {
+            "event" : [
+                {
+                "event" : "function", "args" : ["med2"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing5", true],"callback" : "setStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 5"] },{"args" : ["storage:playing5"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
+        },
+        "releaseM2" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["med2", 0.25],
+                    "callback" : "instrument.releaseNote"
+                },
+                {"event" : "function","args" : ["playing5"],"callback" : "clearStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 5"] },{"args" : ["storage:playing5"],"event" : "function","callback" : "checkStorage"} ] }
+        },
+        "playM3" : {
+            "event" : [
+                {
+                "event" : "function", "args" : ["med3"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing6", true],"callback" : "setStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 6"] },{"args" : ["storage:playing6"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
+        },
+        "releaseM3" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["med3", 0.25],
+                    "callback" : "instrument.releaseNote"
+                },
+                {"event" : "function","args" : ["playing6"],"callback" : "clearStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 6"] },{"args" : ["storage:playing6"],"event" : "function","callback" : "checkStorage"} ] }
+        },
+        
+        "playH1" : {
+            "event" : [
+                {
+                "event" : "function", "args" : ["high1"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing7", true],"callback" : "setStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 7"] },{"args" : ["storage:playing7"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
+        },
+        "releaseH1" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["high1", 0.25],
+                    "callback" : "instrument.releaseNote"
+                },
+                {"event" : "function","args" : ["playing7"],"callback" : "clearStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 7"] },{"args" : ["storage:playing7"],"event" : "function","callback" : "checkStorage"} ] }
+        },
+        "playH2" : {
+            "event" : [
+                {
+                "event" : "function", "args" : ["high2"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing8", true],"callback" : "setStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 8"] },{"args" : ["storage:playing8"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
+        },
+        "releaseH2" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["high2", 0.25],
+                    "callback" : "instrument.releaseNote"
+                },
+                {"event" : "function","args" : ["playing8"],"callback" : "clearStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 8"] },{"args" : ["storage:playing8"],"event" : "function","callback" : "checkStorage"} ] }
+        },
+        "playH3" : {
+            "event" : [
+                {
+                "event" : "function", "args" : ["high3"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing9", true],"callback" : "setStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 9"] },{"args" : ["storage:playing9"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
+        },
+        "releaseH3" : {
+            "event" : [ 
+                { 
+                    "event" : "function", "args" : ["high3", 0.25],
+                    "callback" : "instrument.releaseNote"
+                },
+                {"event" : "function","args" : ["playing9"],"callback" : "clearStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 9"] },{"args" : ["storage:playing9"],"event" : "function","callback" : "checkStorage"} ] }
+        }
+    
+    },
+    "behaviorPathsShort" : {
+        "playL1" : {
+            "event" : [
+                {
+                "event" : "function",
+                "args" : ["low1"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function",
+                "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function",
+                "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing1", true],"callback" : "setStorage"}
+            ],
+            "require" : {
+                "function" : [
+                    {
+                        "callback" : "input.key",
+                        "args" : ["Keypad 1"]
+                    },{"args" : ["storage:playing1"],"event" : "function","callback" : "checkStorage","inverse" : true}
+                ]
+            }
+        },
+        "releaseL1" : {
+            "event" : [
+                {
+                    "event" : "function",
+                    "args" : ["low1", 3],
+                    "callback" : "instrument.releaseNote"
+                },
+                {"event" : "function","args" : ["playing1"],"callback" : "clearStorage"}
+            ],
+            "require" : {
+                "function" : [
+                    {
+                        "callback" : "input.key",
+                        "inverse" : true,
+                        "args" : ["Keypad 1"]
+                    },{"args" : ["storage:playing1"],"event" : "function","callback" : "checkStorage","inverse" : false}
+                ]
+            }
+        },
+        "playL2" : {
+            "event" : [
+                {
+                "event" : "function",
+                "args" : ["low2"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function",
+                "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function",
+                "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing2", true],"callback" : "setStorage"}
+            ],
+            "require" : {
+                "function" : [
+                    {
+                        "callback" : "input.key",
+                        "args" : ["Keypad 2"]
+                    },{"args" : ["storage:playing2"],"event" : "function","callback" : "checkStorage","inverse" : true}
+                ]
+            }
+        },
+        "releaseL2" : {
+            "event" : [
+                {
+                "event" : "function",
+                "args" : ["low2", 3],
+                "callback" : "instrument.releaseNote"
+                },
+                {"event" : "function","args" : ["playing2"],"callback" : "clearStorage"}
+            ],
+            "require" : {
+                "function" : [
+                    {
+                        "callback" : "input.key",
+                        "inverse" : true,
+                        "args" : ["Keypad 2"]
+                    },{"args" : ["storage:playing2"],"event" : "function","callback" : "checkStorage"}
+                ]
+            }
+        },
+        "playL3" : {
+            "event" : [
+                {
+                "event" : "function", "args" : ["low3"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing3", true],"callback" : "setStorage"}
+            ],
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 3"] },{"args" : ["storage:playing3"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
         },
         "releaseL3" : {
             "event" : [ 
                 { 
                     "event" : "function", "args" : ["low3", 3],
                     "callback" : "instrument.releaseNote"
-                }
+                },
+                {"event" : "function","args" : ["playing3"],"callback" : "clearStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 3"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 3"] },{"args" : ["storage:playing3"],"event" : "function","callback" : "checkStorage"} ] }
         },
         
         "playM1" : {
             "event" : [
-                "med1", 
                 {
-                    "event" : "function", "args" : ["play.1"],
-                    "callback" : "setStance"
-                }
+                "event" : "function", "args" : ["med1"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing4", true],"callback" : "setStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 4"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 4"] },{"args" : ["storage:playing4"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
         },
         "releaseM1" : {
             "event" : [ 
                 { 
                     "event" : "function", "args" : ["med1", 3],
                     "callback" : "instrument.releaseNote"
-                }
+                },
+                {"event" : "function","args" : ["playing4"],"callback" : "clearStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 4"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 4"] },{"args" : ["storage:playing4"],"event" : "function","callback" : "checkStorage"} ] }
         },
         "playM2" : {
             "event" : [
-                "med2", 
                 {
-                    "event" : "function", "args" : ["play.1"],
-                    "callback" : "setStance"
-                }
+                "event" : "function", "args" : ["med2"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing5", true],"callback" : "setStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 5"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 5"] },{"args" : ["storage:playing5"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
         },
         "releaseM2" : {
             "event" : [ 
                 { 
                     "event" : "function", "args" : ["med2", 3],
                     "callback" : "instrument.releaseNote"
-                }
+                },
+                {"event" : "function","args" : ["playing5"],"callback" : "clearStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 5"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 5"] },{"args" : ["storage:playing5"],"event" : "function","callback" : "checkStorage"} ] }
         },
         "playM3" : {
             "event" : [
-                "med3", 
                 {
-                    "event" : "function", "args" : ["play.1"],
-                    "callback" : "setStance"
-                }
+                "event" : "function", "args" : ["med3"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing6", true],"callback" : "setStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 6"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 6"] },{"args" : ["storage:playing6"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
         },
         "releaseM3" : {
             "event" : [ 
                 { 
                     "event" : "function", "args" : ["med3", 3],
                     "callback" : "instrument.releaseNote"
-                }
+                },
+                {"event" : "function","args" : ["playing6"],"callback" : "clearStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 6"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 6"] },{"args" : ["storage:playing6"],"event" : "function","callback" : "checkStorage"} ] }
         },
         
         "playH1" : {
             "event" : [
-                "high1", 
                 {
-                    "event" : "function", "args" : ["play.1"],
-                    "callback" : "setStance"
-                }
+                "event" : "function", "args" : ["high1"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing7", true],"callback" : "setStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 7"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 7"] },{"args" : ["storage:playing7"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
         },
         "releaseH1" : {
             "event" : [ 
                 { 
                     "event" : "function", "args" : ["high1", 3],
                     "callback" : "instrument.releaseNote"
-                }
+                },
+                {"event" : "function","args" : ["playing7"],"callback" : "clearStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 7"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 7"] },{"args" : ["storage:playing7"],"event" : "function","callback" : "checkStorage"} ] }
         },
         "playH2" : {
             "event" : [
-                "high2", 
                 {
-                    "event" : "function", "args" : ["play.1"],
-                    "callback" : "setStance"
-                }
+                "event" : "function", "args" : ["high2"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing8", true],"callback" : "setStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 8"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 8"] },{"args" : ["storage:playing8"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
         },
         "releaseH2" : {
             "event" : [ 
                 { 
                     "event" : "function", "args" : ["high2", 3],
                     "callback" : "instrument.releaseNote"
-                }
+                },
+                {"event" : "function","args" : ["playing8"],"callback" : "clearStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 8"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 8"] },{"args" : ["storage:playing8"],"event" : "function","callback" : "checkStorage"} ] }
         },
         "playH3" : {
             "event" : [
-                "high3", 
                 {
-                    "event" : "function", "args" : ["play.1"],
-                    "callback" : "setStance"
-                }
+                "event" : "function", "args" : ["high3"],
+                "callback" : "instrument.pressNote"
+                }, 
+                {
+                "event" : "function", "args" : ["musicNote"],
+                "callback" : "animator.burstParticleEmitter"
+                }, 
+                {
+                "event" : "function", "args" : ["play.1"],
+                "callback" : "setStance"
+                },
+                {"event" : "function","args" : ["playing9", true],"callback" : "setStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyDown", "args" : ["Keypad 9"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "args" : ["Keypad 9"] },{"args" : ["storage:playing9"],"event" : "function","callback" : "checkStorage","inverse" : true} ] }
         },
         "releaseH3" : {
             "event" : [ 
                 { 
                     "event" : "function", "args" : ["high3", 3],
                     "callback" : "instrument.releaseNote"
-                }
+                },
+                {"event" : "function","args" : ["playing9"],"callback" : "clearStorage"}
             ],
-            "require" : { "function" : [ { "callback" : "input.keyUp", "args" : ["Keypad 9"] } ] }
+            "require" : { "function" : [ { "callback" : "input.key", "inverse" : true, "args" : ["Keypad 9"] },{"args" : ["storage:playing9"],"event" : "function","callback" : "checkStorage"} ] }
         }
+    
     }
 }

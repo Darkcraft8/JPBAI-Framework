@@ -215,14 +215,14 @@ function findCallback(functionPath, bypassBlacklist, bypassBridge)
     end -- swap function with the given variant... primarily for safety consern or compatibility
 
     local findCallback = function(path)
-        local currentResult = nil
-        for _, string in ipairs(segmentPath(path)) do
+        local currentResult = pathUp(_ENV, segmentPath(path))--nil
+        --[[for _, string in ipairs(segmentPath(path)) do
           if not currentResult then 
             currentResult = _ENV[string]
           else
             currentResult = currentResult[string]
           end
-        end
+        end]]
         if currentResult ~= nil then
           return currentResult
         else
@@ -247,13 +247,33 @@ function segmentPath(path)
       while string.find(path, "[.:]") do
         local dotNumber = string.find(path, "[.:]")
         if dotNumber then
-          table.insert(pathSegment, string.sub(path, 1, dotNumber - 1))
-          path = string.sub(path, dotNumber + 1, string.len(path))
+            local segment = string.sub(path, 1, dotNumber - 1)
+            if not string.find(segment, "[a-z]") then -- check if it a number in case of tables
+                segment = tonumber(segment)
+            end
+            table.insert(pathSegment, segment)
+            path = string.sub(path, dotNumber + 1, string.len(path))
         end
       end
     end
     table.insert(pathSegment, path)
     return pathSegment
+end
+
+function pathUp(_table, _segmentedPath)
+    local currentResult = nil
+    for _, string in ipairs(_segmentedPath) do
+        if not currentResult then 
+            currentResult = _table[string]
+        else
+            currentResult = currentResult[string]
+        end
+    end
+    if currentResult ~= nil then
+        return currentResult
+    else
+        return defaultValue
+    end
 end
 
 function effectiveArguments(_args)
@@ -268,16 +288,26 @@ function checkStorage(path)
     if type(path) == "string" then
         if string.find(path, "storage:") == 1 then
             path = string.gsub(path, "storage:", "")
+            local storageContent = nil 
+            if string.find(path, "[.:]") then
+                local segments = segmentPath(path)
+                local _storCon = pathUp(storage, segments)
+                if _storCon then
+                    storageContent = _storCon
+                end
+            else
+                storageContent = storage[path]
+            end
             --sb.logInfo("storage[%s] %s", path, storage[path])
-            if storage[path] then 
-                if type(storage[path]) == "table" then
+            if storageContent then 
+                if type(storageContent) == "table" then
                     local args = {}
-                    for i, arg in pairs(storage[path] or {}) do
+                    for i, arg in pairs(storageContent or {}) do
                         args[i] = checkStorage(arg)
                     end
                     return args
                 else
-                    return storage[path] 
+                    return storageContent
                 end
             else 
                 return nil 
@@ -377,5 +407,12 @@ function worldCallScriptedEntity(entityId, ...)
     if not entityId then return false end
     if world.entityExists(entityId) then
         return world.callScriptedEntity(entityId, ...)
+    end
+end
+
+function worldSendEntityMessage(entityId, ...)
+    if not entityId then return false end
+    if world.entityExists(entityId) then
+        return world.sendEntityMessage(entityId, ...)
     end
 end

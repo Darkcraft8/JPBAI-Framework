@@ -79,7 +79,6 @@ function calculus.between(numA, min, max, bool)
     return false
 end
 
-
 logic = {}
 
 function logic.equalTo(a, b)

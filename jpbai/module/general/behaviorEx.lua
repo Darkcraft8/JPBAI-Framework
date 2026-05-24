@@ -60,10 +60,11 @@ end
 -- Events
 function behavior_hitbox(event) -- todo
     local hitboxInfo = event.hitbox or {}
-    local _poly = animator.partPoly(hitboxInfo.partName, hitboxInfo.polyName or "damageArea")
+    local _poly = event.poly or animator.partPoly(hitboxInfo.partName, hitboxInfo.polyName or "damageArea")
     local damageLine, damagePoly
     local knockback = event.knockback or 0
     local damage = event.baseDamage or 0
+    sb.logInfo("event %s", sb.printJson(event, 1))
     if not _poly then
         sb.logError("[JPBAI Framework] behavior_hitbox | poly not found for %s | %s : %s", hitboxInfo, hitboxInfo.partName, hitboxInfo.polyName)
         --if player then if player.say then player.say(string.format("^cyan;[JPBAI Framework] behavior_hitbox | poly not found for %s : %s", hitboxInfo.partName, hitboxInfo.polyName)) end end
@@ -73,7 +74,7 @@ function behavior_hitbox(event) -- todo
 
     if (event.damageScalingFunction or Weapon) and damage then damage = call({callback = (event.damageScalingFunction or "Weapon.basicDamage"), args = event}) end
     if knockback and event.directionalKnockback then knockback = knockbackMomentum(knockback, event.knockbackMode, (self.aimAngle or 0), self.aimDirection or 0) end
-    
+
     local damageSource = {
         priority = event.priority or 0,
         duration = event.duration or event.timeout or 0.1,
@@ -93,6 +94,7 @@ function behavior_hitbox(event) -- todo
     if not self.damageSources then self.damageSources = {} end
     if not self.damageSources[event.hitboxName or behaviorName] then self.damageSources[event.hitboxName or behaviorName] = {} end
     table.insert(self.damageSources[event.hitboxName or behaviorName], damageSource)
+    return true
 end
 
 function behavior_monster(event) -- function to spawn monster based on weapon level or scaling function
@@ -288,7 +290,7 @@ end
 -- Other's
 function spawnPosition(cfg)
     local originPos = copy(cfg.spawnPos) -- Possible | ownerHandPos, ownerPosFaceDirection, ownerPos, fireOffset, cursor
-    local posOffset = (cfg.spawnOffset)
+    local posOffset = (cfg.spawnOffset or {0, 0})
     local aimAngle, aimDirection = activeItem.aimAngleAndDirection(self.fireOffset[2], activeItem.ownerAimPosition())
     local ownerPos = entity.position()
     local handPos = activeItem.handPosition()
@@ -318,7 +320,7 @@ function spawnPosition(cfg)
 end
 
 function aimVector(inaccuracy, aimShift, aimAngle) -- straight out of gunFire.lua with one change
-    local aimVector = vec2.rotate({1, 0}, (aimAngle or self.aimAngle or 0) + sb.nrand(inaccuracy, 0) + (aimShift or 0))
+    local aimVector = vec2.rotate({1, 0}, (aimAngle or self.aimAngle or 0) + sb.nrand(inaccuracy or 0, 0) + (aimShift or 0))
     aimVector[1] = aimVector[1] * mcontroller.facingDirection()
     return aimVector
 end

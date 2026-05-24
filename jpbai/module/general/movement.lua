@@ -6,6 +6,13 @@ function movementControl.init()
     movementControl.resetParameters()
     movementControl.resetModifiers()
     mcontroller.setRotation(0)
+    message.setHandler("facingDirection", function(_, isLocal, entityId)
+        world.callScriptedEntity(entityId, "facingDirection", mcontroller.facingDirection())
+    end)
+    message.setHandler("crouching", function(_, isLocal, entityId)
+        world.callScriptedEntity(entityId, "crouching", mcontroller.crouching())
+    end)
+    
 end
 
 function movementControl.uninit()
@@ -22,6 +29,7 @@ function movementControl.update(dt)
         mcontroller.controlParameters(movementParameters or {})
     end
 end
+
 
 function movementControl.translateAboveGround(distance, collisionKind)
     if not distance then return end
