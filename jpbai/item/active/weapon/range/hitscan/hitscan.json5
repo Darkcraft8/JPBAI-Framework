@@ -493,7 +493,7 @@
 			},
 			
 			"fire" : {
-				"duration" : 0.0125,
+				"duration" : 0.1,
 				"allowFlip" : true,
 				"armRotation" : 0,
 				"frontArmFrame" : "rotation",
@@ -514,7 +514,7 @@
 				"transition" : "cooldown"
 			},
 			"cooldown" : {
-				"duration" : 0.15,
+				"duration" : 0.05,
 
 				"allowFlip" : true,
 				"armRotation" : 6,
@@ -1054,7 +1054,7 @@
 					"event" : "function",
 					"callback" : "Weapon.hitscan",
 					"args" : ["bullet-1", {
-						"power" : 5,
+						"power" : 12.5,
 						"movementSettings" : {
 							"mass" : 1.0,
 							"gravityMultiplier" : 0.25,

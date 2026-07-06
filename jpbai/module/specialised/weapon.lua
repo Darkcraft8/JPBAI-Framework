@@ -29,7 +29,7 @@ function Weapon.update(dt)
 end
 -- a very basic hitscan
 function Weapon.hitscan(projectileType, projectileParameters, range, spawnPos, inaccuracy, baseDamage, damageScalingFunction, damageSourceKind, hitboxName, extra)
-    test = table.pack(projectileType, projectileParameters, range, spawnPos, inaccuracy, baseDamage, damageScalingFunction, damageSourceKind, hitboxName, extra)
+    --test = table.pack(projectileType, projectileParameters, range, spawnPos, inaccuracy, baseDamage, damageScalingFunction, damageSourceKind, hitboxName, extra)
     local extra = extra or {}
     local projectileConfig = root.projectileConfig(projectileType)
     if damageScalingFunction or Weapon then -- Scale based on weapon stat or scaling function
@@ -50,6 +50,7 @@ function Weapon.hitscan(projectileType, projectileParameters, range, spawnPos, i
     collisionProj.timeToLive = 0
     collisionProj.speed = 1
     collisionProj.clientEntityMode = "ClientPresenceMaster"
+	collisionProj.processing = "?multiply=fff0"
     for i, cfg in pairs(tragectory) do
         local _magnitude = math.max(world.magnitude(cfg.pos[1], cfg.pos[2]), 0)
         table.insert(debugHitScan, {type = "line", pos = {cfg.pos[1], cfg.pos[2]}, color = "yellow"})
@@ -83,6 +84,9 @@ function Weapon.hitscan(projectileType, projectileParameters, range, spawnPos, i
         end
 
         -- Visual
+        local extra = copy(extra)
+        local alpha = ((1 - (i / #tragectory)) * 0.25)
+        extra.trailColor[4] = extra.trailColor[4] * alpha
         local visualParam = {
             clientEntityMode = "ClientPresenceMaster",
             speed = 0,
@@ -112,7 +116,7 @@ function Weapon.hitscan(projectileType, projectileParameters, range, spawnPos, i
 						collidesLiquid= false,
                         flip = false,
                         fullbright = extra.trailFullbright or true,
-                        color = extra.trailColor or {255, 255, 255, 255},
+                        color = extra.trailColor or {255, 255, 255, 255 * alpha},
                         light = extra.trailLight or {0, 0, 0},
                         position = {_magnitude, 0}
                     },
@@ -136,11 +140,12 @@ function Weapon.hitscan(projectileType, projectileParameters, range, spawnPos, i
             param.timeToLive = 0
             param.speed = 20
             param.clientEntityMode = "ClientPresenceMaster"
+			param.processing = "?multiply=fff0"
             if type(validEnt) == "table" then
                 world.spawnProjectile(projectileType, validEnt, activeItem.ownerEntityId(), cfg.aimVector, false, jarray(param or {}))
             else
                 local n = world.magnitude(cfg.pos[1], cfg.pos[2])
-                local endPos = world.xwrap(vec2.add(cfg.pos[1], vec2.withAngle(vec2.angle(cfg.aimVector), n * 0.85)))
+                local endPos = world.xwrap(vec2.add(cfg.pos[1], vec2.withAngle(vec2.angle(cfg.aimVector), n * 0.975)))
                 
                 world.spawnProjectile(projectileType, endPos, activeItem.ownerEntityId(), cfg.aimVector, false, jarray(param or {}))
             end

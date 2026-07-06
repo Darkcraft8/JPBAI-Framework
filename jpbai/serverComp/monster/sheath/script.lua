@@ -11,8 +11,9 @@ end
 function update(dt)
     if not parentEntity then return end
     local pos = world.entityMouthPosition(parentEntity)
-    
-    mcontroller.setPosition(vec2.add(pos, offset))
+    local vel = world.entityVelocity(parentEntity)
+
+    mcontroller.setPosition(vec2.add(vec2.add(pos, offset), vec2.mul(vel, dt)))
     world.sendEntityMessage(parentEntity, "facingDirection", entity.id())
     world.sendEntityMessage(parentEntity, "crouching", entity.id())
 end
