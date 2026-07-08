@@ -709,7 +709,7 @@ end
 
     function check_raycastToSpawnPos(args)
         local entIdPos = world.entityMouthPosition(activeItem.ownerEntityId())
-        local spawnPoint = spawnPosition(args)
+        local spawnPoint = spawnPosition(checkStorage(args))
         local colide = world.lineTileCollision(entIdPos, spawnPoint)
         if colide and debugMode then
             world.debugLine(entIdPos, spawnPoint, "red")

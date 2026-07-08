@@ -79,6 +79,13 @@ function calculus.between(numA, min, max, bool)
     return false
 end
 
+function calculus.fill(numA, numB, Max)
+    local cap = Max - numB
+    local result = math.min(math.abs(numA - numB), cap)
+    --sb.logInfo("numA %s, numB %s, Max %s | %s / %s = %s", numA, numB, Max, result, cap, numA - result)
+    return result, numA - result -- amountToFill, overFlowedAmount
+end
+
 logic = {}
 
 function logic.equalTo(a, b)

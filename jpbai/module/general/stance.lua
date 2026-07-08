@@ -216,7 +216,7 @@ function updateAim(allowRotate, allowFlip, aimSpeed, initAtAimAngle)
   allowFlip = allowFlip or self.stance.allowFlip
   aimSpeed = aimSpeed or self.stance.aimSpeed
   --aimSpeed = 0.5
-  local aimAngle, aimDirection = activeItem.aimAngleAndDirection(self.stance.aimVerticalOffset or 0, activeItem.ownerAimPosition())
+  local aimAngle, aimDirection = activeItem.aimAngleAndDirection(self.stance.aimVerticalOffset or self.fireOffset[2] or 0, activeItem.ownerAimPosition())
   local rotation = math.abs(mcontroller.rotation())
   
   if allowRotate then

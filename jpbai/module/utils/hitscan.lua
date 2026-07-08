@@ -1,5 +1,5 @@
 hitscan = {}
-function hitscan.calculateTragectory(projectileType, projectileParameters, range, spawnPos, inaccuracy)
+function hitscan.calculateTragectory(projectileType, projectileParameters, range, spawnPos, inaccuracy, maxSegmentRange)
     local physicsConfig = root.assetJson("/projectiles/physics.config")
     local projectileConfig = root.projectileConfig(projectileType)
     local configParam = function(paramName, defaultValue)
@@ -16,7 +16,7 @@ function hitscan.calculateTragectory(projectileType, projectileParameters, range
     end
     local speed = configParam("speed", 250)
     local initSpeed = copy(speed)
-    local range = math.min((range or calRange(configParam("speed", 250), configParam("timeToLive", 5))), 2000)
+    local range = math.min((range or calRange(configParam("speed", 250), configParam("timeToLive", 5))), 20000)
     local totalRange = copy(range)
     local velDir = aimVector(0 or inaccuracy)
 
@@ -40,7 +40,7 @@ function hitscan.calculateTragectory(projectileType, projectileParameters, range
         if (scalar == 0) or (float == 0) then return 0 end
         return float / scalar
     end
-    local maxRangeStep = 8 * (movementSettings.maxMovementPerStep or 1)
+    local maxRangeStep = maxSegmentRange or (8 * (movementSettings.maxMovementPerStep or 1))
     while (range > 0) do -- calculating Tragectory
         
         traveledSpace = vec2.withAngle(vec2.angle(velDir), math.min(range * (movementSettings.maxMovementPerStep or 1), maxRangeStep))

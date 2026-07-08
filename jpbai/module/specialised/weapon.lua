@@ -39,7 +39,9 @@ function Weapon.hitscan(projectileType, projectileParameters, range, spawnPos, i
     end
 
     local configParam = function(paramName, defaultValue)
-        return projectileParameters[paramName] or projectileConfig[paramName] or defaultValue
+        if projectileParameters[paramName] ~= nil then return projectileParameters[paramName] end
+        if projectileConfig[paramName] ~= nil then return projectileConfig[paramName] end
+        return defaultValue
     end
     local tragectory = hitscan.calculateTragectory(projectileType, projectileParameters, range, spawnPos, inaccuracy)
     debugHitScan = {}
@@ -51,6 +53,7 @@ function Weapon.hitscan(projectileType, projectileParameters, range, spawnPos, i
     collisionProj.speed = 1
     collisionProj.clientEntityMode = "ClientPresenceMaster"
 	collisionProj.processing = "?multiply=fff0"
+    local pierced = 0
     for i, cfg in pairs(tragectory) do
         local _magnitude = math.max(world.magnitude(cfg.pos[1], cfg.pos[2]), 0)
         table.insert(debugHitScan, {type = "line", pos = {cfg.pos[1], cfg.pos[2]}, color = "yellow"})
@@ -62,79 +65,143 @@ function Weapon.hitscan(projectileType, projectileParameters, range, spawnPos, i
             order = "nearest"
         })
         local validEnt = false
+        local canPierces = function() return configParam("piercing") or (pierced <= configParam("pierces", 0)) end
+        --sb.logInfo("canPierces %s, piercing %s, pierces %s/%s", canPierces(), configParam("piercing"), pierced, configParam("pierces", 0))
         for i = 1, #entList do
             local targetEntity = entList[i]
             local validType = (world.entityType(targetEntity) == "monster") or (world.entityType(targetEntity) == "player") or (world.entityType(targetEntity) == "npc") or (world.entityType(targetEntity) == "vehicle") or (world.entityType(targetEntity) == "object")
+
             if world.entityCanDamage(activeItem.ownerEntityId(), targetEntity) and validType then --need to find a way to reduce the lenght
                 local hitpos = world.entityPosition(targetEntity)
                 local mag = world.magnitude(hitpos, cfg.pos[1])
                 local projPos = world.xwrap(vec2.add(cfg.pos[1], vec2.withAngle(vec2.angle(cfg.aimVector), mag)))
                 validEnt = true
-                local shouldStop = (not configParam("piercing")) and (not (world.entityType(targetEntity) == "object"))
-                --sb.logInfo("piercing %s, isObject %s, shouldStop %s", (configParam("piercing")), ((world.entityType(targetEntity) == "object")), shouldStop)
+                local shouldStop = (not canPierces()) and (not (world.entityType(targetEntity) == "object"))
+                --sb.logInfo("piercing %s, isObject %s, shouldStop %s", (canPierces()), ((world.entityType(targetEntity) == "object")), shouldStop)
                 if shouldStop then
                     --sb.logInfo("stopped at ent %s|%s", targetEntity, world.entityType(targetEntity))
                     validEnt = projPos
                     break
                 else
+                    if (not (world.entityType(targetEntity) == "object")) then pierced = pierced + 1 end
                     validEnt = false
                     world.spawnProjectile(projectileType, projPos, activeItem.ownerEntityId(), cfg.aimVector, false, jarray(collisionProj or {})) 
+                    if not canPierces() then
+                        validEnt = projPos
+                        break
+                    end
                 end
             end
         end
+        -- last Point Check
+        local lastPoint = (i == #tragectory)
+        if validEnt and (not canPierces()) then lastPoint = true end
+        --
 
         -- Visual
+        local max = #tragectory
+        if lastPoint then
+            max = i
+            _magnitude = math.max(world.magnitude(cfg.pos[1], validEnt or cfg.pos[2]), 0)
+        end
         local extra = copy(extra)
-        local alpha = ((1 - (i / #tragectory)) * 0.25)
+        local alpha = ((1 - (i / max)) * (extra.trailLengthMod or 1))
+        local sizeOverride = extra.trailSizeOverride
+        local destructionTime = extra.trailTimeToLive
+        if #tragectory == 1 then 
+            alpha = math.min(1 * (extra.trailLengthMod or 1), 1)
+            if not destructionTime then destructionTime = 0.1 end
+            if not sizeOverride then sizeOverride = 1.25 * (extra.trailSizeMod or 1) end
+        end
         extra.trailColor[4] = extra.trailColor[4] * alpha
-        local visualParam = {
-            clientEntityMode = "ClientPresenceMaster",
-            speed = 0,
-            timeToLive = 0,
-            processing = "?multiply=fff0",
-            damageTeam = { type = "ghostly" },
-            actionOnReap = {
-                {
-                    rotate = true,
-                    specification = {
-                        fade = 1,
-                        approach = {0, 0},
-                        layer = "front",
-                        destructionAction = "shrink",
-                        type = "streak",
-                        destructionTime = math.max(0.0625 + (i * 0.0625), 1),
-                        size = math.min(0.125 + (math.max(#tragectory - i, 0) * 0.125), 1.25),
+        local visualParam = {}
+        if extra.useStreak then
+            visualParam = {
+                clientEntityMode = "ClientPresenceMaster",
+                speed = 0.001,
+                timeToLive = 0,
+                processing = "?multiply=fff0",
+                damageTeam = { type = "ghostly" },
+                movementSettings = {collisionEnabled = false, gravityEnable = false},
+                actionOnReap = {
+                    {
+                        rotate = true,
+                        specification = {
+                            fade = 1,
+                            approach = {0, 0},
+                            layer = "front",
+                            destructionAction = "shrink",
+                            type = "streak",
+                            destructionTime = destructionTime or math.max(0.0625 + (i * 0.0625), 1),
+                            size = sizeOverride or math.min((0.125 * (extra.trailSizeMod or 1)) + (math.max(max - i, 0) * 0.125), 1.25 * (extra.trailSizeMod or 1)),
 
-                        initialVelocity = {0.1, 0},
-                        finalVelocity = {0, 0},
-                        timeToLive = 0,
-                        length = (_magnitude * 8),
-                        variance = {
-                            size = 0.0625
+                            initialVelocity = {0.125 * (destructionTime or math.max(0.0625 + (i * 0.0625), 1)), 0},
+                            finalVelocity = {0, 0},
+                            timeToLive = 0,
+                            variance = {},
+                            collidesForeground= false,
+                            collidesLiquid= false,
+                            flip = false,
+                            fullbright = extra.trailFullbright or false,
+                            color = extra.trailColor or {255, 255, 255, 255 * alpha},
+                            light = extra.trailLight or {0, 0, 0},
+
+                            length = (_magnitude * 8),
+                            position = {_magnitude, 0}
                         },
-						collidesForeground= false,
-						collidesLiquid= false,
-                        flip = false,
-                        fullbright = extra.trailFullbright or true,
-                        color = extra.trailColor or {255, 255, 255, 255 * alpha},
-                        light = extra.trailLight or {0, 0, 0},
-                        position = {_magnitude, 0}
-                    },
-                    action = "particle"
+                        action = "particle"
+                    }
                 }
             }
-        }
+        else
+            visualParam = {
+                clientEntityMode = "ClientPresenceMaster",
+                speed = 0.001,
+                timeToLive = 0,
+                processing = "?multiply=fff0",
+                damageTeam = { type = "ghostly" },
+                movementSettings = {collisionEnabled = false, gravityEnable = false},
+                actionOnReap = {
+                    {
+                        rotate = true,
+                        specification = {
+                            fade = 1,
+                            approach = {0, 0},
+                            layer = "front",
+                            destructionAction = "shrink",
+                            string = "/items/active/weapons/protectorate/aegisaltpistol/beam.png?crop;0;1;1;2?saturation=-100",
+                            type = "Textured",
+                            destructionTime = destructionTime or math.max(0.0625 + (i * 0.0625), 1),
+                            size = sizeOverride or math.min((0.125 * (extra.trailSizeMod or 1)) + (math.max(max - i, 0) * 0.125), 1.25 * (extra.trailSizeMod or 1)),
+
+                            initialVelocity = {0.125 * (destructionTime or math.max(0.0625 + (i * 0.0625), 1)), 0},
+                            finalVelocity = {0, 0},
+                            timeToLive = 0,
+                            variance = {},
+                            collidesForeground= false,
+                            collidesLiquid= false,
+                            flip = false,
+                            fullbright = extra.trailFullbright or false,
+                            color = extra.trailColor or {255, 255, 255, 255 * alpha},
+                            light = extra.trailLight or {0, 0, 0},
+
+                            position = {_magnitude, 0}
+                        },
+                        action = "particle"
+                    }
+                }
+            }
+            visualParam.actionOnReap[1].specification.string = visualParam.actionOnReap[1].specification.string .. string.format("?scalenearest=%s;1", (_magnitude * (6.4375)) )
+        end
         if type(validEnt) == "table" then
             local mag = world.magnitude(validEnt, cfg.pos[1])
             visualParam.actionOnReap[1].specification.position[1] = mag
             visualParam.actionOnReap[1].specification.length = mag * 8
         end
-        world.spawnProjectile("invisibleprojectile", world.xwrap(cfg.pos[1]), activeItem.ownerEntityId(), cfg.aimVector, false, jarray(visualParam or {}))
+        world.spawnProjectile("bullet-1", world.xwrap(cfg.pos[1]), activeItem.ownerEntityId(), cfg.aimVector, false, jarray(visualParam or {}))
         --
 
         -- last hit/collision
-        local lastPoint = (i == #tragectory)
-        if validEnt and (not configParam("piercing")) then lastPoint = true end
         if lastPoint then
             local param = copy(projectileParameters)
             param.timeToLive = 0
