@@ -33,6 +33,9 @@
 	 The user position will be resolved before being applied as to **Hopefully** not cause them to be stuck
 	 an offset(default [0, 2.5]) and the number of maximum Correction(3 by default) can be given.
 
+   - `Hitscan Modules`<br>
+    Insert Description Here
+
 #### Fix
   - added `nil` check to callbacks so that<br>
     they don't cause problem if the given function(s) doesn't exist or for edge case like world.callEntityContext
@@ -40,7 +43,10 @@
   - `Status Module`
 	- Fixed statusEx.hasResources(resourceList) using the old args passing method causing any resource check to pass
 
-#### Still need to be made
+  - `Stance Module`
+  - Fixed initStance not merging stances in the correct order
+
+#### Note
   - Documentation Need to be Made !!!
   - Not every change is listed
   

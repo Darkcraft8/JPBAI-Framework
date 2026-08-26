@@ -1,0 +1,24 @@
+[
+    [
+        {
+            "op": "add",
+            "path": "/d8_ASN-abilityDeck",
+            "value": {
+                "priority" : 1,
+                "action" : "togglePane",
+                "args" : ["d8_ASN-abilityDeck", "/d8_ASN/interfaces/scripted/abilityDecker/gui.config"],
+                "require" : [],
+
+                "base" : "/interface/collections.png:base",
+                "hover" : "/interface/collections.png:hover",
+                "open" : "/interface/collections.png:open",
+                "openHover" : "/interface/collections.png:openHover",
+                "disabled" : "/interface/beamno.png",
+
+                "paneName" : "d8_ASN-abilityDeck",
+                "shotDescription" : "Ability Deck",
+                "description" : "Change your character abilities for compatible item"
+            }
+        }
+    ]
+]

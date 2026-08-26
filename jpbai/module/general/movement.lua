@@ -7,12 +7,37 @@ function movementControl.init()
     movementControl.resetModifiers()
     mcontroller.setRotation(0)
     message.setHandler("facingDirection", function(_, isLocal, entityId)
-        world.callScriptedEntity(entityId, "facingDirection", mcontroller.facingDirection())
+        if isLocal then return mcontroller.facingDirection() end
     end)
     message.setHandler("crouching", function(_, isLocal, entityId)
-        world.callScriptedEntity(entityId, "crouching", mcontroller.crouching())
+        if isLocal then return mcontroller.crouching() end
     end)
-    
+    message.setHandler("armPos", function(_, isLocal, entityId)
+        if isLocal then return activeItem.handPosition() end
+    end)
+    message.setHandler("bobState", function(_, isLocal, entityId)
+        if isLocal then 
+            local state = "idle"
+
+            if mcontroller.walking() and mcontroller.groundMovement() then
+                state = "walk"
+            elseif mcontroller.running() and mcontroller.groundMovement() then
+                state = "run"
+            elseif mcontroller.liquidMovement() then
+                state = "swim"
+            end
+
+            if mcontroller.falling() then
+                state = "idle"
+            elseif mcontroller.jumping() then
+                state = "idle"
+            end
+
+            local backward = mcontroller.movingDirection() ~= mcontroller.facingDirection()
+            return {state, backward}
+        end
+    end)
+
 end
 
 function movementControl.uninit()
@@ -81,7 +106,7 @@ function movementControl.aimTranslation(vec, verticalOffset, checkForObstacle, o
     end
 end
 
-function movementControl.resolvedCollision()
+function movementControl.resolvedCollision(maxCorrection)
     local resolvedCollision = world.resolvePolyCollision(mcontroller.collisionPoly(), mcontroller.position(), maxCorrection or 3, {"Block", "Dynamic", "Null", "Slippery"})
     if resolvedCollision then
         mcontroller.setPosition(resolvedCollision)
@@ -97,6 +122,10 @@ function movementControl.translatePos(pos, maxCorrection)
     end
 end
 
+function movementControl.overrideParameters(ActorMovementParameters)
+    movementControl.resetParameters()
+    movementControl.setParameters(ActorMovementParameters)
+end
 function movementControl.setParameters(ActorMovementParameters)
     if not movementParameters then movementParameters = {} end
     movementParameters = sb.jsonMerge(movementParameters, ActorMovementParameters)
@@ -104,6 +133,11 @@ end
 
 function movementControl.resetParameters()
     movementParameters = nil
+end
+
+function movementControl.overrideModifiers(ActorMovementParameters)
+    movementControl.resetModifiers()
+    movementControl.setModifiers(ActorMovementParameters)
 end
 function movementControl.setModifiers(ActorMovementParameters)
     if not movementModifiers then movementModifiers = {} end

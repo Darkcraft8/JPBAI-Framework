@@ -4,8 +4,10 @@ behaviorEx = {}
 -----------------------------------------------------------------------------------
 
 -- Value
-function behaviorEx.modValue(parameter, value)
+function behaviorEx.modValue(parameter, value, mul)
     if not parameter or not value then return end
+    local value = copy(value)
+    if type(mul) == "number" then value = value * mul end
     if parameter and value then
         if type(config.getParameter(parameter, 0)) == "number" and type(value) == "number" then
             local newValue = config.getParameter(parameter, 0) + value
@@ -64,7 +66,7 @@ function behavior_hitbox(event) -- todo
     local damageLine, damagePoly
     local knockback = event.knockback or 0
     local damage = event.baseDamage or 0
-    sb.logInfo("event %s", sb.printJson(event, 1))
+    --sb.logInfo("event %s", sb.printJson(event, 1))
     if not _poly then
         sb.logError("[JPBAI Framework] behavior_hitbox | poly not found for %s | %s : %s", hitboxInfo, hitboxInfo.partName, hitboxInfo.polyName)
         --if player then if player.say then player.say(string.format("^cyan;[JPBAI Framework] behavior_hitbox | poly not found for %s : %s", hitboxInfo.partName, hitboxInfo.polyName)) end end

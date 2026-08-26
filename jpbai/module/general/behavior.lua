@@ -26,11 +26,13 @@ local behavTreeBuild = function(varName, varData)
         if isListOfResource then self[varName] = copy(_table) else self[varName] = varData end
     end
 end
-
+preInit_behaviors = {}
+preInit_behaviorEvents = {}
+preInit_behaviorPaths = {}
 function initBehavior()
-    behavTreeBuild("behaviors", config.getParameter("behaviors", {}))
-    behavTreeBuild("behaviorEvents", config.getParameter("behaviorEvents", {})) -- event can be placed in this table to be directly referred to instead of copying in each behavior
-    behavTreeBuild("behaviorPaths", config.getParameter("behaviorPaths", {})) -- similar to the event one but for outcome
+    behavTreeBuild("behaviors", preInit_behaviors)
+    behavTreeBuild("behaviorEvents", preInit_behaviorEvents) -- event can be placed in this table to be directly referred to instead of copying in each behavior
+    behavTreeBuild("behaviorPaths", preInit_behaviorPaths) -- similar to the event one but for outcome
     
     behaviorPathBuild()
     self.behavior = {}
@@ -122,6 +124,18 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
         behaviorTimer(self.behaviorPeriodicEventTimer[behaviorName], "increase")
     --
 
+    local fireMode = fireMode
+    if input and player then -- too smoothen switching between items, the game doesn't send the fireType if the mouseBtn was held before having the item
+        if fireMode == "none" then
+            if input.mouseHeld("MouseLeft") then
+                fireMode = "primary"
+            elseif input.mouseHeld("MouseRight") then
+                fireMode = "alt"
+            else
+                fireMode = "none"
+            end
+        end
+    end
     local curPlayerInput = {
         fireMode = fireMode,
         isShiftHeld = isShiftHeld,
@@ -145,7 +159,22 @@ function behaviorUpdate(dt, fireMode, isShiftHeld, currentMove) -- find a way to
                         if self.behaviors[behavior] or p.event then
                             if debugMode then sb.logInfo("--[ behavior %s", behavior) end
                             local requirement = p.require or {}
+                            local getStorage = function(v)
+                                if type(v) == "string" then
+                                    if string.find(v, "storage:") then
+                                        v = checkStorage(v)
+                                    end
+                                elseif type(v) == "table" then
+                                    local result = {}
+                                    for i, _v in pairs(v) do
+                                        result[i] = checkStorage(_v)
+                                    end
+                                    v = result
+                                end
+                                return v
+                            end
                             for k, v in pairs(requirement) do
+                                local v = getStorage(v)
                                 if player then -- player specific check(s)
                                     if k == "inSwapSlot" then
                                         if player.swapSlotItem() then
@@ -345,7 +374,7 @@ end
 
 function setBehavior(newBehaviorName)
     if not newBehaviorName then return end
-    if not self.behaviors[newBehaviorName] then return end
+    if not self.behaviors[newBehaviorName] then sb.logError("No behavior called %s is currently loaded for %s!", newBehaviorName, itemId) return end
     if debugMode then sb.logInfo("--[ newBehaviorName %s", newBehaviorName) end
     if self.behavior["eventOnUninit"] then behaviorEvents(self.behavior["eventOnUninit"]) end
     resetBehavior()
@@ -407,6 +436,8 @@ function behaviorEvent(eventCfg, notification) -- Handle the Different Event kin
                 _eventCfg[i] = checkStorage(arg)
             end
         end
+        if _eventCfg.args and notification then table.insert(_eventCfg.args, notification) end
+        
         if string.lower(_eventCfg.event) == "monster" then behavior_monster(_eventCfg) return end
         if string.lower(_eventCfg.event) == "projectile" then behavior_projectile(_eventCfg) return end
         if string.lower(_eventCfg.event) == "function" then call(_eventCfg) return end

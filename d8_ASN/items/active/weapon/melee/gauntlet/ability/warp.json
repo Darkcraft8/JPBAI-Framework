@@ -1,0 +1,346 @@
+{
+    "card" : {
+        "front" : {
+            "group" : "warp",
+            "behaviorName" : "ab_warp_enter",
+            "priority" : 1,
+            "backgroundType" : "tablet",
+            "draw" : [
+                {
+                    "type" : "drawable",
+                    "position" : [9, 55],
+                    "image" : "/d8_ASN/items/active/weapon/melee/gauntlet/ability/text/warp.png"
+                },
+                {
+                    "type" : "label",
+                    "position" : [32, 55],
+                    "wrapWidth" : 28,
+                    "hAnchor" : "mid",
+                    "vAnchor" : "mid",
+                    "string" : "^shadow,#a12e2e;Warp^reset;"
+                },
+                {
+                    "type" : "label",
+                    "position" : [3, 45],
+                    "wrapWidth" : 60,
+                    "fontSize" : 4.5,
+                    "string" : "^shadow;Warp to target position.\nIf a damagable ent is near do a jab.^reset;"
+                },
+                {
+                    "type" : "label",
+                    "position" : [55.5, 61],
+                    "fontSize" : 14,
+                    "hAnchor" : "mid",
+                    "string" : "^shadow;20^reset;"
+                }
+            ]
+        }
+    },
+    "startBehav" : "ab_warp_enter",
+    "behavs" : {
+        "ab_warp_enter" : {
+            "stance" : "abilitySelect_exit",
+			"possibleOutcome" : [
+                { 
+                    "behavior" : "idle",
+                    "require" : {
+                        "function" : [
+                            {
+                                "event" : "function",
+                                "callback" : "statusEx.hasResources",
+                                "inverse" : true,
+                                "args" : [[{"resource":"energy", "amount": 20}]]
+                            }
+                        ]
+                    }
+                },
+                { 
+                    "behavior" : "idle",
+                    "require" : {
+                        "function" : [
+                            {
+                                "event" : "function",
+                                "callback" : "status.resourceLocked",
+                                "inverse" : false,
+                                "args" : ["energy"]
+                            }
+                        ]
+                    }
+                },
+                
+                {
+					"require" : { 
+						"fireMode" : "primary",
+						"time" : 0.1
+					}, 
+					"behavior" : "ab_warp_execute" 
+				},
+                {
+					"require" : { 
+						"fireMode" : "alt",
+						"time" : 0.1
+					}, 
+					"behavior" : "idle" 
+				}
+            ],
+			"eventOnInit" : ["ab_warp_init"],
+			"eventOnUninit" : ["ab_warp_uninit"]
+        },
+        "ab_warp_idle" : {
+            "stance" : "ab_warp_idle",
+			"possibleOutcome" : [
+				{ 
+                    "behavior" : "abilitySelectExit",
+                    "require" : {}
+                }
+			],
+			"eventOnInit" : ["ab_warp_init"],
+			"eventOnUninit" : ["ab_warp_uninit"]
+        },
+        "ab_warp_execute" : {
+			"possibleOutcome" : [
+                { 
+                    "behavior" : "idle",
+                    "require" : {
+						"time" : 0.1
+                    }
+                }
+			],
+			"eventOnUninit" : ["ab_warp_execute"]
+        }
+    },
+    "paths" : {},
+    "events" : {
+        "ab_warp_init" : [
+            {
+				"event" : "setCursor",
+				"cursor" : "/cursors/reticle5.cursor"
+			}
+        ],
+        "ab_warp_uninit" : [
+            {
+				"event" : "setCursor"
+			}
+        ],
+
+        "ab_warp_getMousePos" : [
+            {
+                "event" : "function",
+                "callback" : "activeItem.ownerAimPosition",
+                "args" : [],
+                "storage" : "ab_warp_aimPos"
+            }
+        ],
+        "ab_warp_execute" : [
+            {
+                "event" : "function",
+                "callback" :"status.overConsumeResource",
+                "args" : ["energy", 20]
+            },
+            {
+			    "event" : "function",
+				"callback" : "status.setResourcePercentage",
+				"args" : [ "energyRegenBlock", 1]
+			},
+            
+            "ab_warp_sound",
+            "ab_warp_particle",
+
+            "ab_warp_getMousePos",
+            {
+                "event" : "function",
+                "callback" :"mcontroller.setPosition",
+                "args" : ["storage:ab_warp_aimPos"]
+            },
+            {
+                "event" : "function",
+                "callback" :"movementControl.resolvedCollision"
+            },
+
+            "ab_warp_sound",
+            "ab_warp_particle",
+            {
+                "event" : "function",
+                "callback" :"clearStorage",
+                "args" : ["ab_warp_aimPos", "ab_warp_entPos"]
+            }
+        ],
+
+        "ab_warp_sound" : [
+            {
+                "event" : "function",
+                "callback" :"mcontroller.position",
+                "args" : [],
+                "storage" : "ab_warp_entPos"
+            },
+            {
+                "event" : "function",
+                "callback" : "animationEx.playSoundsAt",
+                "args" : ["storage:ab_warp_entPos", [{"pool" : ["/sfx/tech/vehicle_appear3.ogg"], "pitch" : 0.75, "pitchShift" : 25}]]
+            }
+        ],
+        "ab_warp_particle" : [
+            {
+                "event" : "function",
+                "callback" :"animationEx.spawnParticles",
+                "args" : [[
+                    {
+                        "specification" : {
+                            "type" : "ember",
+                            "fade" : 0.9,
+                            "destructionAction" : "shrink",
+                            "destructionTime" : 0.2,
+                            "initialVelocity" : [0, -5],
+                            "finalVelocity" : [0, 5],
+                            "approach" : [1, 30],
+                            "timeToLive" : 1.5,
+                            "size" : 1,
+                            "layer" : "back",
+                            "color" : [255, 66, 66, 254],
+                            "light" : [50, 25, 25],
+                            "trail" : true,
+                            "collidesForeground" : true,
+                            "variance" : {
+                                "timeToLive" : 0.5,
+                                "size" : 0.95,
+                                "position" : [1, 0.15],
+                                "initialVelocity" : [2.5, 20],
+                                "finalVelocity" : [0, 10],
+                                "rotation" : 180
+                            }
+                        },
+                        "count" : 20,
+                        "rotation" : 0
+                    },
+                    {
+                        "specification" : {
+                            "type" : "ember",
+                            "fade" : 0.9,
+                            "destructionAction" : "shrink",
+                            "destructionTime" : 0.2,
+                            "position" : [0, -1.5],
+                            "initialVelocity" : [0, -1],
+                            "finalVelocity" : [0, 5],
+                            "approach" : [5, 15],
+                            "timeToLive" : 1.5,
+                            "size" : 1,
+                            "layer" : "back",
+                            "color" : [255, 66, 66, 254],
+                            "light" : [50, 25, 25],
+                            "trail" : true,
+                            "collidesForeground" : true,
+                            "variance" : {
+                                "timeToLive" : 0.5,
+                                "size" : 0.95,
+                                "position" : [0.15, 0],
+                                "initialVelocity" : [20, 1],
+                                "finalVelocity" : [0, 2.5],
+                                "rotation" : 180
+                            }
+                        },
+                        "count" : 20,
+                        "rotation" : 0
+                    },
+                    {
+                        "specification" : {
+                            "type" : "animated",
+                            "fade" : 0.9,
+                            "string" : "/animations/gravitybubble/gravitybubble.animation?saturation=-100",
+                            "destructionAction" : "fade",
+                            "destructionTime" : 0.5,
+                            "initialVelocity" : [0, 0],
+                            "finalVelocity" : [0, 0],
+                            "approach" : [0, 0],
+                            "timeToLive" : 0,
+                            "size" : 1,
+                            "layer" : "middle",
+                            "color" : [255, 66, 66, 254],
+                            "light" : [150, 50, 50],
+                            "variance" : {
+                            }
+                        },
+                        "count" : 1,
+                        "rotation" : 0
+                    },
+                    {
+                        "specification" : {
+                            "type" : "animated",
+                            "fade" : 0.9,
+                            "string" : "/animations/gravitybubble/gravitybubble.animation?saturation=-100",
+                            "destructionAction" : "shrink",
+                            "destructionTime" : 0.5,
+                            "initialVelocity" : [0, 0],
+                            "finalVelocity" : [0, 0],
+                            "approach" : [0, 0],
+                            "timeToLive" : 0,
+                            "size" : 1,
+                            "layer" : "middle",
+                            "color" : [255, 66, 66, 150],
+                            "light" : [150, 50, 50],
+                            "variance" : {
+                            }
+                        },
+                        "count" : 1,
+                        "rotation" : 0
+                    },
+                    {
+                        "specification" : {
+                            "type" : "textured",
+                            "fade" : 0.9,
+                            "string" : "/animations/swampfog/swampfog.png?saturation=-100",
+                            "destructionAction" : "fade",
+                            "destructionTime" : 1,
+                            "position" : [0, -1.5],
+                            "initialVelocity" : [5, 0],
+                            "finalVelocity" : [2, 0],
+                            "approach" : [20, 0],
+                            "timeToLive" : 0,
+                            "size" : 0.25,
+                            "layer" : "front",
+                            "collidesForeground" : true,
+                            "color" : [255, 250, 250, 254],
+                            "light" : [0, 0, 0],
+                            "variance" : {
+                                "size" : 0.25,
+                                "destructionTime" : 1,
+                                "initialVelocity" : [2.5, 0]
+                            }
+                        },
+                        "count" : 2,
+                        "rotation" : 0
+                    },
+                    {
+                        "specification" : {
+                            "type" : "textured",
+                            "fade" : 0.9,
+                            "string" : "/animations/swampfog/swampfog.png?saturation=-100",
+                            "destructionAction" : "fade",
+                            "destructionTime" : 1,
+                            "position" : [0, -1.5],
+                            "initialVelocity" : [-5, 0],
+                            "finalVelocity" : [-2, 0],
+                            "approach" : [20, 0],
+                            "timeToLive" : 0,
+                            "size" : 0.25,
+                            "layer" : "front",
+                            "collidesForeground" : true,
+                            "color" : [255, 250, 250, 254],
+                            "light" : [0, 0, 0],
+                            "variance" : {
+                                "size" : 0.25,
+                                "destructionTime" : 1,
+                                "initialVelocity" : [2.5, 0]
+                            }
+                        },
+                        "count" : 2,
+                        "rotation" : 0
+                    }
+                ]]
+            }
+            
+        ]
+    },
+    "stances" : {
+        "ab_warp_idle" : {}
+    }
+}

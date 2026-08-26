@@ -19,7 +19,7 @@ uninitFunc = {
     "uninitStance",
     "movementControl.uninit"
 }
-
+coroutineList = {}
 require "/jpbai/module/general/logic.lua"
 require "/jpbai/module/general/stance.lua"
 require "/jpbai/module/general/animation.lua"
@@ -37,6 +37,33 @@ function init()
     JPBAIConfig = root.assetJson("/jpbai/JPBAI.config")
     storage = config.getParameter("scriptStorage", {})
     itemId = item.name()..":"..item.friendlyName().."-"..activeItem.hand()
+    message.setHandler("getItemBehavior", function(_, isLocal, targetItemId, hand)
+        if isLocal and ((targetItemId == itemId) or (targetItemId == activeItem.ownerEntityId())) then
+            return behaviorName
+        end
+    end)
+    message.setHandler("setItemBehavior", function(_, isLocal, targetItemId, behavName, hand)
+        if isLocal and ((targetItemId == itemId) or (targetItemId == activeItem.ownerEntityId())) and behavName then
+            setBehavior(behavName)
+            return true
+        end
+    end)
+
+    preInit_baseStances = config.getParameter("baseStances", {})
+    preInit_behaviors = config.getParameter("behaviors", {})
+    preInit_behaviorEvents = config.getParameter("behaviorEvents", {})
+    preInit_behaviorPaths = config.getParameter("behaviorPaths", {})
+
+    for _, func in ipairs(config.getParameter("preinitFunction", {})) do 
+        if type(func) == "function" then
+            func()
+        else
+            local callback = findCallback(func, true)
+            if callback then
+                callback()
+            end
+        end
+    end
     for _, func in ipairs(initFunc) do
         if type(func) == "function" then
             func()
@@ -74,6 +101,21 @@ function update(dt, fireMode, isShiftHeld, currentMove)
             end
         end
     end
+    local upCoList = {}
+    for _, co in pairs(coroutineList) do
+        local _co, args = co, {}
+        if type(co) == "table" then
+            _co = co[1]
+            args = co[2]
+        end
+        if coroutine.status(_co) ~= "dead" then
+            local s, m = coroutine.resume(_co, table.unpack(args))
+            if (not s) and m then sb.logInfo("%s : %s", sb.print(s), sb.print(m)) end
+            if upCoList and _co then
+                upCoList = table.insert(upCoList, _co)
+            end
+        end
+    end
     if playerInteractTimer > 0 then playerInteractTimer = playerInteractTimer - dt end
 end
 
@@ -102,6 +144,7 @@ function uninit()
         --sb.logInfo("storage == [ %s ]", storage)
         activeItem.setInstanceValue("scriptStorage", storage)
     end
+    activeItem.setCursor() -- reseting item cursor
 end
 
 function activeItemCfg()
@@ -159,7 +202,7 @@ function call(eventCfg) -- because whe can't directly do _ENV[funcGroup.Func]()
             lastEvent.args = copy(args)
             if type(eventCfg.args) == "table" then
                 local result
-                if eventCfg.args[1] then
+                if eventCfg.args[1] and args then
                     --sb.logInfo("executing %s with args %s", tostring(eventCfg.callback), sb.printJson(args))
                     sb.setLogMap("[JPBAI] Item "..itemId.."last processed event", sb.printJson(lastEvent))
                     result = table.pack(callback(table.unpack(args)))
@@ -281,6 +324,7 @@ function effectiveArguments(_args)
     for i, arg in pairs(_args or {}) do
         args[i] = checkStorage(arg)
     end
+    if compare(args, {}) then args = nil end
     return args
 end
 
@@ -415,4 +459,10 @@ function worldSendEntityMessage(entityId, ...)
     if world.entityExists(entityId) then
         return world.sendEntityMessage(entityId, ...)
     end
+end
+
+function startCoroutine(func, ...)
+    local func = func
+    if type(func) == "string" then func = findCallback(func) end
+    table.insert(coroutineList, {coroutine.create(func), table.pack(...)})
 end

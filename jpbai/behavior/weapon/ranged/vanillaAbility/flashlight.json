@@ -1,0 +1,37 @@
+{
+    "behaviors" : {
+		"toggleFlashlight" : {
+			"possibleOutcome" : [
+				"toggleFlashlight",
+				{"behavior" : "idle"}
+			],
+			"eventOnInit" : ["flashlightSwitch"]
+		}
+	},
+	"behaviorPaths" : {},
+	"events" : {
+		"flashlightSwitch" : [
+			{
+				"event" : "function",
+				"callback" : "logic.none",
+				"args" : ["storage:flashlightActive"],
+				"storage" : "flashlightActive"
+			},
+			{
+				"event" : "function",
+				"callback" : "animator.setLightActive",
+				"args" : ["flashlight", "storage:flashlightActive"]
+			},
+			{
+				"event" : "function",
+				"callback" : "animator.setLightActive",
+				"args" : ["flashlightSpread", "storage:flashlightActive"]
+			},
+			{
+				"event" : "function",
+				"callback" : "animator.playSound",
+				"args" : ["flashlight"]
+			}
+		]
+	}
+}

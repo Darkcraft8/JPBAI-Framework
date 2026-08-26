@@ -1,0 +1,74 @@
+{
+    "behavs" : {
+        "punch" : {
+            "stance" : "punch_windup",
+			"possibleOutcome" : [{ "require" : { "stance" : "idle" }, "behavior" : "idle" }],
+            "eventOnStance" : {
+               "punch_fire" : ["punch_onFire"]
+            },
+
+			"eventOnDamageTaken" : [
+				"punch_onDamageTaken"
+			],
+			"eventOnHitDealt" : [
+				"punch_onHit"
+			],
+			"eventOnDamageDealt" : [
+				"punch_onDamageDealt"
+			],
+			"eventOnKill" : [
+				"punch_onKill"
+			]
+        }
+    },
+    "paths" : {
+
+    },
+    "events" : {
+        "punch_onFire" : [],
+		"punch_onDamageTaken" : [],
+        "punch_onDamageDealt" : [],
+        "punch_onHit" : [],
+        "punch_onKill" : []
+    },
+    "stances" : {
+        "punch_windup" : {
+            "duration" : 0.05,
+            "armRotation" : 0,
+
+            "allowRotate" : false,
+            "allowFlip" : false,
+            "twoHanded" : false,
+
+            "frontArmFrame" : "swimIdle.1",
+            "backArmFrame" : "swim.1",
+            "transition" : "punch_windup2"
+        },
+        "punch_windup2" : {
+            "duration" : 0.05,
+            "armRotation" : 0,
+
+            "allowRotate" : false,
+            "allowFlip" : false,
+            "twoHanded" : false,
+
+            "frontArmFrame" : "swimIdle.1",
+            "backArmFrame" : "swim.1",
+
+            "recoil" : true,
+            "transition" : "punch_fire"
+        },
+        "punch_fire" : {
+            "duration" : 0.1,
+            "armRotation" : 0,
+
+            "allowRotate" : false,
+            "allowFlip" : false,
+            "twoHanded" : false,
+
+            "frontArmFrame" : "rotation",
+            "backArmFrame" : "rotation",
+            "transition" : "idle"
+        }
+    }
+}

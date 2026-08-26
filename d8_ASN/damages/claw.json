@@ -1,0 +1,116 @@
+{
+    "damageNumberParticles" : {
+        "shieldhit" : [{
+			"type" : "text",
+			"text" : "^shadow;$dmg$ : Blocked",
+			"color" : [0, 255, 255, 180],
+			"light" : [0, 70, 70],
+			"fullbright" : true,
+			"initialVelocity" : [0.0, 15.0],
+			"finalVelocity" : [0.0, -15],
+			"size" : 1,
+			"approach" : [3, 30],
+			"angularVelocity" : 20,
+			"timeToLive" : 0.7,
+			"layer" : "front",
+			"destructionAction" : "shrink",
+			"destructionTime" : 0.5,
+			"variance" : {
+			"initialVelocity" : [9.0, 3.0]
+			},
+			"flippable" : false
+        }],
+        "weakhit" : [{
+			"type" : "text",
+			"text" : "^shadow;$dmg$ : Endured",
+			"color" : [129, 171, 226, 180],
+			"light" : [35, 46, 61],
+			"fullbright" : true,
+			"initialVelocity" : [0.0, 15.0],
+			"finalVelocity" : [0.0, -15],
+			"size" : 0.5,
+			"approach" : [3, 30],
+			"angularVelocity" : 20,
+			"timeToLive" : 0.7,
+			"layer" : "front",
+			"destructionAction" : "shrink",
+			"destructionTime" : 0.5,
+			"variance" : {
+			"initialVelocity" : [9.0, 3.0]
+			},
+			"flippable" : false
+        }],
+        "hit" : [{
+			"type" : "text",
+			"text" : "^shadow;$dmg$ : Normal",
+			"color" : [67, 120, 189, 180],
+			"light" : [18, 32, 51],
+			"fullbright" : true,
+			"initialVelocity" : [0.0, 15.0],
+			"finalVelocity" : [0.0, -15],
+			"size" : 1,
+			"approach" : [3, 30],
+			"angularVelocity" : 20,
+			"timeToLive" : 0.7,
+			"layer" : "front",
+			"destructionAction" : "shrink",
+			"destructionTime" : 0.5,
+			"variance" : {
+			"initialVelocity" : [9.0, 3.0]
+			},
+			"flippable" : false
+        }],
+        "stronghit" : [{
+			"type" : "text",
+			"text" : "^shadow;$dmg$ : Weak",
+			"color" : [27, 87, 165, 180],
+			"light" : [7, 23, 45],
+			"fullbright" : true,
+			"initialVelocity" : [0.0, 15.0],
+			"finalVelocity" : [0.0, -15],
+			"size" : 1.2,
+			"approach" : [3, 30],
+			"angularVelocity" : 20,
+			"timeToLive" : 0.7,
+			"layer" : "front",
+			"destructionAction" : "shrink",
+			"destructionTime" : 0.5,
+			"variance" : {
+			"initialVelocity" : [9.0, 3.0]
+			},
+			"flippable" : false
+        }],
+        "kill" : [{
+			"type" : "text",
+			"text" : "^shadow;$dmg$ : Fatal",
+			"color" : [3, 45, 76, 180],
+			"light" : [0, 12, 21],
+			"fullbright" : true,
+			"initialVelocity" : [0.0, 15.0],
+			"finalVelocity" : [0.0, -15],
+			"size" : 1.2,
+			"approach" : [3, 30],
+			"angularVelocity" : 20,
+			"timeToLive" : 0.7,
+			"layer" : "front",
+			"destructionAction" : "shrink",
+			"destructionTime" : 0.5,
+			"variance" : {
+			    "initialVelocity" : [9.0, 3.0]
+			},
+			"flippable" : false
+        }]
+    },
+    "hitSoundKind" : {
+        "organic" : {
+            "weakhit" : ["/sfx/melee/sharp_hit_organic.ogg"],
+            "stronghit" : ["/sfx/melee/1h_sword_kill_organic1.ogg", "/sfx/melee/1h_sword_kill_organic2.ogg"],
+            "kill" : ["/sfx/melee/2h_sword_kill_organic1.ogg", "/sfx/melee/2h_sword_kill_organic2.ogg"]
+        },
+        "robotic" : {
+            "weakhit" : ["/sfx/melee/dagger_hit_metal1.ogg", "/sfx/melee/dagger_hit_metal2.ogg", "/sfx/melee/dagger_hit_metal3.ogg", "/sfx/melee/dagger_hit_metal4.ogg", "/sfx/melee/dagger_hit_metal5.ogg", "/sfx/melee/dagger_hit_metal6.ogg"],
+            "stronghit" : ["/sfx/melee/sword_hit_metal1.ogg", "/sfx/melee/sword_hit_metal2.ogg", "/sfx/melee/sword_hit_metal3.ogg", "/sfx/melee/sword_hit_metal4.ogg", "/sfx/melee/sword_hit_metal5.ogg", "/sfx/melee/sword_hit_metal6.ogg"],
+            "kill" : ["/sfx/melee/shield_break_metal.ogg"]
+        }
+    }
+}

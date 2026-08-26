@@ -5,16 +5,32 @@ require "/scripts/interp.lua"
 local oldSetStance = setStance
 local oldUpdateStance = updateStance
 local oldInitStances = initStances
+local function numberToVec2(num)
+    if type(num) == "number" then return {num, num} else return num end
+end
+preInit_baseStances = {}
+stance = {}
+function stance.getParameter(variable, default)
+    if not self.stance then return default end
+    if self.stance[variable] ~= nil then return self.stance[variable] end
+    return default
+end
+
 function initStances()
     oldInitStances()
-    local baseStances = config.getParameter("baseStances", {}) -- in case you make a bunch of base stances for inheritance and don't want to copy them everywhere
+    local baseStances = copy(preInit_baseStances) -- in case you make a bunch of base stances for inheritance and don't want to copy them everywhere
+    local baseStancesBuild = {}
     if type(baseStances) == "table" then
-        for _, string in pairs(baseStances) do
-            self.stances = sb.jsonMerge(root.assetJson(string), self.stances or {})
+        for _, string in ipairs(baseStances) do
+            if type(string) == "string" then string = root.assetJson(string) end
+            baseStancesBuild = sb.jsonMerge(baseStancesBuild or {}, string)
         end
     elseif type(baseStances) == "string" then 
-        self.stances = sb.jsonMerge(root.assetJson(baseStances), self.stances or {})
+        if type(baseStances) == "string" then baseStances = root.assetJson(baseStances) end
+        baseStancesBuild = sb.jsonMerge(baseStancesBuild or {}, baseStances)
     end
+    self.stances = sb.jsonMerge(baseStancesBuild or {}, self.stances)
+    
     local stances = {}
     local function inherit(stanceData)
         local result = copy(stanceData)
@@ -53,9 +69,7 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
         end
     end
     if self.stance.playSounds then
-        for _, s in ipairs(self.stance.playSounds) do
-            if animator.hasSound(s) then animator.playSound(s) end
-        end
+        animationEx.playSounds(self.stance.playSounds)
     end
     if self.stance.burstParticleEmitters then
         for _, e in ipairs(self.stance.burstParticleEmitters) do
@@ -136,21 +150,22 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
     for group, transform in pairs(self.stance.transformations or {}) do
         animator.resetTransformationGroup(group)
         local rotationCenter = transform.rotationCenter or {0, 0}
-        local translate, rotate, scale, rotationCenter = copy(transform.translate), copy(transform.rotate), copy(transform.scale), copy(transform.rotationCenter) or {0, 0}
+        local translate, rotate, scale, rotationCenter, scaleCenter = copy(transform.translate), copy(transform.rotate), copy(transform.scale), copy(transform.rotationCenter) or {0, 0}, copy(transform.scaleCenter) or {0, 0}
 
         if transform.inherit then
             local inheritedValue = self.stance.transformations[transform.inherit]
             if inheritedValue then
                 if inheritedValue.translate then translate = vec2.add(inheritedValue.translate or {0, 0}, translate or {0, 0}) end
                 if inheritedValue.rotate then rotate = (inheritedValue.rotate or 0) + (rotate or 0) end
-                if inheritedValue.scale then scale = (inheritedValue.scale or 0) + (scale or 1) end
+                if inheritedValue.scale then scale = vec2.add(numberToVec2(inheritedValue.scale or 0), numberToVec2(scale or 1)) end
                 if inheritedValue.rotationCenter then rotationCenter = vec2.add(inheritedValue.rotationCenter or {0, 0}, rotationCenter or {0, 0}) end
+                if inheritedValue.scaleCenter then scaleCenter = vec2.add(inheritedValue.scaleCenter or {0, 0}, scaleCenter or {0, 0}) end
             end
         end
 
         if translate then animator.translateTransformationGroup(group, translate) end
         if rotate then animator.rotateTransformationGroup(group, util.toRadians(rotate), rotationCenter) end
-        if scale then animator.scaleTransformationGroup(group, scale) end
+        if scale then animator.scaleTransformationGroup(group, scale, scaleCenter) end
     end
 
     if type(self.stance.armRotation) == "table" then
@@ -172,7 +187,7 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
 	if self.stance.aimAngle then
         self.aimAngle = math.rad(self.stance.aimAngle)
     end
-
+    
     if self.stance.frontArmFrame ~= nil then activeItem.setFrontArmFrame(self.stance.frontArmFrame) end
     if self.stance.backArmFrame ~= nil then activeItem.setBackArmFrame(self.stance.backArmFrame) end
     if self.stance.holdingItem ~= nil then activeItem.setHoldingItem(self.stance.holdingItem) end
@@ -209,6 +224,7 @@ function setStance(stanceName) -- replace and expend on the old version in stanc
         activeItem.setOutsideOfHand(false)
     end
     self.stancePlayerRotation = 0
+    sb.setLogMap("[JPBAI] Item "..itemId.." Stance", "name %s", self.stanceName)
 end
 
 function updateAim(allowRotate, allowFlip, aimSpeed, initAtAimAngle)
@@ -264,9 +280,10 @@ function updateStance(dt) -- added updateAim in so that rotation and flip get up
             for group, transform in pairs(self.stance.transformations or {}) do
                 if (transform.inherit or transform.velocity) then 
                     local velocity = copy(transform.velocity)
-                    local translate, rotate, scale, rotationCenter
+                    local translate, rotate, scale, rotationCenter, scaleCenter
+                    
                     if velocity then
-                        translate, rotate, scale, rotationCenter = copy(velocity.translate), copy(velocity.rotate), copy(velocity.scale), copy(transform.rotationCenter) or {0, 0}
+                        translate, rotate, scale, rotationCenter, scaleCenter = copy(velocity.translate), copy(velocity.rotate), copy(velocity.scale), copy(transform.rotationCenter) or {0, 0}, copy(transform.scaleCenter) or {0, 0}
                     end
 
                     if transform.inherit then
@@ -276,14 +293,14 @@ function updateStance(dt) -- added updateAim in so that rotation and flip get up
                             --sb.logInfo("inheritedValue.velocity %s", inheritedValue.velocity)
                             if inheritedValue.velocity.translate then translate = vec2.add(inheritedValue.velocity.translate or {0, 0}, translate or {0, 0}) end
                             if inheritedValue.velocity.rotate then rotate = (inheritedValue.velocity.rotate or 0) + (rotate or 0) end
-                            if inheritedValue.velocity.scale then scale = (inheritedValue.velocity.scale or 0) + (scale or 0) end
+                            if inheritedValue.velocity.scale then scale = vec2.add(numberToVec2(inheritedValue.velocity.scale or 0), numberToVec2(scale or 0)) end
                         end
                     end
                     if translate or rotate or scale then
                         --sb.logInfo("%s, %s, %s, %s", translate, rotate, scale, rotationCenter)
                         if translate then animator.translateTransformationGroup(group, vec2.mul(translate, dt)) end
                         if velocity.rotate then animator.rotateTransformationGroup(group, util.toRadians((velocity.rotate * dt)), rotationCenter) end
-                        if scale then animator.scaleTransformationGroup(group, scale * dt) end
+                        if scale then animator.scaleTransformationGroup(group, vec2.mul(numberToVec2(scale), dt), scaleCenter) end
                     end
                 end
             end
@@ -316,17 +333,24 @@ function updateStance(dt) -- added updateAim in so that rotation and flip get up
             self.stanceTimer = math.max(self.stanceTimer - dt, 0)
         
             if type(self.stance.armRotation) == "table" and not self.coroutine.lerp then
-            local stanceRatio = 1 - (self.stanceTimer / self.stance.duration)
-            self.armRotation = util.lerp(stanceRatio, self.stance.armRotation)
+                local stanceRatio = 1 - (self.stanceTimer / self.stance.duration)
+                self.armRotation = util.lerp(stanceRatio, self.stance.armRotation)
             end
         
             if self.stanceTimer <= 0 and not self.coroutine.lerp then
+                if self.stance.transition then
+                    setStance(self.stance.transition)
+                end
+                if self.stance.transitionFunction then
+                    call(self.stance.transitionFunction)
+                end
+            end
+        else
             if self.stance.transition then
                 setStance(self.stance.transition)
             end
             if self.stance.transitionFunction then
-                _ENV[self.stance.transitionFunction]()
-            end
+                call(self.stance.transitionFunction)
             end
         end
     end
@@ -340,57 +364,39 @@ function lerpStance(dt)
     local armProgress, aimProgress, armAngle
 
     util.wait(from.duration or 0.25, function(dt)
-        for group, transform in pairs(from.transformations or {}) do
-            if to.transformations[group] then
-                animator.resetTransformationGroup(group)
-                local toTranform = to.transformations[group]
-
-                local translate, rotate, scale, rotationCenter = copy(transform.translate), copy(transform.rotate), copy(transform.scale), copy(transform.rotationCenter)
-                if transform.inherit then
-                    local inheritedValue = from.transformations[transform.inherit]
-                    translate = vec2.add(inheritedValue.translate or {0, 0}, translate or {0, 0})
-                    rotate = (inheritedValue.rotate or 0) + (rotate or 0)
-                    scale = (inheritedValue.scale or 0) + (scale or 1)
-                    rotationCenter = vec2.add(inheritedValue.rotationCenter or {0, 0}, rotationCenter or {0, 0})
-                end
-                local toTranslate, toRotate, toScale, toRotationCenter = copy(toTranform.translate), copy(toTranform.rotate), copy(toTranform.scale), copy(toTranform.rotationCenter)
-                if toTranform.inherit then
-                    local inheritedValue = to.transformations[transform.inherit]
-                    toTranslate = vec2.add(inheritedValue.translate or {0, 0}, toTranslate or {0, 0})
-                    toRotate = (inheritedValue.rotate or 0) + (toRotate or 0)
-                    toScale = (inheritedValue.scale or 0) + (toScale or 1)
-                    toRotationCenter = vec2.add(inheritedValue.rotationCenter or {0, 0}, toRotationCenter or {0, 0})
-                end
-
-                local translate = vec2.lerp(progress, translate or {0, 0}, toTranslate or {0, 0})
-                local rotate = interp.linear(progress, rotate or 0, toRotate or 0)
-                local rotationCenter = vec2.lerp(progress, rotationCenter or {0, 0}, toRotationCenter or {0, 0})
-                local scale = interp.linear(progress, scale or 1 , toScale or 1)
-
-                if translate then animator.translateTransformationGroup(group, translate) end
-                if rotate then animator.rotateTransformationGroup(group, util.toRadians(rotate), rotationCenter) end
-                if scale then animator.scaleTransformationGroup(group, scale) end
-
-            else 
-                animator.resetTransformationGroup(group)
-                local translate, rotate, scale, rotationCenter = copy(transform.translate), copy(transform.rotate), copy(transform.scale), copy(transform.rotationCenter)
-                if transform.inherit then
-                    local inheritedValue = from.transformations[transform.inherit]
-                    translate = vec2.add(inheritedValue.translate or {0, 0}, translate or {0, 0})
-                    rotate = (inheritedValue.rotate or 0) + (rotate or 0)
-                    scale = (inheritedValue.scale or 0) + (scale or 1)
-                    rotationCenter = vec2.add(inheritedValue.rotationCenter or {0, 0}, rotationCenter or {0, 0})
-                end
-
-                local translate = vec2.lerp(progress, translate or {0, 0}, {0, 0})
-                local rotate = interp.linear(progress, rotate or 0, 0)
-                local rotationCenter = vec2.lerp(progress, rotationCenter or {0, 0}, {0, 0})
-                local scale = interp.linear(progress, scale or 1, 1)
-
-                if translate then animator.translateTransformationGroup(group, translate) end
-                if rotate then animator.rotateTransformationGroup(group, util.toRadians(rotate), rotationCenter) end
-                if scale then animator.scaleTransformationGroup(group, scale) end
+        local function getTransform(transform, groupsTables)
+            local translate, rotate, scale, rotationCenter, scaleCenter = copy(transform.translate), copy(transform.rotate), numberToVec2(copy(transform.scale)), copy(transform.rotationCenter), copy(transform.scaleCenter)
+            if transform.inherit and groupsTables then
+                local inheritedValue = groupsTables[transform.inherit]
+                if inheritedValue.translate then translate = vec2.add(inheritedValue.translate or {0, 0}, translate or {0, 0}) end
+                if inheritedValue.rotate then rotate = (inheritedValue.rotate or 0) + (rotate or 0) end
+                if inheritedValue.scale then scale = vec2.add(numberToVec2(inheritedValue.scale or 0), numberToVec2(scale or 1)) end
+                if inheritedValue.rotationCenter then rotationCenter = vec2.add(inheritedValue.rotationCenter or {0, 0}, rotationCenter or {0, 0}) end
+                if inheritedValue.scaleCenter then scaleCenter = vec2.add(inheritedValue.scaleCenter or {0, 0}, scaleCenter or {0, 0}) end
             end
+            return translate, rotate, scale, rotationCenter, scaleCenter
+        end
+        for group, transform in pairs(from.transformations or {}) do
+            local toTranform = to.transformations[group] or {
+                translate = {0, 0}, 
+                rotate = 0, 
+                scale = 1, 
+                rotationCenter = {0, 0}, 
+                scaleCenter = {0, 0}
+            }
+            animator.resetTransformationGroup(group)
+            local translate, rotate, scale, rotationCenter, scaleCenter = getTransform(transform, from.transformations)
+            local toTranslate, toRotate, toScale, toRotationCenter, toScaleCenter = getTransform(toTranform, to.transformations)
+            
+            if translate then translate = vec2.lerp(progress, translate or {0, 0}, toTranslate or {0, 0}) end
+            if rotate then rotate = interp.linear(progress, rotate or 0, toRotate or 0) end
+            if rotationCenter then rotationCenter = vec2.lerp(progress, rotationCenter or {0, 0}, toRotationCenter or {0, 0}) end
+            if scaleCenter then scaleCenter = vec2.lerp(progress, scaleCenter or {0, 0}, toScaleCenter or {0, 0}) end
+            if scale then scale = vec2.lerp(progress, numberToVec2(scale or {0, 0}), numberToVec2(toScale or {0, 0})) end
+
+            if translate then animator.translateTransformationGroup(group, translate) end
+            if rotate then animator.rotateTransformationGroup(group, util.toRadians(rotate), rotationCenter) end
+            if scale then animator.scaleTransformationGroup(group, scale, scaleCenter) end
         end
         
         local aimAngle = activeItem.aimAngleAndDirection(self.fireOffset[2], activeItem.ownerAimPosition())
@@ -465,7 +471,7 @@ end
 -- "allowRotate"
 -- "allowFlip"
 -- "transitionFunction"
--- "transition" can be added to a stance to change stances... don't remember seeing it used in vanilla
+-- "transition" can be added to a stance to change stances... don't remember seeing it used in vanilla weapon
 
 function isFrontHand()
   return (activeItem.hand() == "primary") == (self.aimDirection < 0)

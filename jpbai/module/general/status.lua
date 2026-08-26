@@ -85,4 +85,3 @@ end
 function statusEx.statusProperty(property, require)
     return status.statusProperty(property) == require
 end
-

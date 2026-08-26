@@ -1,0 +1,5 @@
+{
+    "friendlyName" : "Armamentarium Solis Nigri",
+    "name" : "d8_ASN",
+    "require" : ["d8_jpbai"]
+}

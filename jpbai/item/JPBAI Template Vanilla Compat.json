@@ -133,7 +133,7 @@
 		"interactData" : {"gui":{"background":{"zlevel":0,"type":"background","fileHeader":"/interface/scripted/papernote/header.png","fileBody":"/interface/scripted/papernote/body.png","fileFooter":""},"close":{"type":"button","base":"/interface/x.png","hover":"/interface/xhover.png","pressed":"/interface/xpress.png","pressedOffset":[0,0],"position":[185,241]},"scrollArea":{"type":"scrollArea","rect":[5,18,198,230],"children":{"lblNoteText":{"type":"label","zlevel":1,"position":[17,230],"hAnchor":"left","vAnchor":"top","color":"#4c4b3e","fontSize":7,"value" : "Some Items could require a client sided mod called \"JPBAI Framework\",\nIt concept is basicaly creating behavior in json format that the active items use...\n\nIt was created to lower the amount of script that had to be coded and also allow to create a greater variety of item with almost only one script.\nKnow that no having the mod will not crash your character if you pickup a properly made vanilla compatible item due to a small script change made to station transponder lua.\n\nYou can access the mod at\n^blue;https://github.com/Darkcraft8/JPBAI-Framework/tree/developement^reset;","wrapWidth":180}}}}},
 		"itemVersioner" : {
 			"path" : "/jpbai/item/JPBAI Template Vanilla Compat.json:item",
-			"note" : "remove if it ins't necessary (small item)"
+			"note" : "mostly meant has a way to quickly update custom items"
 		}
 	},
 	"itemVersioner" : {

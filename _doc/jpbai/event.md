@@ -8,7 +8,8 @@
     This eventType will spawn a projectile
 
 #### `function`
-    This eventType will execute a function while passing up to 10 args
+    This eventType will execute a function while passing args
+
 #### `setCursor`
     This eventType will set the user cursor
 

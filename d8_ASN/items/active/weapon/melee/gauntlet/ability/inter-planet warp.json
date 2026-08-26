@@ -1,0 +1,45 @@
+{
+    "card" : {
+        "front" : {
+            "group" : "inter-planet warp",
+            "behaviorName" : "abilitySelectExit",
+            "priority" : 3,
+            "backgroundType" : "tablet",
+            "draw" : [
+                {
+                    "type" : "drawable",
+                    "position" : [9, 55],
+                    "image" : "/d8_ASN/items/active/weapon/melee/gauntlet/ability/text/inter-planet warp.png"
+                },
+                {
+                    "type" : "label",
+                    "position" : [32, 55],
+                    "wrapWidth" : 28,
+                    "fontSize" : 4.5,
+                    "hAnchor" : "mid",
+                    "vAnchor" : "mid",
+                    "string" : "^shadow,#4378bd;Inter-Pl^shadow,#a12e2e;anet Warp^reset;"
+                },
+                {
+                    "type" : "label",
+                    "position" : [3, 45],
+                    "wrapWidth" : 60,
+                    "fontSize" : 4.5,
+                    "string" : "^shadow;Warp to a selected planet in the current orbited system.^reset;"
+                },
+                {
+                    "type" : "label",
+                    "position" : [55.5, 61],
+                    "fontSize" : 14,
+                    "hAnchor" : "mid",
+                    "string" : "^shadow;0^reset;"
+                }
+            ]
+        }
+    },
+    "startBehav" : "",
+    "behavs" : {},
+    "paths" : {},
+    "events" : {},
+    "stances" : {}
+}

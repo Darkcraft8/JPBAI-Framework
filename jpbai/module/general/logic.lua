@@ -156,3 +156,7 @@ function logic.both(a, b)
     return (a and b)
 end
 
+function logic.none(a)
+    return (not a)
+end
+

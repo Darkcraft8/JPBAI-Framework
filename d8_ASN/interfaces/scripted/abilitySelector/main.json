@@ -1,0 +1,37 @@
+{
+    "paneLayer" : "hud",
+    "dismissable" : true,
+    "gui" : {
+        "panefeature" : {
+            "type" : "panefeature",
+            "anchor" : "centerBottom",
+            "offset" : [0, 0],
+            "positionLocked" : true
+        },
+        "background" : {
+            "type" : "background",
+            "fileBody" : "/assetmissing.png?crop;0;0;1;1",
+            "mouseTransparent" : true,
+            "zlevel" : -100
+        },
+        "screenCanvas" : {
+            "zlevel" : -9,
+            "type" : "canvas",
+            "position" : [0, 0],
+            "size" : [456, 67],
+            "captureMouseEvents" : true,
+            "captureKeyboardEvents" : false
+        }
+    },
+    "canvasClickCallbacks" : {
+        "screenCanvas" : "canvasClickEvent"
+    },
+    "canvasKeyCallbacks" : {
+        "screenCanvas" : "canvasKeyEvent"
+    },
+    "abilities" : ["crush"],
+
+    "scripts" : ["/d8_ASN/interfaces/scripted/abilitySelector/main.lua"],
+    "scriptDelta" : 1,
+    "scriptWidgetCallbacks" : []
+}

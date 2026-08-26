@@ -1,14 +1,13 @@
 ### Json Behavior Powered Active Item : Changelog
 
 #### Change
-  -  aimVelocity renamed to addAimedVelocity
+  -  To many that i forgotten to list here
 
 #### Addition
-  -  aimedVelocity
+
 
 #### Fix
 
 #### TBD
   - Resources func still need to be made ?
-  - Movement func still need to be made ?
   - Documentation Need to be Made !!!

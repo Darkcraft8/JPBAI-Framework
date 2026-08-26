@@ -1,5 +1,4 @@
 ### Currently Missing Capability
 
-  - Grappling Hook
+  - NPC Support ?
   - Boomerang ?
-  - Dual Wielding ?
