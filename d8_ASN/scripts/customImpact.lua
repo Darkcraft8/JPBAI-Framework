@@ -1,4 +1,5 @@
 -- Custom Damage Impact
+-- Damage Text is disabled because the game doesn't hide damage text even when the damage type is hidden -_-
 local damageCfgTemp = {
     damageNumberParticles = {
         hit = {},

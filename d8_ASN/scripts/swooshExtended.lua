@@ -1,16 +1,16 @@
 -- Swoosh Paticle
-function swooshToParticle(imagePath, posOffset, delay, swooshDir, centered, localPos, inaccuracy, layer, destructionAction, size, fullbright, color, light, dir, posOverride)
+function swooshToParticle(imagePath, posOffset, delay, swooshDir, centered, localPos, inaccuracy, layer, destructionAction, size, fullbright, color, light, dir, posOverride, lightFadeSpeed, timeMultiplier)
     -- turn into a coroutine if a delay is given
     if delay and (delay ~= 0) then
-        local co = coroutine.create(function(imagePath, posOffset, delay, swooshDir, centered, localPos, inaccuracy, layer, destructionAction, size, fullbright, color, light, dir)
-            local imagePath, posOffset, delay, swooshDir, centered, localPos, inaccuracy, layer, destructionAction, size, fullbright, color, light, dir = imagePath, posOffset, delay, swooshDir, centered, localPos, inaccuracy, layer, destructionAction, size, fullbright, color, light, dir
+        local co = coroutine.create(function(imagePath, posOffset, delay, swooshDir, centered, localPos, inaccuracy, layer, destructionAction, size, fullbright, color, light, dir, posOverride, lightFadeSpeed, timeMultiplier)
+            local imagePath, posOffset, delay, swooshDir, centered, localPos, inaccuracy, layer, destructionAction, size, fullbright, color, light, dir, posOverride, lightFadeSpeed, timeMultiplier = imagePath, posOffset, delay, swooshDir, centered, localPos, inaccuracy, layer, destructionAction, size, fullbright, color, light, dir, posOverride, lightFadeSpeed, timeMultiplier
             dir = dir or aimVector(inaccuracy or 0)
             util.wait((delay or 0) - (dt or script.updateDt()))
             local handPos = activeItem.handPosition(posOffset or {0, 0})
             local posOverride = vec2.add(world.entityPosition(activeItem.ownerEntityId()), handPos)
-            swooshToParticle(imagePath, posOffset, 0, swooshDir, centered, localPos, inaccuracy, layer, destructionAction, size, fullbright, color, light, dir, posOverride)
+            swooshToParticle(imagePath, posOffset, 0, swooshDir, centered, localPos, inaccuracy, layer, destructionAction, size, fullbright, color, light, dir, posOverride, lightFadeSpeed, timeMultiplier)
         end)
-        coroutine.resume(co, imagePath, posOffset, delay, swooshDir, centered, localPos, inaccuracy, layer, destructionAction, size, fullbright, color, light, dir)
+        coroutine.resume(co, imagePath, posOffset, delay, swooshDir, centered, localPos, inaccuracy, layer, destructionAction, size, fullbright, color, light, dir, posOverride, lightFadeSpeed, timeMultiplier)
         if coroutineList then table.insert(coroutineList, co) end
         return co
     end
@@ -44,7 +44,7 @@ function swooshToParticle(imagePath, posOffset, delay, swooshDir, centered, loca
             local crop = string.format("?crop;%s=%s;%s=%s", ia - 1, ib - 1, ia, ib)
             local imagePixel = imagePath .. crop
             local particlePos = vec2.mul({ia, ib}, 0.125)
-            local timeA, timeB = (ia * dt), (ib * (dt * 2))
+            local timeA, timeB = (ia * dt), (ib * dt)
             if swooshDir[1] < 0 then
                 timeA = ((imageSize[1] - ia) * dt)
             elseif swooshDir[1] == 0 then
@@ -56,11 +56,11 @@ function swooshToParticle(imagePath, posOffset, delay, swooshDir, centered, loca
             elseif swooshDir[2] == 0 then
                 timeB = 0
             end
-            local time = ( (timeA + timeB) * 0.5 )
+            local time = ( (timeA + timeB) * (timeMultiplier or 0.5) )
             local visualParam = {
                 rotate = true,
                 specification = {
-                    fade = 1,
+                    fade = lightFadeSpeed or 1,
                     approach = {0, 0},
                     layer = layer or "middle",
                     destructionAction = destructionAction or "fade",

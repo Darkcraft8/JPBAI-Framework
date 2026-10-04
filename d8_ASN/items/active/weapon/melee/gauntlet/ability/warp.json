@@ -1,4 +1,9 @@
 {
+    "shortdescription" : "^shadow,#a12e2e;Warp^reset;",
+    "description" : "Warp to cursor at the cost of 20 energy. [Temp]................................................................................................................",
+    "backImg" : "/d8_ASN/interfaces/scripted/abilitySelector/texture/tablet/back.png",
+    "artwork" : "/d8_ASN/items/active/weapon/melee/gauntlet/ability/warpArtwork.png",
+
     "card" : {
         "front" : {
             "group" : "warp",

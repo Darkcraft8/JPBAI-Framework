@@ -8,12 +8,21 @@ function Weapon.init()
     Weapon.inaccuracy = 0
     animator.setGlobalTag("elementalType", Weapon.elementalType or "")
     table.insert(updateFunc, "Weapon.update")
+    table.insert(uninitFunc, "Weapon_uninit")
 end
 
-function Weapon_uninit() end
+function Weapon_uninit() 
+    if Weapon.testTrag then activeItem.setScriptedAnimationParameter("chains", nil) end
+end
+function Weapon.update(dt)
+    if Weapon.testTrag then
+        sb.setLogMap("-10, Debug Trag", "Status: Active")
+        local projectileType, projectileParameters, range, spawnPos, inaccuracy = table.unpack(copy(Weapon.testTrag))
+        spawnPos = spawnPosition()
+        inaccuracy = 0
+        hitscan.debugTragectory(projectileType, projectileParameters, range, spawnPos, inaccuracy)
+    end
 
-local test = {}
-function Weapon.update(dt) 
     if debugHitScan then
         for i, cfg in pairs(debugHitScan or {}) do 
             local travelPoint = {cfg.pos, (debugHitScan[i + 1] or {}).pos or cfg.pos}
@@ -24,13 +33,13 @@ function Weapon.update(dt)
             elseif cfg.type == "point" then
                 world.debugPoint(cfg.pos, cfg.color or {255 * (i / #debugHitScan), 0, 0})
             end
-            
         end
     end
 end
 -- a very basic hitscan
 function Weapon.hitscan(projectileType, projectileParameters, range, spawnPos, inaccuracy, baseDamage, damageScalingFunction, damageSourceKind, extra, maxSegmentRange, isCoroutine)
     --sb.logInfo("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s", projectileType, projectileParameters, range, spawnPos, inaccuracy, baseDamage, damageScalingFunction, damageSourceKind, extra, maxSegmentRange)
+    --Weapon.testTrag = table.pack(projectileType, projectileParameters, range, spawnPos, inaccuracy) -- debug test Trag
     local dt = script.updateDt()
     local extra = extra or {}
     local projectileConfig = root.projectileConfig(projectileType)
@@ -46,7 +55,7 @@ function Weapon.hitscan(projectileType, projectileParameters, range, spawnPos, i
         return defaultValue
     end
     local tragectory = hitscan.calculateTragectory(projectileType, projectileParameters, range, spawnPos, inaccuracy, maxSegmentRange, isCoroutine)
-    debugHitScan = {}
+    lastTrag = tragectory
 
     local _lastPos = false
     local collisionProj = copy(projectileParameters)
@@ -62,8 +71,8 @@ function Weapon.hitscan(projectileType, projectileParameters, range, spawnPos, i
     for i, cfg in pairs(tragectory) do
         local travelPoint = {cfg.pos, (tragectory[i + 1] or {}).pos or cfg.pos}
         local _magnitude = math.max(world.magnitude(travelPoint[1], travelPoint[2]), 0)
-        table.insert(debugHitScan, {type = "line", pos = {travelPoint[1], travelPoint[2]}, color = "yellow"})
-        table.insert(debugHitScan, {type = "point", pos = vec2.add(travelPoint[1], vec2.withAngle(vec2.angle(cfg.aimVector), _magnitude * 0.5)), color = "yellow"})
+        --table.insert(debugHitScan, {type = "line", pos = {travelPoint[1], travelPoint[2]}, color = "yellow"})
+        --table.insert(debugHitScan, {type = "point", pos = vec2.add(travelPoint[1], vec2.withAngle(vec2.angle(cfg.aimVector), _magnitude * 0.5)), color = "yellow"})
         
         -- entity hit
         local entList = world.entityLineQuery(world.xwrap(travelPoint[1]), world.xwrap(travelPoint[2]), {
@@ -91,7 +100,20 @@ function Weapon.hitscan(projectileType, projectileParameters, range, spawnPos, i
                 local projPos = world.xwrap(vec2.add(travelPoint[1], vec2.withAngle(vec2.angle(cfg.aimVector), mag)))
                 validEnt = true
                 local shouldStop = (not canPierces()) and stopAtEntityType[string.lower(world.entityType(targetEntity))]
-                --sb.logInfo("piercing %s, stopAtEntityType %s, shouldStop %s", (canPierces()), stopAtEntityType[string.lower(world.entityType(targetEntity))], shouldStop)
+                --[[
+                local stringamagig = {
+                    targetEntity = targetEntity,
+                    piercing = canPierces(),
+                    stopAtEntityType = stopAtEntityType[string.lower(world.entityType(targetEntity))],
+                    shouldStop = shouldStop,
+                    entityCanDamage = world.entityCanDamage(activeItem.ownerEntityId(), targetEntity),
+                    validType = validType
+                }
+                for s, v in pairs(stringamagig) do
+                    sb.logInfo("%s, %s", s, v)
+                end
+                --]]
+                
                 if shouldStop then
                     --sb.logInfo("stopped at ent %s|%s", targetEntity, world.entityType(targetEntity))
                     validEnt = projPos

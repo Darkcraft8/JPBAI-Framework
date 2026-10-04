@@ -5,6 +5,7 @@
   - Added code segments that where missing in the stances lerp function
   - The projectile event no longer override the `power` and `powerMultiplier` parameter that are given inside of the event projectile `parameter`
   - Streamlined the `fireOffset` option for `spawnPos` in the `spawnPosition` function (used in the projectile event for exemple)
+  - the `spawnPosition` function now retain the last used arguments
   
 #### Addition
   - `JPBAI.lua`
@@ -34,7 +35,8 @@
 	 an offset(default [0, 2.5]) and the number of maximum Correction(3 by default) can be given.
 
    - `Hitscan Modules`<br>
-    Insert Description Here
+    Precalculate the tagectory of the projectile
+    Contain some function that use the result
 
 #### Fix
   - added `nil` check to callbacks so that<br>

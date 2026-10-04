@@ -290,7 +290,14 @@ end
 -----------------------------------------------------------------------------------
 
 -- Other's
+local lastSpawnCfg = nil
 function spawnPosition(cfg)
+    local cfg = cfg
+    if cfg then 
+        lastSpawnCfg = copy(cfg)
+    else
+        cfg = copy(lastSpawnCfg)
+    end
     local originPos = copy(cfg.spawnPos) -- Possible | ownerHandPos, ownerPosFaceDirection, ownerPos, fireOffset, cursor
     local posOffset = (cfg.spawnOffset or {0, 0})
     local aimAngle, aimDirection = activeItem.aimAngleAndDirection(self.fireOffset[2], activeItem.ownerAimPosition())

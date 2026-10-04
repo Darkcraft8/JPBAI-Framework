@@ -33,7 +33,7 @@ function openAbilitySelector()
     player.interact("scriptPane", gui)
 end
 
-function jpbai_loadAbilities()
+function jpbai_loadAbilities() --
     local abilityList = root.assetJson("/d8_ASN/items/active/abilities/abilityList.config")
     local abilities = getAbilityDeck()
     for i, name in pairs(abilities or {}) do

@@ -265,10 +265,18 @@ end
 
 function hitscan.debugTragectory(projectileType, projectileParameters, range, spawnPos, inaccuracy)
     local tragectory = hitscan.calculateTragectory(projectileType, projectileParameters, range, spawnPos, inaccuracy)
+    local prev = {}
     for i, p in pairs(tragectory or {}) do
         local travelPoint = {p.pos, (tragectory[i + 1] or {}).pos or p.pos}
-        world.debugLine(travelPoint[1], travelPoint[2], "white")
+        local normal = world.magnitude(prev.endPosition or travelPoint[1], travelPoint[2])
+        if (normal >= 2) or (i == 1) or (i == #tragectory) then
+            world.debugLine(travelPoint[1], travelPoint[2], "white")
+            prev = p
+        end
     end
+    local text = "/items/active/weapons/protectorate/aegisaltpistol/beam.png?setcolor=f00?crop;0;0=4;1?multiply=fff8"
+    local textEnd = "/items/active/weapons/protectorate/aegisaltpistol/beamend.png?setcolor=f00?crop;0;0=4;1?scalenearest=1;1?multiply=fff8"
+    activeItem.setScriptedAnimationParameter("chains", hitscan.toChain(tragectory, nil, text, textEnd, nil, nil, 0.98, true, nil, "player+1", nil, nil, true))
 end
 
 function vector2DReflect(velDir, collisionNorm)
@@ -277,29 +285,64 @@ end
 
 -- Extra :D
 -- convert tragectory to a chain config for the vanilla chain animation script, might be a bit laggy
-function hitscan.toChain(tragectory, startTexture, texture, endTexture, size, overdrawLength, drawPercent, fullbright, light, renderLayer)
+-- "animationScripts" : ["/items/active/effects/chain.lua"]
+function hitscan.toChain(tragectory, startTexture, texture, endTexture, size, overdrawLength, drawPercent, fullbright, light, renderLayer, distToPrev, max, autoSet)
     local newChain = {}
+    local max = math.min(max or math.max(math.floor(((#tragectory) * drawPercent) + 0.5), 1), #tragectory)
+    
     for i, p in pairs(tragectory or {}) do
+        if i > max then break end
+        local prev = newChain[#newChain] or {}
         local travelPoint = {p.pos, (tragectory[i + 1] or {}).pos or p.pos}
-        local normal = world.magnitude(travelPoint[1], travelPoint[2])
+        local normal = world.magnitude(prev.endPosition or travelPoint[1], travelPoint[2])
         local cfg = {
             segmentImage = texture or "/items/active/weapons/protectorate/aegisaltpistol/beam.png?setcolor=fff",
             renderLayer = renderLayer,
 
             fullbright = fullbright or false,
             segmentSize = size or 0.48,
-            drawPercentage = drawPercent or 1,
+            drawPercentage = 1,
             overdrawLength = overdrawLength or 0.2,
             startPosition = travelPoint[1],
             endPosition = travelPoint[2],
             light = light
         }
-        if i == #tragectory then
+        if (i >= max) then
             cfg.segmentImage = endTexture or cfg.segmentImage
         elseif i == 1 then
             cfg.segmentImage = startTexture or cfg.segmentImage
         end
-        table.insert(newChain, cfg)
+        local _distToPrev = copy(distToPrev) or (root.imageSize(cfg.segmentImage)[1] * 0.125)
+        local tooCloseToPrev = (normal >= _distToPrev) -- lower the amount of sprite to render
+        if tooCloseToPrev or (#newChain < 1) or (i == max) or (i == (max - 1)) then
+            --sb.logInfo("normal %s, #newChain %s", normal, #newChain)
+            if prev.endPosition then cfg.startPosition = prev.endPosition end
+            if (i >= max) then
+                if prev.segmentImage then
+                    local length = (root.imageSize(cfg.segmentImage)[1] - root.imageSize(prev.segmentImage)[1]) * (0.0625)
+                    local forward = vec2.angle(world.distance(cfg.endPosition, prev.endPosition))
+                    
+                    cfg.startPosition = vec2.add(cfg.startPosition, vec2.withAngle(forward, length))
+                    cfg.endPosition = vec2.add(cfg.endPosition, vec2.withAngle(forward, length))
+                else
+                    local length = root.imageSize(cfg.segmentImage)[1] * (0.125) 
+                    local forward = vec2.angle(world.distance(cfg.endPosition, cfg.startPosition))
+                    cfg.startPosition = vec2.add(cfg.startPosition, vec2.withAngle(forward, (length * 0.5) - 0.25))
+                    cfg.endPosition = vec2.add(cfg.endPosition, vec2.withAngle(forward, (length * 0.5) - 0.25))
+                end
+                --world.debugPoint(cfg.startPosition, "green")
+                --world.debugPoint(cfg.endPosition, "red")
+            end
+            table.insert(newChain, cfg)
+        end
+    end
+    if autoSet then
+        if #newChain < 1 then activeItem.setScriptedAnimationParameter(autoSet, nil) return end
+        if type(autoSet) == "string" then
+            activeItem.setScriptedAnimationParameter(autoSet, newChain)
+        else
+            activeItem.setScriptedAnimationParameter("chains", newChain)
+        end
     end
     return newChain
 end
